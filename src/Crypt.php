@@ -95,7 +95,7 @@ final class Crypt
      */
     public function encryptByPassword(string $data, string $password): string
     {
-        return $this->encrypt($data, true, $password, null);
+        return $this->encrypt($data, true, $password, '');
     }
 
     /**
@@ -107,7 +107,7 @@ final class Crypt
      * to hash input or output data.
      * @param string $data the data to encrypt
      * @param string $inputKey the input to use for encryption and authentication
-     * @param string|null $info context/application specific information, e.g. a user ID
+     * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      * @return string the encrypted data
      * @throws \RuntimeException on OpenSSL not loaded
@@ -115,7 +115,7 @@ final class Crypt
      * @see decryptByKey()
      * @see encryptByPassword()
      */
-    public function encryptByKey(string $data, string $inputKey, string $info = null): string
+    public function encryptByKey(string $data, string $inputKey, string $info = ''): string
     {
         return $this->encrypt($data, false, $inputKey, $info);
     }
@@ -132,14 +132,14 @@ final class Crypt
      */
     public function decryptByPassword(string $data, string $password): string
     {
-        return $this->decrypt($data, true, $password, null);
+        return $this->decrypt($data, true, $password, '');
     }
 
     /**
      * Verifies and decrypts data encrypted with {@see encryptByKey()}.
      * @param string $data the encrypted data to decrypt
      * @param string $inputKey the input to use for encryption and authentication
-     * @param string|null $info context/application specific information, e.g. a user ID
+     * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      * @return string the decrypted data
      * @throws \RuntimeException on OpenSSL not loaded
@@ -147,7 +147,7 @@ final class Crypt
      * @throws AuthenticationFailure on authentication failure
      * @see encryptByKey()
      */
-    public function decryptByKey($data, $inputKey, $info = null): string
+    public function decryptByKey($data, $inputKey, $info = ''): string
     {
         return $this->decrypt($data, false, $inputKey, $info);
     }
@@ -158,7 +158,7 @@ final class Crypt
      * @param string $data data to be encrypted
      * @param bool $passwordBased set true to use password-based key derivation
      * @param string $secret the encryption password or key
-     * @param string|null $info context/application specific information, e.g. a user ID
+     * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      *
      * @return string the encrypted data
@@ -166,7 +166,7 @@ final class Crypt
      * @throws \Exception on OpenSSL error
      * @see decrypt()
      */
-    private function encrypt(string $data, bool $passwordBased, string $secret, ?string $info): string
+    private function encrypt(string $data, bool $passwordBased, string $secret, string $info = ''): string
     {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
@@ -202,7 +202,7 @@ final class Crypt
      * @param string $data encrypted data to be decrypted.
      * @param bool $passwordBased set true to use password-based key derivation
      * @param string $secret the decryption password or key
-     * @param string|null $info context/application specific information, @see encrypt()
+     * @param string $info context/application specific information, @see encrypt()
      *
      * @return string the decrypted data
      * @throws \RuntimeException on OpenSSL not loaded
@@ -210,7 +210,7 @@ final class Crypt
      * @throws AuthenticationFailure on authentication failure
      * @see encrypt()
      */
-    private function decrypt(string $data, bool $passwordBased, string $secret, ?string $info): string
+    private function decrypt(string $data, bool $passwordBased, string $secret, string $info): string
     {
         if (!extension_loaded('openssl')) {
             throw new \RuntimeException('Encryption requires the OpenSSL PHP extension');
