@@ -32,11 +32,11 @@ class PasswordHasher
      *
      * ```php
      * // generates the hash (usually done during user registration or when the password is changed)
-     * $hash = Yii::getApp()->getSecurity()->hash($password);
+     * $hash = (new PasswordHasher())->hash($password);
      * // ...save $hash in database...
      *
      * // during login, validate if the password entered is correct using $hash fetched from database
-     * if (Yii::getApp()->getSecurity()->validate($password, $hash)) {
+     * if ((new PasswordHasher())->validate($password, $hash)) {
      *     // password is good
      * } else {
      *     // password is bad
