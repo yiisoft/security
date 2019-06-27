@@ -18,6 +18,8 @@ Security package provides a set of classes to handle common security-related tas
 [![Total Downloads](https://poser.pugx.org/yiisoft/security/downloads.png)](https://packagist.org/packages/yiisoft/security)
 [![Build Status](https://travis-ci.com/yiisoft/security.svg?branch=master)](https://travis-ci.com/yiisoft/security)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/security/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/security/?branch=master)
+[![Tests coverage](https://scrutinizer-ci.com/g/yiisoft/security/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/security/?branch=master)
+
 
 ## Random values generation
 
