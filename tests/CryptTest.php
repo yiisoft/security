@@ -75,7 +75,7 @@ class CryptTest extends TestCase
         $encryptedData = $crypt->encryptByKey($data, $key, $key);
         $tampered = $encryptedData;
         $tampered[20] = ~$tampered[20];
-        $decryptedData = $crypt->decryptByKey($tampered, $key);
+        $crypt->decryptByKey($tampered, $key);
     }
 
     public function testEncryptAndDecryptByKeyShouldThrowExceptionForTamperedDataWithNullByte(): void
