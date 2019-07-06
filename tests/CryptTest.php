@@ -2,7 +2,7 @@
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Security\AuthenticationFailure;
+use Yiisoft\Security\AuthenticationException;
 use Yiisoft\Security\Crypt;
 
 class CryptTest extends TestCase
@@ -33,7 +33,7 @@ class CryptTest extends TestCase
         $data = 'known data';
         $key = 'secret';
 
-        $this->expectException(AuthenticationFailure::class);
+        $this->expectException(AuthenticationException::class);
 
         $encryptedData = $crypt->encryptByPassword($data, $key);
         $tampered = $encryptedData;
@@ -70,7 +70,7 @@ class CryptTest extends TestCase
         $data = 'known data';
         $key = random_bytes(80);
 
-        $this->expectException(AuthenticationFailure::class);
+        $this->expectException(AuthenticationException::class);
 
         $encryptedData = $crypt->encryptByKey($data, $key, $key);
         $tampered = $encryptedData;
@@ -84,7 +84,7 @@ class CryptTest extends TestCase
         $data = 'known data';
         $key = random_bytes(80);
 
-        $this->expectException(AuthenticationFailure::class);
+        $this->expectException(AuthenticationException::class);
 
         $encryptedData = $crypt->encryptByKey($data, $key, $key);
         $tampered = $encryptedData;

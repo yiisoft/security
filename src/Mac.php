@@ -59,7 +59,7 @@ final class Mac
      * of lowercase hex digits only.
      * @return string the real data with the sign stripped off.
      * @throws \RuntimeException when HMAC generation fails.
-     * @throws DataIsTampered If the given data is tampered.
+     * @throws DataIsTamperedException If the given data is tampered.
      * @see hash()
      */
     public function getMessage(string $data, string $key, bool $rawHash = false): string
@@ -80,6 +80,6 @@ final class Mac
             }
         }
 
-        throw new DataIsTampered('Data is tampered');
+        throw new DataIsTamperedException('Data is tampered');
     }
 }

@@ -127,7 +127,7 @@ final class Crypt
      * @return string the decrypted data
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL errors
-     * @throws AuthenticationFailure on authentication failure
+     * @throws AuthenticationException on authentication failure
      * @see encryptByPassword()
      */
     public function decryptByPassword(string $data, string $password): string
@@ -144,7 +144,7 @@ final class Crypt
      * @return string the decrypted data
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL errors
-     * @throws AuthenticationFailure on authentication failure
+     * @throws AuthenticationException on authentication failure
      * @see encryptByKey()
      */
     public function decryptByKey($data, $inputKey, $info = ''): string
@@ -207,7 +207,7 @@ final class Crypt
      * @return string the decrypted data
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL errors
-     * @throws AuthenticationFailure on authentication failure
+     * @throws AuthenticationException on authentication failure
      * @see encrypt()
      */
     private function decrypt(string $data, bool $passwordBased, string $secret, string $info): string
@@ -232,8 +232,8 @@ final class Crypt
 
         try {
             $data = (new Mac())->getMessage(StringHelper::byteSubstr($data, $keySize), $authKey);
-        } catch (DataIsTampered $e) {
-            throw new AuthenticationFailure('Failed to decrypt data');
+        } catch (DataIsTamperedException $e) {
+            throw new AuthenticationException('Failed to decrypt data');
         }
 
         $iv = StringHelper::byteSubstr($data, 0, $blockSize);

@@ -2,7 +2,7 @@
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Security\DataIsTampered;
+use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 
 class MacTest extends TestCase
@@ -27,7 +27,7 @@ class MacTest extends TestCase
         $signedData = $mac->sign($data, $key);
         $signedData[strlen($signedData) - 1] = 'A';
 
-        $this->expectException(DataIsTampered::class);
+        $this->expectException(DataIsTamperedException::class);
         $mac->getMessage($signedData, $key);
     }
 }
