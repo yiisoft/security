@@ -4,12 +4,14 @@ namespace Yiisoft\Security\Tests;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\PasswordHasher;
 
-class PasswordTest extends TestCase
+class PasswordHasherTest extends TestCase
 {
     public function testPasswordHash(): void
     {
-        // minimum blowfish's value is enough for tests
-        $password = new PasswordHasher(4);
+        $password = new PasswordHasher(PASSWORD_BCRYPT, [
+            // minimum blowfish's value is enough for tests
+            'cost' => 4,
+        ]);
 
         $secret = 'secret';
         $hash = $password->hash($secret);

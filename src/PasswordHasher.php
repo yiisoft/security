@@ -18,7 +18,7 @@ class PasswordHasher
     ];
 
     /**
-     * @see https://www.php.net/manual/en/function.password-hash.php on how to choose cost
+     * @see https://www.php.net/manual/en/function.password-hash.php
      */
     public function __construct(int $algorithm = PASSWORD_DEFAULT, array $parameters = null)
     {
@@ -54,7 +54,6 @@ class PasswordHasher
      * @param string $password The password to be hashed.
      * @return string The password hash string. The output length might increase
      * in future versions of PHP (http://php.net/manual/en/function.password-hash.php)
-     * @throws \Exception on bad password parameter or cost parameter.
      * @see validate()
      */
     public function hash(string $password): string
