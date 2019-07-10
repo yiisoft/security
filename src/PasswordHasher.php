@@ -6,20 +6,28 @@ namespace Yiisoft\Security;
  */
 class PasswordHasher
 {
-    /**
-     * @var int Default cost used for password hashing.
-     * Allowed value is between 4 and 31.
-     * @see hash()
-     */
-    private $cost;
+    private $algorithm;
+    private $parameters;
+
+    private const SAFE_PARAMETERS = [
+        PASSWORD_BCRYPT => [
+            'cost' => 13,
+        ],
+        PASSWORD_ARGON2I => null,
+        PASSWORD_ARGON2ID => null,
+    ];
 
     /**
-     * @param int $cost
      * @see https://www.php.net/manual/en/function.password-hash.php on how to choose cost
      */
-    public function __construct(int $cost = 13)
+    public function __construct(int $algorithm = PASSWORD_DEFAULT, array $parameters = null)
     {
-        $this->cost = $cost;
+        $this->algorithm = $algorithm;
+
+        if ($parameters === null) {
+            $parameters = self::SAFE_PARAMETERS[$algorithm];
+        }
+        $this->parameters = $parameters;
     }
 
 
@@ -44,24 +52,14 @@ class PasswordHasher
      * ```
      *
      * @param string $password The password to be hashed.
-     * @param int $cost Cost parameter used by the Blowfish hash algorithm.
-     * The higher the value of cost,
-     * the longer it takes to generate the hash and to verify a password against it. Higher cost
-     * therefore slows down a brute-force attack. For best protection against brute-force attacks,
-     * set it to the highest value that is tolerable on production servers. The time taken to
-     * compute the hash doubles for every increment by one of $cost.
      * @return string The password hash string. The output length might increase
      * in future versions of PHP (http://php.net/manual/en/function.password-hash.php)
      * @throws \Exception on bad password parameter or cost parameter.
      * @see validate()
      */
-    public function hash(string $password, int $cost = null): string
+    public function hash(string $password): string
     {
-        if ($cost === null) {
-            $cost = $this->cost;
-        }
-
-        return password_hash($password, PASSWORD_DEFAULT, ['cost' => $cost]);
+        return password_hash($password, $this->algorithm, $this->parameters);
     }
 
     /**
