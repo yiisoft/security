@@ -13,8 +13,6 @@ class PasswordHasher
         PASSWORD_BCRYPT => [
             'cost' => 13,
         ],
-        PASSWORD_ARGON2I => null,
-        PASSWORD_ARGON2ID => null,
     ];
 
     /**
@@ -25,7 +23,7 @@ class PasswordHasher
         $this->algorithm = $algorithm;
 
         if ($parameters === null) {
-            $parameters = self::SAFE_PARAMETERS[$algorithm];
+            $parameters = self::SAFE_PARAMETERS[$algorithm] ?? null;
         }
         $this->parameters = $parameters;
     }
