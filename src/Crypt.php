@@ -87,7 +87,7 @@ final class Crypt
      * poor-quality or compromised passwords.
      * @param string $data the data to encrypt
      * @param string $password the password to use for encryption
-     * @return string the encrypted data
+     * @return string the encrypted data as byte string
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL error
      * @see decryptByPassword()
@@ -109,7 +109,7 @@ final class Crypt
      * @param string $inputKey the input to use for encryption and authentication
      * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
-     * @return string the encrypted data
+     * @return string the encrypted data as byte string
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL error
      * @see decryptByKey()
@@ -161,7 +161,7 @@ final class Crypt
      * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      *
-     * @return string the encrypted data
+     * @return string the encrypted data as byte string
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL error
      * @see decrypt()
