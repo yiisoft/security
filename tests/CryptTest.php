@@ -1,16 +1,26 @@
 <?php
+
 namespace Yiisoft\Security\Tests;
 
-use PHPUnit\Framework\TestCase;
+require_once __DIR__ . '/MockHelper.php';
+
 use Yiisoft\Security\AuthenticationException;
 use Yiisoft\Security\Crypt;
+use Yiisoft\Security\MockHelper;
 
 class CryptTest extends TestCase
 {
+    protected function tearDown()
+    {
+        MockHelper::$mock_extension_loaded = null;
+        MockHelper::$mock_openssl_encrypt = null;
+        MockHelper::$mock_openssl_decrypt = null;
+    }
+
     private function getCrypt(): Crypt
     {
         // speed up test running
-        return (new Crypt())->withDerivationInterations(1000);
+        return (new Crypt())->withDerivationIterations(1000);
     }
 
     public function testEncryptAndDecryptByPassword(): void
@@ -246,81 +256,81 @@ class CryptTest extends TestCase
      * @return array ciphertexts generated using openssl
      */
     public function dataProviderEncryptByKeyCompatibilityWithOpenSsl(): array
-        {
-            return [
-                [
-                    '67ae7370e4a144523543f1e3edf35b26',
-                    '30',
-                    '706e1670ec6beb91c565299710e4f43231336530323838313435653933623539
+    {
+        return [
+            [
+                '67ae7370e4a144523543f1e3edf35b26',
+                '30',
+                '706e1670ec6beb91c565299710e4f43231336530323838313435653933623539
                         3238313639623066323530646630653236313832333361346664623132393436
                         34326131663964636634366665306439e6142bf3d0e6a5952231d8bfabbacd83
                         ff04c61400529385d63a4b8f8696982d',
-                ],
-                [
-                    '5d4bae62bea3c8f4c49dd1a38a4e1b2a',
-                    '30313233343536373839',
-                    '4c9a34e1977dd656fd3e18d4bc2b00c762353830326262373135396530643235
+            ],
+            [
+                '5d4bae62bea3c8f4c49dd1a38a4e1b2a',
+                '30313233343536373839',
+                '4c9a34e1977dd656fd3e18d4bc2b00c762353830326262373135396530643235
                         3332643937653632353331626532373336653761643866646233336365323233
                         30633138663034313665653038306161eb77ac98344a0bf946f98e892e6e15db
                         b9e221a7c25135a36562c3ecb2981fcd',
-                ],
-                [
-                    '6832851af3c63a1e303bdf1bca38dd9c',
-                    '303132333435363738396162636465',
-                    'd09d2faa163e774abd020bf8cd623f8962646233313330626133613964353834
+            ],
+            [
+                '6832851af3c63a1e303bdf1bca38dd9c',
+                '303132333435363738396162636465',
+                'd09d2faa163e774abd020bf8cd623f8962646233313330626133613964353834
                         3436663631383139653438326563623537373830663962303531366130383130
                         3333303531613337386534626136636415db7a6885b67f69d9974f5879ae7497
                         08811fc036508f23f55f3f9d16b9ff9d',
-                ],
-                [
-                    'e8a9799f4254b26484ea447918dcaad4',
-                    '30313233343536373839616263646566',
-                    '1a76a05af572abe9b4e7a67d7f64baff39666636363332323133373034386531
+            ],
+            [
+                'e8a9799f4254b26484ea447918dcaad4',
+                '30313233343536373839616263646566',
+                '1a76a05af572abe9b4e7a67d7f64baff39666636363332323133373034386531
                         3761353236333263643965313139303666636535343862363737333032323331
                         313136366562336535663033316231303811542783f13798b17d40aa7ec9b489
                         34404ab50784ad1722f5f4d4462f702d3a625ef712635b274a970a47b516b137',
-                ],
-                [
-                    '27cbf5a7c4327582393b2ec277cfe957',
-                    '3031323334353637383961626364656630',
-                    '60e2e14b404c5bd55b192ef2f1c7131c32356261636361313131336265323534
+            ],
+            [
+                '27cbf5a7c4327582393b2ec277cfe957',
+                '3031323334353637383961626364656630',
+                '60e2e14b404c5bd55b192ef2f1c7131c32356261636361313131336265323534
                         3439623033346337346133346239363337633736663831343632626638303038
                         64653361396366356165633061666538d2137b2defca383668827b6983f86254
                         bd849c3e8c9a44b6e1ed203491d73b4cb0cb83658240a89baa9261755d707879',
-                ],
-                [
-                    '7b157beb08e8a8ac7d74f789ccbacae5',
-                    '4e161a1df6',
-                    'a17ca346c4a88404b8a345b1d075173a66356137326335343137393136353762
+            ],
+            [
+                '7b157beb08e8a8ac7d74f789ccbacae5',
+                '4e161a1df6',
+                'a17ca346c4a88404b8a345b1d075173a66356137326335343137393136353762
                         3930636535636466336534316438376437376639366535666636313235653262
                         38393464663134313430333633343232b319ce688676fde03d092d73df75705f
                         bde594d9b2bfe41580a458555982dc70',
-                ],
-                [
-                    '88704df5b4881d2246388dc7c68066cc',
-                    '5862447074634952357761764253733d',
-                    '9069fbdd47ee81faf34eff40f8fee94333393037333936333439653537636132
+            ],
+            [
+                '88704df5b4881d2246388dc7c68066cc',
+                '5862447074634952357761764253733d',
+                '9069fbdd47ee81faf34eff40f8fee94333393037333936333439653537636132
                         6561613863336165333336323562353161636330366438633264376461626563
                         3836363462646536323261333034643070e4b0a3d196f36a4afb92a7ae4ef7b8
                         eb44e9db29638fa32140e379ae7aa6b7e68f454635ade137165383fd3a5c049b',
-                ],
-                [
-                    '1d203fba1cd2a7b92abb8f40eb985538',
-                    '82c2f315c69f20ec7ae391fc6c2de85281d54c97f74981b4efec0f5e4606765c
+            ],
+            [
+                '1d203fba1cd2a7b92abb8f40eb985538',
+                '82c2f315c69f20ec7ae391fc6c2de85281d54c97f74981b4efec0f5e4606765c
                         040f1f45386bed4fdb9f998b0e7027c7414bea667b1205027c55eed927364446
                         3b1832bc5338e3a7e10bf24d8e69f167b94551b6240f65b416feebd28599334a
                         a4',
-                    'fade5d841aa10a29a2ef5236371ffc2964343165383664636264393666383364
+                'fade5d841aa10a29a2ef5236371ffc2964343165383664636264393666383364
                         6165646139316438666531633230306537343364336166666463656466306564
                         63326239653938303332656464346463136bd6dd0b7530490b91024ed944bc3e
                         3fc4050d20ce05a9ed992ede75f62bdd2523d0cbc93493baf07ef98c895a353b
                         5baaf26200572aa2e5bd22508db227556c5ee9eb7425418e9852c595e6ac0e61
                         37c186e04a3f19d855d8c4b8a8e6ad1be179ea5c816fe461a4cec212297873c8
                         5f96ee5c024cd88d1c32975fd95acd73',
-                ],
-                [
-                    '1f93719d7a66a724c3841835fbcb33fd',
-                    'badec0c7d9ca734e161a1df6ca4daa8cdbf6b3bbb60ec404b47a23226ec266b1
+            ],
+            [
+                '1f93719d7a66a724c3841835fbcb33fd',
+                'badec0c7d9ca734e161a1df6ca4daa8cdbf6b3bbb60ec404b47a23226ec266b1
                         3837ffc969e9c23e2bbba72facb491a6a3271193a35026a9ebc93698d689bf7b
                         84fc384f544cc5d71c2945c8c48ae6348c753322fcaf75171b7d8f1e178e8545
                         3d5c79f03bae6d9705cabbe7004ec81e188812a66313297fcf5d4c61a48614d2
@@ -352,7 +362,7 @@ class CryptTest extends TestCase
                         4f88cf801f35708db0901ffaa55415ca4334678633dda763b5fbfba7cfd51dc5
                         79149ec9284a4db2349dbc5264d5fca7a72034261716d90a996cb57ba09f7d07
                         29a2f10cc58eec98d86e9306a3fbf2e711046e86b5a86cc0eed7625be1a01ebf',
-                    '712929635f5be013159aec81296b96ec36333734373565366166383031313734
+                '712929635f5be013159aec81296b96ec36333734373565366166383031313734
                         3331623863663837343237633863376539643865643339383531363139396566
                         34313731633765393462663264316130de90698e64fa4abc91639e72baee83bc
                         2caf85f91318e0cbd0db5fa08c4ffb582ec55ca43de53a43f2844af35d5f87b9
@@ -388,9 +398,9 @@ class CryptTest extends TestCase
                         d4359f840b11ad495357210e259e6b9e8fe5e8f600e8746fe1a483d45b694324
                         0809649ed7320b0022a5ef7b414635933d6d18ec7218f829121d12dcb573ed77
                         79ab0519d2df17dbd8988b32ac0711ef',
-                ],
-            ];
-        }
+            ],
+        ];
+    }
 
     /**
      * @dataProvider dataProviderEncryptByKeyCompatibilityWithMcrypt
@@ -764,5 +774,59 @@ class CryptTest extends TestCase
         $encrypted = hex2bin(preg_replace('{\s+}', '', $encrypted));
 
         $this->assertEquals($data, $crypt->decryptByPassword($encrypted, $password));
+    }
+
+    public function testOpensslNotLoadedException()
+    {
+        $this->expectException(\RuntimeException::class);
+
+        MockHelper::$mock_extension_loaded = false;
+        $crypt = $this->getCrypt();
+    }
+
+    public function testUnknownCipher()
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $crypt = new Crypt('test');
+    }
+
+    public function testWithKdfAlgorithm()
+    {
+        $crypt = new Crypt('AES-256-CBC');
+        $newCrypt = $crypt->withKdfAlgorithm('sha512');
+        $this->assertInstanceOf(Crypt::class, $newCrypt);
+        $this->assertNotSame($crypt, $newCrypt);
+        $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
+        $this->assertEquals('sha512', $this->getInaccessibleProperty($newCrypt, 'kdfAlgorithm'));
+    }
+
+    public function testWithAuthKeyInfo()
+    {
+        $crypt = new Crypt('AES-256-CBC');
+        $newCrypt = $crypt->withAuthKeyInfo('info');
+        $this->assertInstanceOf(Crypt::class, $newCrypt);
+        $this->assertNotSame($crypt, $newCrypt);
+        $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
+        $this->assertEquals('info', $this->getInaccessibleProperty($newCrypt, 'authKeyInfo'));
+    }
+
+    public function testOpensslEncryptException()
+    {
+        $this->expectException(\RuntimeException::class);
+
+        MockHelper::$mock_openssl_encrypt = false;
+        $crypt = $this->getCrypt();
+        $crypt->encryptByPassword('test', 'test');
+    }
+
+    public function testOpensslDecryptException()
+    {
+        $this->expectException(\RuntimeException::class);
+
+        MockHelper::$mock_openssl_decrypt = false;
+        $crypt = $this->getCrypt();
+        $encrypted = $crypt->encryptByPassword('test', 'test');
+        $crypt->decryptByPassword($encrypted, 'test');
     }
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Yiisoft\Security;
 
 use Yiisoft\Strings\StringHelper;
@@ -68,10 +69,10 @@ final class Crypt
         return $new;
     }
 
-    public function withDerivationInterations(int $interations): self
+    public function withDerivationIterations(int $iterations): self
     {
         $new = clone $this;
-        $new->derivationIterations = $interations;
+        $new->derivationIterations = $iterations;
         return $new;
     }
 
@@ -212,13 +213,6 @@ final class Crypt
      */
     private function decrypt(string $data, bool $passwordBased, string $secret, string $info): string
     {
-        if (!extension_loaded('openssl')) {
-            throw new \RuntimeException('Encryption requires the OpenSSL PHP extension');
-        }
-        if (!isset(self::ALLOWED_CIPHERS[$this->cipher][0], self::ALLOWED_CIPHERS[$this->cipher][1])) {
-            throw new \RuntimeException($this->cipher . ' is not an allowed cipher');
-        }
-
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
         $keySalt = StringHelper::byteSubstr($data, 0, $keySize);

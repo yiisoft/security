@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -17,5 +18,13 @@ class PasswordHasherTest extends TestCase
         $hash = $password->hash($secret);
         $this->assertTrue($password->validate($secret, $hash));
         $this->assertFalse($password->validate('test', $hash));
+    }
+
+    public function testValidateEmptyPasswordException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $password = new PasswordHasher();
+        $password->validate('', 'test');
     }
 }

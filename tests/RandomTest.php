@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -6,7 +7,7 @@ use Yiisoft\Security\Random;
 
 class RandomTest extends TestCase
 {
-    public function testRandomStringRepectsLength(): void
+    public function testRandomStringRespectsLength(): void
     {
         $length = 21;
         $key = Random::string($length);
@@ -17,5 +18,11 @@ class RandomTest extends TestCase
     {
         $key = Random::string(100);
         $this->assertRegExp('/[A-Za-z0-9_-]+/', $key);
+    }
+
+    public function testInvalidLength()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $key = Random::string(0);
     }
 }
