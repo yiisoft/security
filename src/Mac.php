@@ -65,7 +65,7 @@ final class Mac
      */
     public function getMessage(string $data, string $key, bool $rawHash = false): string
     {
-        $test = @hash_hmac($this->algorithm, '', '', $rawHash);
+        $test = hash_hmac($this->algorithm, '', '', $rawHash);
         if (!$test) {
             throw new \RuntimeException('Failed to generate HMAC with hash algorithm: ' . $this->algorithm);
         }

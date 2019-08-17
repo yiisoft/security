@@ -53,7 +53,8 @@ class MacTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
 
-        $mac = new Mac('crc32');
+        MockHelper::$mock_hash_hmac = false;
+        $mac = new Mac();
         $mac->getMessage('test', 'test');
     }
 }
