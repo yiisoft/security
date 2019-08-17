@@ -52,4 +52,12 @@ class MockHelper
      * null means normal openssl_decrypt() behavior.
      */
     public static $mock_openssl_decrypt;
+
+    public static function resetMocks()
+    {
+        static::$mock_hash_hmac = null;
+        static::$mock_extension_loaded = null;
+        static::$mock_openssl_encrypt = null;
+        static::$mock_openssl_decrypt = null;
+    }
 }

@@ -13,7 +13,7 @@ class MacTest extends TestCase
 {
     protected function tearDown()
     {
-        MockHelper::$mock_hash_hmac = null;
+        MockHelper::resetMocks();
     }
 
     public function testOriginalMessageIsExtracted(): void

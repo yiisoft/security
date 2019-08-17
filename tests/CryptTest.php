@@ -12,9 +12,7 @@ class CryptTest extends TestCase
 {
     protected function tearDown()
     {
-        MockHelper::$mock_extension_loaded = null;
-        MockHelper::$mock_openssl_encrypt = null;
-        MockHelper::$mock_openssl_decrypt = null;
+        MockHelper::resetMocks();
     }
 
     private function getCrypt(): Crypt
