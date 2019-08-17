@@ -18,10 +18,10 @@ class PasswordHasher
 
     /**
      * @see https://www.php.net/manual/en/function.password-hash.php
-     * @param int $algorithm
+     * @param int|string $algorithm
      * @param array|null $parameters
      */
-    public function __construct(int $algorithm = PASSWORD_DEFAULT, array $parameters = null)
+    public function __construct($algorithm = PASSWORD_DEFAULT, array $parameters = null)
     {
         $this->algorithm = $algorithm;
 

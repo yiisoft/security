@@ -27,4 +27,13 @@ class PasswordHasherTest extends TestCase
         $password = new PasswordHasher();
         $password->validate('', 'test');
     }
+
+    /**
+     * In PHP 7.4 password hashing algorithm identifiers are now nullable strings rather than integers.
+     */
+    public function testAlgorithmString()
+    {
+        $password = new PasswordHasher('test');
+        $this->assertTrue(true);
+    }
 }
