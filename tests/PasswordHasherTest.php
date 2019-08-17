@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -17,5 +18,22 @@ class PasswordHasherTest extends TestCase
         $hash = $password->hash($secret);
         $this->assertTrue($password->validate($secret, $hash));
         $this->assertFalse($password->validate('test', $hash));
+    }
+
+    public function testValidateEmptyPasswordException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $password = new PasswordHasher();
+        $password->validate('', 'test');
+    }
+
+    /**
+     * In PHP 7.4 password hashing algorithm identifiers are now nullable strings rather than integers.
+     */
+    public function testAlgorithmString()
+    {
+        $password = new PasswordHasher('test');
+        $this->assertTrue(true);
     }
 }

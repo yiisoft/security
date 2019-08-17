@@ -1,8 +1,10 @@
 <?php
+
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMasker;
+use Yiisoft\Strings\StringHelper;
 
 class TokenMaskerTest extends TestCase
 {
@@ -39,5 +41,10 @@ class TokenMaskerTest extends TestCase
             ['Token with special characters: %d1    5"'],
             ['Token with UTF8 character: †'],
         ];
+    }
+
+    public function testUnmaskTokenWithOddLength()
+    {
+        $this->assertEquals('', TokenMasker::unmask('YWJj'));
     }
 }
