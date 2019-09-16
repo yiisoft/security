@@ -125,13 +125,13 @@ A random mask is applied to the token making the string always unique.
 In order to mask a token:
 
 ```php
-$maskedToken = TokenMasker::mask($token);
+$maskedToken = TokenMask::apply($token);
 ```
 
 In order to get original value from the masked one:
 
 ```php
-$token = TokenMasker::unmask($maskedToken);
+$token = TokenMask::remove($maskedToken);
 ```
 
 ## Native PHP functionality

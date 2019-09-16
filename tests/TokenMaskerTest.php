@@ -3,7 +3,7 @@
 namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Security\TokenMasker;
+use Yiisoft\Security\TokenMask;
 use Yiisoft\Strings\StringHelper;
 
 class TokenMaskerTest extends TestCase
@@ -15,22 +15,22 @@ class TokenMaskerTest extends TestCase
      */
     public function testMaskingAndUnmasking($unmaskedToken): void
     {
-        $maskedToken = TokenMasker::mask($unmaskedToken);
+        $maskedToken = TokenMask::apply($unmaskedToken);
 
         $this->assertGreaterThan(mb_strlen($unmaskedToken, '8bit') * 2, mb_strlen($maskedToken, '8bit'));
-        $this->assertEquals($unmaskedToken, TokenMasker::unmask($maskedToken));
+        $this->assertEquals($unmaskedToken, TokenMask::unmask($maskedToken));
     }
 
     public function testUnMaskingInvalidStrings(): void
     {
-        $this->assertEquals('', TokenMasker::unmask(''));
-        $this->assertEquals('', TokenMasker::unmask('1'));
+        $this->assertEquals('', TokenMask::unmask(''));
+        $this->assertEquals('', TokenMask::unmask('1'));
     }
 
     public function testMaskingInvalidStrings(): void
     {
         $this->expectException(\Error::class);
-        TokenMasker::mask('');
+        TokenMask::apply('');
     }
 
     public function maskProvider(): array
@@ -45,6 +45,6 @@ class TokenMaskerTest extends TestCase
 
     public function testUnmaskTokenWithOddLength()
     {
-        $this->assertEquals('', TokenMasker::unmask('YWJj'));
+        $this->assertEquals('', TokenMask::unmask('YWJj'));
     }
 }

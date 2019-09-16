@@ -8,7 +8,7 @@ use Yiisoft\Strings\StringHelper;
  * TokenMask helps to mitigate BREACH attack by randomizing how token is outputted on each request.
  * A random mask is applied to the token making the string always unique.
  */
-final class TokenMasker
+final class TokenMask
 {
     /**
      * Masks a token to make it uncompressible.
@@ -17,7 +17,7 @@ final class TokenMasker
      * @return string A masked token.
      * @throws \Exception if unable to securely generate random bytes
      */
-    public static function mask(string $token): string
+    public static function apply(string $token): string
     {
         // The number of bytes in a mask is always equal to the number of bytes in a token.
         $mask = random_bytes(StringHelper::byteLength($token));
