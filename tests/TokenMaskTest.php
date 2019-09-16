@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMask;
 use Yiisoft\Strings\StringHelper;
 
-class TokenMaskerTest extends TestCase
+class TokenMaskTest extends TestCase
 {
     /**
      * @dataProvider maskProvider
@@ -18,13 +18,13 @@ class TokenMaskerTest extends TestCase
         $maskedToken = TokenMask::apply($unmaskedToken);
 
         $this->assertGreaterThan(mb_strlen($unmaskedToken, '8bit') * 2, mb_strlen($maskedToken, '8bit'));
-        $this->assertEquals($unmaskedToken, TokenMask::unmask($maskedToken));
+        $this->assertEquals($unmaskedToken, TokenMask::remove($maskedToken));
     }
 
     public function testUnMaskingInvalidStrings(): void
     {
-        $this->assertEquals('', TokenMask::unmask(''));
-        $this->assertEquals('', TokenMask::unmask('1'));
+        $this->assertEquals('', TokenMask::remove(''));
+        $this->assertEquals('', TokenMask::remove('1'));
     }
 
     public function testMaskingInvalidStrings(): void
@@ -45,6 +45,6 @@ class TokenMaskerTest extends TestCase
 
     public function testUnmaskTokenWithOddLength()
     {
-        $this->assertEquals('', TokenMask::unmask('YWJj'));
+        $this->assertEquals('', TokenMask::remove('YWJj'));
     }
 }

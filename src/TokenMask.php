@@ -29,7 +29,7 @@ final class TokenMask
      * @param string $maskedToken A masked token.
      * @return string An unmasked token, or an empty string in case of token format is invalid.
      */
-    public static function unmask(string $maskedToken): string
+    public static function remove(string $maskedToken): string
     {
         $decoded = StringHelper::base64UrlDecode($maskedToken);
         $length = StringHelper::byteLength($decoded) / 2;
