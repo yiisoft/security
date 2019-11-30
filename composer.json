@@ -2,7 +2,9 @@
     "name": "yiisoft/security",
     "type": "library",
     "description": "Security utilities",
-    "keywords": ["security"],
+    "keywords": [
+        "security"
+    ],
     "homepage": "http://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
@@ -33,5 +35,8 @@
         "branch-alias": {
             "dev-master": "3.0.x-dev"
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }
