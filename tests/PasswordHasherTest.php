@@ -7,6 +7,17 @@ use Yiisoft\Security\PasswordHasher;
 
 class PasswordHasherTest extends TestCase
 {
+    public function testPasswordHashWithDefaults(): void
+    {
+        $password = new PasswordHasher();
+
+        $secret = 'secret';
+        $hash = $password->hash($secret);
+
+        $this->assertTrue($password->validate($secret, $hash));
+        $this->assertFalse($password->validate('test', $hash));
+    }
+
     public function testPasswordHash(): void
     {
         $password = new PasswordHasher(PASSWORD_BCRYPT, [
