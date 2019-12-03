@@ -26,11 +26,10 @@ class PasswordHasher
         $this->algorithm = $algorithm;
 
         if ($parameters === null) {
-            $parameters = self::SAFE_PARAMETERS[$algorithm] ?? null;
+            $parameters = self::SAFE_PARAMETERS[$algorithm] ?? [];
         }
         $this->parameters = $parameters;
     }
-
 
     /**
      * Generates a secure hash from a password and a random salt.
