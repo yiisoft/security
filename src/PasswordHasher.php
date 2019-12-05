@@ -21,7 +21,7 @@ class PasswordHasher
      * @param string $algorithm
      * @param array|null $parameters
      */
-    public function __construct(string $algorithm = PASSWORD_DEFAULT, array $parameters = null)
+    public function __construct(?string $algorithm = PASSWORD_DEFAULT, array $parameters = null)
     {
         $this->algorithm = $algorithm;
 
