@@ -31,7 +31,7 @@ class PasswordHasherTest extends TestCase
         $this->assertFalse($password->validate('test', $hash));
     }
 
-    public function testValidateEmptyPasswordException()
+    public function testValidateEmptyPasswordException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -42,7 +42,7 @@ class PasswordHasherTest extends TestCase
     /**
      * In PHP 7.4 password hashing algorithm identifiers are now nullable strings rather than integers.
      */
-    public function testAlgorithmString()
+    public function testAlgorithmString(): void
     {
         $password = new PasswordHasher('test');
         $this->assertTrue(true);

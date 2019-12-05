@@ -15,7 +15,7 @@ final class Mac
      * @var string Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
      * @see [hash_algos()](http://php.net/manual/en/function.hash-algos.php)
      */
-    private $algorithm;
+    private string $algorithm;
 
     public function __construct(string $algorithm = 'sha256')
     {

@@ -7,11 +7,6 @@ use Yiisoft\Strings\StringHelper;
 final class Crypt
 {
     /**
-     * @var string The cipher to use for encryption and decryption.
-     */
-    private $cipher;
-
-    /**
      * @var array[] Look-up table of block sizes and key sizes for each supported OpenSSL cipher.
      *
      * In each element, the key is one of the ciphers supported by OpenSSL {@see openssl_get_cipher_methods()}.
@@ -28,20 +23,25 @@ final class Crypt
     ];
 
     /**
+     * @var string The cipher to use for encryption and decryption.
+     */
+    private string $cipher;
+
+    /**
      * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
      * @see http://php.net/manual/en/function.hash-algos.php
      */
-    private $kdfAlgorithm = 'sha256';
+    private string $kdfAlgorithm = 'sha256';
 
     /**
      * @var string HKDF info value for derivation of message authentication key.
      */
-    private $authKeyInfo = 'AuthorizationKey';
+    private string $authKeyInfo = 'AuthorizationKey';
     /**
      * @var int derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
      */
-    private $derivationIterations = 100000;
+    private int $derivationIterations = 100000;
 
     public function __construct(string $cipher = 'AES-128-CBC')
     {
