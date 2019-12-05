@@ -4,7 +4,6 @@ namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMask;
-use Yiisoft\Strings\StringHelper;
 
 class TokenMaskTest extends TestCase
 {
@@ -43,7 +42,7 @@ class TokenMaskTest extends TestCase
         ];
     }
 
-    public function testUnmaskTokenWithOddLength()
+    public function testUnmaskTokenWithOddLength(): void
     {
         $this->assertEquals('', TokenMask::remove('YWJj'));
     }

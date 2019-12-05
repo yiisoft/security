@@ -11,7 +11,7 @@ use Yiisoft\Security\MockHelper;
 
 class MacTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         MockHelper::resetMocks();
     }

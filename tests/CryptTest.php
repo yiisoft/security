@@ -10,7 +10,7 @@ use Yiisoft\Security\MockHelper;
 
 class CryptTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         MockHelper::resetMocks();
     }
@@ -746,8 +746,11 @@ class CryptTest extends TestCase
      * @param string $encrypted ciphertext hex string
      * @throws \Exception
      */
-    public function testEncryptByPasswordCompatibilityWithMcrypt(string $password, string $data, string $encrypted): void
-    {
+    public function testEncryptByPasswordCompatibilityWithMcrypt(
+        string $password,
+        string $data,
+        string $encrypted
+    ): void {
         $crypt = $this->getCrypt();
 
         $data = hex2bin(preg_replace('{\s+}', '', $data));
@@ -764,8 +767,11 @@ class CryptTest extends TestCase
      * @param string $encrypted ciphertext hex string
      * @throws \Exception
      */
-    public function testEncryptByPasswordCompatibilityWithOpenSsl(string $password, string $data, string $encrypted): void
-    {
+    public function testEncryptByPasswordCompatibilityWithOpenSsl(
+        string $password,
+        string $data,
+        string $encrypted
+    ): void {
         $crypt = $this->getCrypt();
 
         $data = hex2bin(preg_replace('{\s+}', '', $data));

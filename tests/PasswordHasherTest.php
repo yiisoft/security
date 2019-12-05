@@ -20,10 +20,12 @@ class PasswordHasherTest extends TestCase
 
     public function testPasswordHash(): void
     {
-        $password = new PasswordHasher(PASSWORD_BCRYPT, [
+        $password = new PasswordHasher(
+            PASSWORD_BCRYPT, [
             // minimum blowfish's value is enough for tests
             'cost' => 4,
-        ]);
+        ]
+        );
 
         $secret = 'secret';
         $hash = $password->hash($secret);

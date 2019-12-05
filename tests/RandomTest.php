@@ -20,7 +20,7 @@ class RandomTest extends TestCase
         $this->assertRegExp('/[A-Za-z0-9_-]+/', $key);
     }
 
-    public function testInvalidLength()
+    public function testInvalidLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $key = Random::string(0);
