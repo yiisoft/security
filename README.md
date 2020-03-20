@@ -96,7 +96,7 @@ $data = (new Crypt())->decryptByKey($encryptedData, $key);
 
 ## Data tampering prevention
 
-MAC signing could be used in orde to prevent data tampering. The `$key` should be present at both sending and receiving
+MAC signing could be used in order to prevent data tampering. The `$key` should be present at both sending and receiving
 sides. At the sending side:
 
 ```php
@@ -112,26 +112,26 @@ $signedMessage = receiveMessage($signedMessage);
 
 try {
     $message = (new Mac())->getMessage($signedMessage, $key);
-} catch (\Yiisoft\Security\DataIsTampered $e) {
+} catch (\Yiisoft\Security\DataIsTamperedException $e) {
     // data is tampered
 }
 ```
 
 ## Masking token length
 
-Masking a token helps to mitigate BREACH attack by randomizing how token is outputted on each request.
-A random mask is applied to the token making the string always unique.
+Masking a token helps to mitigate BREACH attack by randomizing how token outputted on each request.
+A random mask applied to the token making the string always unique.
 
 In order to mask a token:
 
 ```php
-$maskedToken = TokenMask::apply($token);
+$maskedToken = \Yiisoft\Security\TokenMask::apply($token);
 ```
 
 In order to get original value from the masked one:
 
 ```php
-$token = TokenMask::remove($maskedToken);
+$token = \Yiisoft\Security\TokenMask::remove($maskedToken);
 ```
 
 ## Native PHP functionality
@@ -149,4 +149,3 @@ There is a special function in PHP that compares strings in a constant time:
 ```php
 hash_equals($expected, $actual);
 ```
-
