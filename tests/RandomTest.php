@@ -17,12 +17,12 @@ class RandomTest extends TestCase
     public function testRandomStringValidSymbols(): void
     {
         $key = Random::string(100);
-        $this->assertRegExp('/[A-Za-z0-9_-]+/', $key);
+        $this->assertMatchesRegularExpression('/[A-Za-z0-9_-]+/', $key);
     }
 
     public function testInvalidLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $key = Random::string(0);
+        Random::string(0);
     }
 }
