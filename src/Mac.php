@@ -73,8 +73,8 @@ final class Mac
         }
         $hashLength = StringHelper::byteLength($test);
         if (StringHelper::byteLength($data) >= $hashLength) {
-            $hash = StringHelper::byteSubstr($data, 0, $hashLength);
-            $pureData = StringHelper::byteSubstr($data, $hashLength, null);
+            $hash = StringHelper::byteSubstring($data, 0, $hashLength);
+            $pureData = StringHelper::byteSubstring($data, $hashLength, null);
 
             $calculatedHash = hash_hmac($this->algorithm, $pureData, $key, $rawHash);
 

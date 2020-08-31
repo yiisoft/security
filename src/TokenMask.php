@@ -40,6 +40,6 @@ final class TokenMask
             return '';
         }
 
-        return StringHelper::byteSubstr($decoded, $length, $length) ^ StringHelper::byteSubstr($decoded, 0, $length);
+        return StringHelper::byteSubstring($decoded, $length, $length) ^ StringHelper::byteSubstring($decoded, 0, $length);
     }
 }

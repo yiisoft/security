@@ -217,7 +217,7 @@ final class Crypt
     {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
-        $keySalt = StringHelper::byteSubstr($data, 0, $keySize);
+        $keySalt = StringHelper::byteSubstring($data, 0, $keySize);
         if ($passwordBased) {
             $key = hash_pbkdf2($this->kdfAlgorithm, $secret, $keySalt, $this->derivationIterations, $keySize, true);
         } else {
@@ -227,13 +227,13 @@ final class Crypt
         $authKey = hash_hkdf($this->kdfAlgorithm, $key, $keySize, $this->authKeyInfo);
 
         try {
-            $data = (new Mac())->getMessage(StringHelper::byteSubstr($data, $keySize), $authKey);
+            $data = (new Mac())->getMessage(StringHelper::byteSubstring($data, $keySize), $authKey);
         } catch (DataIsTamperedException $e) {
             throw new AuthenticationException('Failed to decrypt data');
         }
 
-        $iv = StringHelper::byteSubstr($data, 0, $blockSize);
-        $encrypted = StringHelper::byteSubstr($data, $blockSize);
+        $iv = StringHelper::byteSubstring($data, 0, $blockSize);
+        $encrypted = StringHelper::byteSubstring($data, $blockSize);
 
         $decrypted = openssl_decrypt($encrypted, $this->cipher, $key, OPENSSL_RAW_DATA, $iv);
         if ($decrypted === false) {
