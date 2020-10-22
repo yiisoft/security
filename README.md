@@ -19,6 +19,7 @@ Security package provides a set of classes to handle common security-related tas
 [![Build Status](https://travis-ci.com/yiisoft/security.svg?branch=master)](https://travis-ci.com/yiisoft/security)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/security/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/security/?branch=master)
 [![Code coverage](https://scrutinizer-ci.com/g/yiisoft/security/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/security/?branch=master)
+[![static analysis](https://github.com/yiisoft/security/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/security/actions?query=workflow%3A%22static+analysis%22)
 
 
 ## Random values generation
