@@ -149,3 +149,19 @@ There is a special function in PHP that compares strings in a constant time:
 ```php
 hash_equals($expected, $actual);
 ```
+
+## Unit testing
+
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+
+```bash
+./vendor/bin/phpunit
+```
+
+## Static analysis
+
+The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
+
+```php
+./vendor/bin/psalm
+```
