@@ -812,7 +812,7 @@ final class CryptTest extends TestCase
         $newCrypt = $crypt->withAuthorizationKeyInfo('info');
         $this->assertNotSame($crypt, $newCrypt);
         $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
-        $this->assertEquals('info', $this->getInaccessibleProperty($newCrypt, 'authKeyInfo'));
+        $this->assertEquals('info', $this->getInaccessibleProperty($newCrypt, 'authorizationKeyInfo'));
     }
 
     public function testOpensslEncryptException(): void
