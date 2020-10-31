@@ -28,10 +28,10 @@ final class Random
     public static function string(int $length = 32): string
     {
         if ($length < 1) {
-            throw new \InvalidArgumentException('First parameter ($length) must be greater than 0');
+            throw new \InvalidArgumentException('First parameter ($length) must be greater than 0.');
         }
-
-        $bytes = random_bytes($length);
+        // Optimization: we can generate a quarter fewer bits to completely cover the desired length in base64
+        $bytes = random_bytes((int) ceil($length * 0.75));
         return substr(StringHelper::base64UrlEncode($bytes), 0, $length);
     }
 }

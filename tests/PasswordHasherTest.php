@@ -52,4 +52,10 @@ final class PasswordHasherTest extends TestCase
         $password = new PasswordHasher('test');
         $this->assertTrue(true);
     }
+
+    public function testPreconfiguredAlgorithm(): void
+    {
+        $hasher = new PasswordHasher(PASSWORD_BCRYPT);
+        $this->assertSame('$2y$13$', substr($hasher->hash('42'), 0, 7));
+    }
 }

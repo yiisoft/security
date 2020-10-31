@@ -18,6 +18,18 @@ final class MacTest extends TestCase
         MockHelper::resetMocks();
     }
 
+    public function testSignMessage(): void
+    {
+        $mac = new Mac();
+        $data = 'known data';
+        $key = 'secret';
+
+        $signedData = $mac->sign($data, $key);
+
+        $this->assertNotSame($data, $signedData);
+        $this->assertStringContainsString($data, $signedData);
+    }
+
     public function testOriginalMessageIsExtracted(): void
     {
         $mac = new Mac();
@@ -25,6 +37,18 @@ final class MacTest extends TestCase
         $key = 'secret';
 
         $signedData = $mac->sign($data, $key);
+
+        $this->assertSame($data, $mac->getMessage($signedData, $key));
+    }
+
+    public function testExtractEmptyMessage(): void
+    {
+        $mac = new Mac();
+        $data = '';
+        $key = 'secret';
+
+        $signedData = $mac->sign($data, $key);
+
         $this->assertNotSame($data, $signedData);
         $this->assertSame($data, $mac->getMessage($signedData, $key));
     }
@@ -58,5 +82,33 @@ final class MacTest extends TestCase
         MockHelper::$mock_hash_hmac = false;
         $mac = new Mac();
         $mac->getMessage('test', 'test');
+    }
+
+    public function testGetFromDamagedMessageException(): void
+    {
+        $mac = new Mac();
+        $data = 'known data';
+        $key = 'secret';
+        $signedData = $mac->sign($data, $key);
+        $damagedData = substr($signedData, 0, -1);
+
+        $this->expectException(\RuntimeException::class);
+
+        $mac = new Mac();
+        $mac->getMessage($damagedData, $key);
+    }
+
+    public function testGetFromTooShortMessageException(): void
+    {
+        $mac = new Mac();
+        $data = 'known data';
+        $key = 'secret';
+        $signedData = $mac->sign($data, $key);
+        $damagedData = substr($signedData, 0, -strlen($data) - 1);
+
+        $this->expectException(\RuntimeException::class);
+
+        $mac = new Mac();
+        $mac->getMessage($damagedData, $key);
     }
 }
