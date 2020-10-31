@@ -50,7 +50,7 @@ final class Mac
     {
         $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
         if (!$hash) {
-            throw new \RuntimeException('Failed to generate HMAC with hash algorithm: ' . $this->algorithm);
+            throw new \RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
 
         return $hash . $data;
@@ -76,7 +76,7 @@ final class Mac
     {
         $test = hash_hmac($this->algorithm, '', '', $rawHash);
         if (!$test) {
-            throw new \RuntimeException('Failed to generate HMAC with hash algorithm: ' . $this->algorithm);
+            throw new \RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
         $hashLength = StringHelper::byteLength($test);
         if (StringHelper::byteLength($data) >= $hashLength) {
@@ -90,6 +90,6 @@ final class Mac
             }
         }
 
-        throw new DataIsTamperedException('Data is tampered');
+        throw new DataIsTamperedException('Data is tampered.');
     }
 }

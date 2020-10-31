@@ -83,4 +83,32 @@ final class MacTest extends TestCase
         $mac = new Mac();
         $mac->getMessage('test', 'test');
     }
+
+    public function testGetFromDamagedMessageException(): void
+    {
+        $mac = new Mac();
+        $data = 'known data';
+        $key = 'secret';
+        $signedData = $mac->sign($data, $key);
+        $damagedData = substr($signedData, 0, -1);
+
+        $this->expectException(\RuntimeException::class);
+
+        $mac = new Mac();
+        $mac->getMessage($damagedData, $key);
+    }
+
+    public function testGetFromTooShortMessageException(): void
+    {
+        $mac = new Mac();
+        $data = 'known data';
+        $key = 'secret';
+        $signedData = $mac->sign($data, $key);
+        $damagedData = substr($signedData, 0, -strlen($data) - 1);
+
+        $this->expectException(\RuntimeException::class);
+
+        $mac = new Mac();
+        $mac->getMessage($damagedData, $key);
+    }
 }
