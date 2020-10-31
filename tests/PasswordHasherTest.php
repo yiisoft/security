@@ -25,9 +25,9 @@ final class PasswordHasherTest extends TestCase
         $password = new PasswordHasher(
             PASSWORD_BCRYPT,
             [
-            // minimum blowfish's value is enough for tests
-            'cost' => 4,
-        ]
+                // minimum blowfish's value is enough for tests
+                'cost' => 4,
+            ]
         );
 
         $secret = 'secret';
