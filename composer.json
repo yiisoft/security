@@ -3,7 +3,15 @@
     "type": "library",
     "description": "Security utilities",
     "keywords": [
-        "security"
+        "security",
+        "random",
+        "password",
+        "hash",
+        "encryption",
+        "decryption",
+        "signature",
+        "token masking",
+        "mac"
     ],
     "homepage": "http://www.yiiframework.com/",
     "license": "BSD-3-Clause",
