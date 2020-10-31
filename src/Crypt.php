@@ -256,7 +256,7 @@ final class Crypt
         try {
             $data = (new Mac())->getMessage(StringHelper::byteSubstring($data, $keySize), $authKey);
         } catch (DataIsTamperedException $e) {
-            throw new AuthenticationException('Failed to decrypt data');
+            throw new AuthenticationException();
         }
 
         $iv = StringHelper::byteSubstring($data, 0, $blockSize);
