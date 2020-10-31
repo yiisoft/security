@@ -160,7 +160,7 @@ The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 ./vendor/bin/phpunit
 ```
 
-### Mutation testing
+## Mutation testing
 
 The package tests are checked with [Infection](https://infection.github.io/) mutation framework. To run it:
 
