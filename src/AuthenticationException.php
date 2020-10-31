@@ -10,5 +10,4 @@ final class AuthenticationException extends \RuntimeException
     {
         parent::__construct('Failed to decrypt data.');
     }
-
 }

@@ -10,5 +10,4 @@ final class DataIsTamperedException extends \RuntimeException
     {
         parent::__construct('Data does not match signature.');
     }
-
 }
