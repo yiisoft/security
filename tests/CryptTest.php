@@ -797,12 +797,18 @@ final class CryptTest extends TestCase
         new Crypt('test');
     }
 
+    public function testNotAllowedCypher(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        new Crypt('BF-CBC');
+    }
+
     public function testWithKdfAlgorithm(): void
     {
         $crypt = new Crypt('AES-256-CBC');
         $newCrypt = $crypt->withKdfAlgorithm('sha512');
         $this->assertNotSame($crypt, $newCrypt);
-        $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
         $this->assertEquals('sha512', $this->getInaccessibleProperty($newCrypt, 'kdfAlgorithm'));
     }
 
@@ -811,8 +817,15 @@ final class CryptTest extends TestCase
         $crypt = new Crypt('AES-256-CBC');
         $newCrypt = $crypt->withAuthorizationKeyInfo('info');
         $this->assertNotSame($crypt, $newCrypt);
-        $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
         $this->assertEquals('info', $this->getInaccessibleProperty($newCrypt, 'authorizationKeyInfo'));
+    }
+
+    public function testWithDerivationIterations(): void
+    {
+        $crypt = new Crypt('AES-256-CBC');
+        $newCrypt = $crypt->withDerivationIterations(5);
+        $this->assertNotSame($crypt, $newCrypt);
+        $this->assertEquals(5, $this->getInaccessibleProperty($newCrypt, 'derivationIterations'));
     }
 
     public function testOpensslEncryptException(): void

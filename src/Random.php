@@ -21,9 +21,9 @@ final class Random
      * Generates a random string of specified length.
      * The string generated matches [A-Za-z0-9_-]+ and is transparent to URL-encoding.
      *
-     * @param int $length the length of the key in characters
-     * @return string the generated random key
-     * @throws \Exception on failure.
+     * @param int $length The length of the key in characters.
+     * @return string The generated random key.
+     * @throws \Exception On failure.
      */
     public static function string(int $length = 32): string
     {

@@ -53,7 +53,7 @@ final class Crypt
         if (!extension_loaded('openssl')) {
             throw new \RuntimeException('Encryption requires the OpenSSL PHP extension');
         }
-        if (!isset(self::ALLOWED_CIPHERS[$cipher][0], self::ALLOWED_CIPHERS[$cipher][1])) {
+        if (!array_key_exists($cipher, self::ALLOWED_CIPHERS)) {
             throw new \RuntimeException($cipher . ' is not an allowed cipher');
         }
 
