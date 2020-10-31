@@ -51,10 +51,10 @@ final class Crypt
     public function __construct(string $cipher = 'AES-128-CBC')
     {
         if (!extension_loaded('openssl')) {
-            throw new \RuntimeException('Encryption requires the OpenSSL PHP extension');
+            throw new \RuntimeException('Encryption requires the OpenSSL PHP extension.');
         }
         if (!array_key_exists($cipher, self::ALLOWED_CIPHERS)) {
-            throw new \RuntimeException($cipher . ' is not an allowed cipher');
+            throw new \RuntimeException($cipher . ' is not an allowed cipher.');
         }
 
         $this->cipher = $cipher;
