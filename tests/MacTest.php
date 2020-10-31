@@ -18,6 +18,18 @@ final class MacTest extends TestCase
         MockHelper::resetMocks();
     }
 
+    public function testSignMessage(): void
+    {
+        $mac = new Mac();
+        $data = 'known data';
+        $key = 'secret';
+
+        $signedData = $mac->sign($data, $key);
+
+        $this->assertNotSame($data, $signedData);
+        $this->assertStringContainsString($data, $signedData);
+    }
+
     public function testOriginalMessageIsExtracted(): void
     {
         $mac = new Mac();
@@ -25,6 +37,18 @@ final class MacTest extends TestCase
         $key = 'secret';
 
         $signedData = $mac->sign($data, $key);
+
+        $this->assertSame($data, $mac->getMessage($signedData, $key));
+    }
+
+    public function testExtractEmptyMessage(): void
+    {
+        $mac = new Mac();
+        $data = '';
+        $key = 'secret';
+
+        $signedData = $mac->sign($data, $key);
+
         $this->assertNotSame($data, $signedData);
         $this->assertSame($data, $mac->getMessage($signedData, $key));
     }
