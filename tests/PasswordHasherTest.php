@@ -7,7 +7,7 @@ namespace Yiisoft\Security\Tests;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\PasswordHasher;
 
-class PasswordHasherTest extends TestCase
+final class PasswordHasherTest extends TestCase
 {
     public function testPasswordHashWithDefaults(): void
     {

@@ -20,7 +20,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3",
-        "vimeo/psalm": "^4.0"
+        "vimeo/psalm": "^4.0",
+        "infection/infection": "^0.19.2"
     },
     "autoload": {
         "psr-4": {
@@ -34,12 +35,10 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0.x-dev"
+            "dev-master": "1.0.x-dev"
         }
     },
     "config": {
         "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

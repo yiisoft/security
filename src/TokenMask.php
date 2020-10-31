@@ -13,7 +13,7 @@ use Yiisoft\Strings\StringHelper;
 final class TokenMask
 {
     /**
-     * Masks a token to make it uncompressible.
+     * Masks a token to make it incompressible.
      * Applies a random mask to the token and prepends the mask used to the result making the string always unique.
      * @param string $token An unmasked token.
      * @return string A masked token.

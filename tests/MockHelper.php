@@ -35,27 +35,27 @@ function openssl_decrypt($data, $method, $password, $options = 1, $iv = "")
 class MockHelper
 {
     /**
-     * @var int value to be returned by mocked hash_hmac() function.
+     * @var string|bool|null value to be returned by mocked hash_hmac() function.
      * null means normal hash_hmac() behavior.
      */
     public static $mock_hash_hmac;
     /**
-     * @var int value to be returned by mocked extension_loaded() function.
+     * @var bool|null value to be returned by mocked extension_loaded() function.
      * null means normal extension_loaded() behavior.
      */
-    public static $mock_extension_loaded;
+    public static ?bool $mock_extension_loaded;
     /**
-     * @var int value to be returned by mocked openssl_encrypt() function.
+     * @var string|false|null value to be returned by mocked openssl_encrypt() function.
      * null means normal openssl_encrypt() behavior.
      */
     public static $mock_openssl_encrypt;
     /**
-     * @var int value to be returned by mocked openssl_decrypt() function.
+     * @var string|false|null value to be returned by mocked openssl_decrypt() function.
      * null means normal openssl_decrypt() behavior.
      */
     public static $mock_openssl_decrypt;
 
-    public static function resetMocks()
+    public static function resetMocks(): void
     {
         static::$mock_hash_hmac = null;
         static::$mock_extension_loaded = null;

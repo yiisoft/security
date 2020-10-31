@@ -7,7 +7,7 @@ namespace Yiisoft\Security;
 /**
  * PasswordHasher allows generating password hash and verifying passwords against a hash.
  */
-class PasswordHasher
+final class PasswordHasher
 {
     private ?string $algorithm;
     private array $parameters;
@@ -19,18 +19,20 @@ class PasswordHasher
     ];
 
     /**
+     * @param string|null $algorithm Algorithm to use. If not specified, PHP chooses safest algorithm available in the
+     * current version of PHP.
+     * @param array|null $parameters Algorithm parameters. If not specified, safe defaults are used.
      * @see https://www.php.net/manual/en/function.password-hash.php
-     * @param string $algorithm
-     * @param array|null $parameters
      */
     public function __construct(?string $algorithm = PASSWORD_DEFAULT, array $parameters = null)
     {
         $this->algorithm = $algorithm;
 
         if ($parameters === null) {
-            $parameters = self::SAFE_PARAMETERS[$algorithm] ?? [];
+            $this->parameters = self::SAFE_PARAMETERS[$algorithm] ?? [];
+        } else {
+            $this->parameters = $parameters;
         }
-        $this->parameters = $parameters;
     }
 
     /**
@@ -57,6 +59,8 @@ class PasswordHasher
      * @return string The password hash string. The output length might increase
      * in future versions of PHP (http://php.net/manual/en/function.password-hash.php)
      * @see validate()
+     * @psalm-suppress InvalidNullableReturnType
+     * @psalm-suppress NullableReturnStatement
      */
     public function hash(string $password): string
     {
