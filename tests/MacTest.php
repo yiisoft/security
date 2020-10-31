@@ -29,6 +29,17 @@ final class MacTest extends TestCase
         $this->assertSame($data, $mac->getMessage($signedData, $key));
     }
 
+    public function testOriginalEmptyMessageIsExtracted(): void
+    {
+        $mac = new Mac();
+        $data = '';
+        $key = 'secret';
+
+        $signedData = $mac->sign($data, $key);
+        $this->assertNotSame($data, $signedData);
+        $this->assertSame($data, $mac->getMessage($signedData, $key));
+    }
+
     public function testDataTamperingIsDetected(): void
     {
         $mac = new Mac();
