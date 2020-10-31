@@ -59,20 +59,12 @@ final class PasswordHasher
      * @return string The password hash string. The output length might increase
      * in future versions of PHP (http://php.net/manual/en/function.password-hash.php)
      * @see validate()
+     * @psalm-suppress InvalidNullableReturnType
+     * @psalm-suppress NullableReturnStatement
      */
     public function hash(string $password): string
     {
-        $result = password_hash($password, $this->algorithm, $this->parameters);
-
-        if ($result === null) {
-            throw new \InvalidArgumentException('Algorithm "' . (string)$this->algorithm . '" is invalid.');
-        }
-
-        if ($result === false) {
-            throw new \RuntimeException('Failed to hash password.');
-        }
-
-        return $result;
+        return password_hash($password, $this->algorithm, $this->parameters);
     }
 
     /**

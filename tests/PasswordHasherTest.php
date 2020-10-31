@@ -36,6 +36,12 @@ final class PasswordHasherTest extends TestCase
         $this->assertFalse($password->validate('test', $hash));
     }
 
+    public function testHashWithInvalidAlgorithm(): void
+    {
+        $hasher = new PasswordHasher('bla');
+        $hasher->hash('test');
+    }
+
     public function testValidateEmptyPasswordException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
