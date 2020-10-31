@@ -25,9 +25,9 @@ final class PasswordHasherTest extends TestCase
         $password = new PasswordHasher(
             PASSWORD_BCRYPT,
             [
-            // minimum blowfish's value is enough for tests
-            'cost' => 4,
-        ]
+                // minimum blowfish's value is enough for tests
+                'cost' => 4,
+            ]
         );
 
         $secret = 'secret';
@@ -51,5 +51,11 @@ final class PasswordHasherTest extends TestCase
     {
         $password = new PasswordHasher('test');
         $this->assertTrue(true);
+    }
+
+    public function testPreconfiguredAlgorithm(): void
+    {
+        $hasher = new PasswordHasher(PASSWORD_BCRYPT);
+        $this->assertSame('$2y$13$', substr($hasher->hash('42'), 0, 7));
     }
 }
