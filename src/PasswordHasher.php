@@ -19,7 +19,7 @@ final class PasswordHasher
     ];
 
     /**
-     * @param string|null $algorithm Algorithm to use. If not specified, PHP chooses safest alhorithm available in the
+     * @param string|null $algorithm Algorithm to use. If not specified, PHP chooses safest algorithm available in the
      * current version of PHP.
      * @param array|null $parameters Algorithm parameters. If not specified, safe defaults are used.
      * @see https://www.php.net/manual/en/function.password-hash.php
@@ -62,7 +62,17 @@ final class PasswordHasher
      */
     public function hash(string $password): string
     {
-        return password_hash($password, $this->algorithm, $this->parameters);
+        $result = password_hash($password, $this->algorithm, $this->parameters);
+
+        if ($result === null) {
+            throw new \InvalidArgumentException('Algorithm "' . (string)$this->algorithm . '" is invalid.');
+        }
+
+        if ($result === false) {
+            throw new \RuntimeException('Failed to hash password.');
+        }
+
+        return $result;
     }
 
     /**
