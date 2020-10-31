@@ -90,6 +90,6 @@ final class Mac
             }
         }
 
-        throw new DataIsTamperedException('Data is tampered.');
+        throw new DataIsTamperedException('Data does not match signature.');
     }
 }
