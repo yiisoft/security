@@ -11,7 +11,7 @@ use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 use Yiisoft\Security\MockHelper;
 
-class MacTest extends TestCase
+final class MacTest extends TestCase
 {
     protected function tearDown(): void
     {
@@ -42,7 +42,7 @@ class MacTest extends TestCase
         $mac->getMessage($signedData, $key);
     }
 
-    public function testSignException()
+    public function testSignException(): void
     {
         $this->expectException(\RuntimeException::class);
 
@@ -51,7 +51,7 @@ class MacTest extends TestCase
         $mac->sign('test', 'test');
     }
 
-    public function testGetMessageException()
+    public function testGetMessageException(): void
     {
         $this->expectException(\RuntimeException::class);
 

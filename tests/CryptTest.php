@@ -10,7 +10,7 @@ use Yiisoft\Security\AuthenticationException;
 use Yiisoft\Security\Crypt;
 use Yiisoft\Security\MockHelper;
 
-class CryptTest extends TestCase
+final class CryptTest extends TestCase
 {
     protected function tearDown(): void
     {
@@ -782,42 +782,40 @@ class CryptTest extends TestCase
         $this->assertEquals($data, $crypt->decryptByPassword($encrypted, $password));
     }
 
-    public function testOpensslNotLoadedException()
+    public function testOpensslNotLoadedException(): void
     {
         $this->expectException(\RuntimeException::class);
 
         MockHelper::$mock_extension_loaded = false;
-        $crypt = $this->getCrypt();
+        $this->getCrypt();
     }
 
-    public function testUnknownCipher()
+    public function testUnknownCipher(): void
     {
         $this->expectException(\RuntimeException::class);
 
-        $crypt = new Crypt('test');
+        new Crypt('test');
     }
 
-    public function testWithKdfAlgorithm()
+    public function testWithKdfAlgorithm(): void
     {
         $crypt = new Crypt('AES-256-CBC');
         $newCrypt = $crypt->withKdfAlgorithm('sha512');
-        $this->assertInstanceOf(Crypt::class, $newCrypt);
         $this->assertNotSame($crypt, $newCrypt);
         $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
         $this->assertEquals('sha512', $this->getInaccessibleProperty($newCrypt, 'kdfAlgorithm'));
     }
 
-    public function testWithAuthKeyInfo()
+    public function testWithAuthKeyInfo(): void
     {
         $crypt = new Crypt('AES-256-CBC');
-        $newCrypt = $crypt->withAuthKeyInfo('info');
-        $this->assertInstanceOf(Crypt::class, $newCrypt);
+        $newCrypt = $crypt->withAuthorizationKeyInfo('info');
         $this->assertNotSame($crypt, $newCrypt);
         $this->assertEquals('AES-256-CBC', $this->getInaccessibleProperty($newCrypt, 'cipher'));
         $this->assertEquals('info', $this->getInaccessibleProperty($newCrypt, 'authKeyInfo'));
     }
 
-    public function testOpensslEncryptException()
+    public function testOpensslEncryptException(): void
     {
         $this->expectException(\RuntimeException::class);
 
@@ -826,7 +824,7 @@ class CryptTest extends TestCase
         $crypt->encryptByPassword('test', 'test');
     }
 
-    public function testOpensslDecryptException()
+    public function testOpensslDecryptException(): void
     {
         $this->expectException(\RuntimeException::class);
 

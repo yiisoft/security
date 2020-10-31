@@ -38,13 +38,16 @@ final class Crypt
     /**
      * @var string HKDF info value for derivation of message authentication key.
      */
-    private string $authKeyInfo = 'AuthorizationKey';
+    private string $authorizationKeyInfo = 'AuthorizationKey';
     /**
-     * @var int derivation iterations count.
+     * @var int Derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
      */
     private int $derivationIterations = 100000;
 
+    /**
+     * @param string $cipher The cipher to use for encryption and decryption.
+     */
     public function __construct(string $cipher = 'AES-128-CBC')
     {
         if (!extension_loaded('openssl')) {
@@ -57,6 +60,10 @@ final class Crypt
         $this->cipher = $cipher;
     }
 
+    /**
+     * @param string $algorithm Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
+     * @return self
+     */
     public function withKdfAlgorithm(string $algorithm): self
     {
         $new = clone $this;
@@ -64,13 +71,22 @@ final class Crypt
         return $new;
     }
 
-    public function withAuthKeyInfo(string $info): self
+    /**
+     * @param string $info HKDF info value for derivation of message authentication key.
+     * @return self
+     */
+    public function withAuthorizationKeyInfo(string $info): self
     {
         $new = clone $this;
-        $new->authKeyInfo = $info;
+        $new->authorizationKeyInfo = $info;
         return $new;
     }
 
+    /**
+     * @param int $iterations Derivation iterations count.
+     * Set as high as possible to hinder dictionary password attacks.
+     * @return self
+     */
     public function withDerivationIterations(int $iterations): self
     {
         $new = clone $this;
@@ -80,19 +96,23 @@ final class Crypt
 
     /**
      * Encrypts data using a password.
+     *
      * Derives keys for encryption and authentication from the password using PBKDF2 and a random salt,
      * which is deliberately slow to protect against dictionary attacks. Use {@see encryptByKey()} to
      * encrypt fast using a cryptographic key rather than a password. Key derivation time is
      * determined by {@see $derivationIterations}}, which should be set as high as possible.
+     *
      * The encrypted data includes a keyed message authentication code (MAC) so there is no need
      * to hash input or output data.
+     *
      * > Note: Avoid encrypting with passwords wherever possible. Nothing can protect against
      * poor-quality or compromised passwords.
-     * @param string $data the data to encrypt
-     * @param string $password the password to use for encryption
-     * @return string the encrypted data as byte string
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL error
+     *
+     * @param string $data The data to encrypt.
+     * @param string $password The password to use for encryption.
+     * @return string The encrypted data as byte string.
+     * @throws \RuntimeException On OpenSSL not loaded.
+     * @throws \Exception On OpenSSL error.
      * @see decryptByPassword()
      * @see encryptByKey()
      */
@@ -103,18 +123,20 @@ final class Crypt
 
     /**
      * Encrypts data using a cryptographic key.
+     *
      * Derives keys for encryption and authentication from the input key using HKDF and a random salt,
      * which is very fast relative to {@see encryptByPassword()}. The input key must be properly
      * random — use {@see random_bytes()} to generate keys.
      * The encrypted data includes a keyed message authentication code (MAC) so there is no need
      * to hash input or output data.
-     * @param string $data the data to encrypt
-     * @param string $inputKey the input to use for encryption and authentication
-     * @param string $info context/application specific information, e.g. a user ID
+     *
+     * @param string $data The data to encrypt.
+     * @param string $inputKey The input to use for encryption and authentication.
+     * @param string $info Context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
-     * @return string the encrypted data as byte string
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL error
+     * @return string The encrypted data as byte string.
+     * @throws \RuntimeException On OpenSSL not loaded.
+     * @throws \Exception On OpenSSL error.
      * @see decryptByKey()
      * @see encryptByPassword()
      */
@@ -125,12 +147,13 @@ final class Crypt
 
     /**
      * Verifies and decrypts data encrypted with {@see encryptByPassword()}.
-     * @param string $data the encrypted data to decrypt
-     * @param string $password the password to use for decryption
-     * @return string the decrypted data
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL errors
-     * @throws AuthenticationException on authentication failure
+     *
+     * @param string $data The encrypted data to decrypt.
+     * @param string $password The password to use for decryption.
+     * @return string The decrypted data.
+     * @throws \RuntimeException On OpenSSL not loaded.
+     * @throws \Exception On OpenSSL errors.
+     * @throws AuthenticationException On authentication failure.
      * @see encryptByPassword()
      */
     public function decryptByPassword(string $data, string $password): string
@@ -140,17 +163,18 @@ final class Crypt
 
     /**
      * Verifies and decrypts data encrypted with {@see encryptByKey()}.
-     * @param string $data the encrypted data to decrypt
-     * @param string $inputKey the input to use for encryption and authentication
-     * @param string $info context/application specific information, e.g. a user ID
+     *
+     * @param string $data The encrypted data to decrypt.
+     * @param string $inputKey The input to use for encryption and authentication.
+     * @param string $info Context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
-     * @return string the decrypted data
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL errors
-     * @throws AuthenticationException on authentication failure
+     * @return string The decrypted data.
+     * @throws \RuntimeException On OpenSSL not loaded.
+     * @throws \Exception On OpenSSL errors.
+     * @throws AuthenticationException On authentication failure.
      * @see encryptByKey()
      */
-    public function decryptByKey($data, $inputKey, $info = ''): string
+    public function decryptByKey(string $data, string $inputKey, string $info = ''): string
     {
         return $this->decrypt($data, false, $inputKey, $info);
     }
@@ -187,7 +211,7 @@ final class Crypt
             throw new \RuntimeException('OpenSSL failure on encryption: ' . openssl_error_string());
         }
 
-        $authKey = hash_hkdf($this->kdfAlgorithm, $key, $keySize, $this->authKeyInfo);
+        $authKey = hash_hkdf($this->kdfAlgorithm, $key, $keySize, $this->authorizationKeyInfo);
         $signed = (new Mac())->sign($iv . $encrypted, $authKey);
 
         /*
@@ -224,7 +248,7 @@ final class Crypt
             $key = hash_hkdf($this->kdfAlgorithm, $secret, $keySize, $info, $keySalt);
         }
 
-        $authKey = hash_hkdf($this->kdfAlgorithm, $key, $keySize, $this->authKeyInfo);
+        $authKey = hash_hkdf($this->kdfAlgorithm, $key, $keySize, $this->authorizationKeyInfo);
 
         try {
             $data = (new Mac())->getMessage(StringHelper::byteSubstring($data, $keySize), $authKey);

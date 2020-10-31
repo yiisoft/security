@@ -54,19 +54,22 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * Gets an inaccessible object property.
      * @param $object
-     * @param $propertyName
+     * @param string $propertyName
      * @param bool $revoke whether to make property inaccessible after getting
      * @return mixed
      * @throws \ReflectionException
      */
-    protected function getInaccessibleProperty($object, $propertyName, bool $revoke = true)
+    protected function getInaccessibleProperty($object, string $propertyName, bool $revoke = true)
     {
         $class = new \ReflectionClass($object);
+
         while (!$class->hasProperty($propertyName)) {
             $class = $class->getParentClass();
         }
+
         $property = $class->getProperty($propertyName);
         $property->setAccessible(true);
+
         $result = $property->getValue($object);
         if ($revoke) {
             $property->setAccessible(false);

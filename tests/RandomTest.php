@@ -7,7 +7,7 @@ namespace Yiisoft\Security\Tests;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\Random;
 
-class RandomTest extends TestCase
+final class RandomTest extends TestCase
 {
     public function testRandomStringRespectsLength(): void
     {

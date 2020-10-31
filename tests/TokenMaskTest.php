@@ -7,7 +7,7 @@ namespace Yiisoft\Security\Tests;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMask;
 
-class TokenMaskTest extends TestCase
+final class TokenMaskTest extends TestCase
 {
     /**
      * @dataProvider maskProvider
