@@ -170,7 +170,7 @@ The package tests are checked with [Infection](https://infection.github.io/) mut
 ./vendor/bin/infection
 ```
 
-## Static analysis
+### Static analysis
 
 The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
 
