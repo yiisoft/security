@@ -62,6 +62,7 @@ final class MacTest extends TestCase
         $signedData = $mac->sign($data, $key);
         $signedData[strlen($signedData) - 1] = 'A';
 
+        $this->expectExceptionMessage('Data does not match signature.');
         $this->expectException(DataIsTamperedException::class);
         $mac->getMessage($signedData, $key);
     }

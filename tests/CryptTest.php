@@ -43,6 +43,7 @@ final class CryptTest extends TestCase
         $data = 'known data';
         $key = 'secret';
 
+        $this->expectExceptionMessage('Failed to decrypt data.');
         $this->expectException(AuthenticationException::class);
 
         $encryptedData = $crypt->encryptByPassword($data, $key);
