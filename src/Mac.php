@@ -15,12 +15,14 @@ final class Mac
 {
     /**
      * @var string Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
+     *
      * @see http://php.net/manual/en/function.hash-algos.php
      */
     private string $algorithm;
 
     /**
      * @param string $algorithm Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
+     *
      * @see http://php.net/manual/en/function.hash-algos.php
      */
     public function __construct(string $algorithm = 'sha256')
@@ -39,8 +41,11 @@ final class Mac
      * cryptographic key.
      * @param bool $rawHash Whether the generated sign value is in raw binary format. If false, lowercase
      * hex digits will be generated.
-     * @return string The data prefixed with the keyed sign.
+     *
      * @throws \RuntimeException When HMAC generation fails.
+     *
+     * @return string The data prefixed with the keyed sign.
+     *
      * @see validate()
      * @see generateBytes()
      * @see hkdf()
@@ -67,9 +72,12 @@ final class Mac
      * @param bool $rawHash This should take the same value as when you generate the data using {@see sign()}.
      * It indicates whether the sign value in the data is in binary format. If false, it means the hash value consists
      * of lowercase hex digits only.
-     * @return string The real data with the sign stripped off.
+     *
      * @throws \RuntimeException When HMAC generation fails.
      * @throws DataIsTamperedException If the given data is tampered.
+     *
+     * @return string The real data with the sign stripped off.
+     *
      * @see hash()
      */
     public function getMessage(string $data, string $key, bool $rawHash = false): string

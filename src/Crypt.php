@@ -31,6 +31,7 @@ final class Crypt
 
     /**
      * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
+     *
      * @see http://php.net/manual/en/function.hash-algos.php
      */
     private string $kdfAlgorithm = 'sha256';
@@ -62,7 +63,9 @@ final class Crypt
 
     /**
      * @psalm-mutation-free
+     *
      * @param string $algorithm Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
+     *
      * @return self
      */
     public function withKdfAlgorithm(string $algorithm): self
@@ -74,7 +77,9 @@ final class Crypt
 
     /**
      * @psalm-mutation-free
+     *
      * @param string $info HKDF info value for derivation of message authentication key.
+     *
      * @return self
      */
     public function withAuthorizationKeyInfo(string $info): self
@@ -86,8 +91,10 @@ final class Crypt
 
     /**
      * @psalm-mutation-free
+     *
      * @param int $iterations Derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
+     *
      * @return self
      */
     public function withDerivationIterations(int $iterations): self
@@ -113,9 +120,12 @@ final class Crypt
      *
      * @param string $data The data to encrypt.
      * @param string $password The password to use for encryption.
-     * @return string The encrypted data as byte string.
+     *
      * @throws \RuntimeException On OpenSSL not loaded.
      * @throws \Exception On OpenSSL error.
+     *
+     * @return string The encrypted data as byte string.
+     *
      * @see decryptByPassword()
      * @see encryptByKey()
      */
@@ -137,9 +147,12 @@ final class Crypt
      * @param string $inputKey The input to use for encryption and authentication.
      * @param string $info Context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
-     * @return string The encrypted data as byte string.
+     *
      * @throws \RuntimeException On OpenSSL not loaded.
      * @throws \Exception On OpenSSL error.
+     *
+     * @return string The encrypted data as byte string.
+     *
      * @see decryptByKey()
      * @see encryptByPassword()
      */
@@ -153,10 +166,13 @@ final class Crypt
      *
      * @param string $data The encrypted data to decrypt.
      * @param string $password The password to use for decryption.
-     * @return string The decrypted data.
+     *
      * @throws \RuntimeException On OpenSSL not loaded.
      * @throws \Exception On OpenSSL errors.
      * @throws AuthenticationException On authentication failure.
+     *
+     * @return string The decrypted data.
+     *
      * @see encryptByPassword()
      */
     public function decryptByPassword(string $data, string $password): string
@@ -171,10 +187,13 @@ final class Crypt
      * @param string $inputKey The input to use for encryption and authentication.
      * @param string $info Context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
-     * @return string The decrypted data.
+     *
      * @throws \RuntimeException On OpenSSL not loaded.
      * @throws \Exception On OpenSSL errors.
      * @throws AuthenticationException On authentication failure.
+     *
+     * @return string The decrypted data.
+     *
      * @see encryptByKey()
      */
     public function decryptByKey(string $data, string $inputKey, string $info = ''): string
@@ -191,9 +210,11 @@ final class Crypt
      * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      *
-     * @return string the encrypted data as byte string
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL error
+     *
+     * @return string the encrypted data as byte string
+     *
      * @see decrypt()
      */
     private function encrypt(string $data, bool $passwordBased, string $secret, string $info = ''): string
@@ -234,10 +255,12 @@ final class Crypt
      * @param string $secret the decryption password or key
      * @param string $info context/application specific information, @see encrypt()
      *
-     * @return string the decrypted data
      * @throws \RuntimeException on OpenSSL not loaded
      * @throws \Exception on OpenSSL errors
      * @throws AuthenticationException on authentication failure
+     *
+     * @return string the decrypted data
+     *
      * @see encrypt()
      */
     private function decrypt(string $data, bool $passwordBased, string $secret, string $info): string

@@ -22,6 +22,7 @@ final class PasswordHasher
      * @param string|null $algorithm Algorithm to use. If not specified, PHP chooses safest algorithm available in the
      * current version of PHP.
      * @param array|null $parameters Algorithm parameters. If not specified, safe defaults are used.
+     *
      * @see https://www.php.net/manual/en/function.password-hash.php
      */
     public function __construct(?string $algorithm = PASSWORD_DEFAULT, array $parameters = null)
@@ -56,8 +57,10 @@ final class PasswordHasher
      * ```
      *
      * @param string $password The password to be hashed.
+     *
      * @return string The password hash string. The output length might increase
      * in future versions of PHP (http://php.net/manual/en/function.password-hash.php)
+     *
      * @see validate()
      * @psalm-suppress InvalidNullableReturnType
      * @psalm-suppress NullableReturnStatement
@@ -69,11 +72,15 @@ final class PasswordHasher
 
     /**
      * Verifies a password against a hash.
+     *
      * @param string $password The password to verify.
      * @param string $hash The hash to verify the password against.
-     * @return bool whether the password is correct.
+     *
      * @throws \InvalidArgumentException on bad password/hash parameters or if crypt() with Blowfish hash is not
      * available.
+     *
+     * @return bool whether the password is correct.
+     *
      * @see hash()
      */
     public function validate(string $password, string $hash): bool
