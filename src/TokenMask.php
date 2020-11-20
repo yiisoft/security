@@ -15,9 +15,12 @@ final class TokenMask
     /**
      * Masks a token to make it incompressible.
      * Applies a random mask to the token and prepends the mask used to the result making the string always unique.
+     *
      * @param string $token An unmasked token.
-     * @return string A masked token.
+     *
      * @throws \Exception if unable to securely generate random bytes
+     *
+     * @return string A masked token.
      */
     public static function apply(string $token): string
     {
@@ -28,7 +31,9 @@ final class TokenMask
 
     /**
      * Unmasks a token previously masked by `mask`.
+     *
      * @param string $maskedToken A masked token.
+     *
      * @return string An unmasked token, or an empty string in case of token format is invalid.
      */
     public static function remove(string $maskedToken): string

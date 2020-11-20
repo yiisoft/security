@@ -8,12 +8,15 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * Invokes a inaccessible method.
+     *
      * @param $object
      * @param $method
      * @param array $args
      * @param bool $revoke whether to make method inaccessible after execution
-     * @return mixed
+     *
      * @throws \ReflectionException
+     *
+     * @return mixed
      */
     protected function invokeMethod($object, $method, array $args = [], bool $revoke = true)
     {
@@ -30,10 +33,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets an inaccessible object property to a designated value.
+     *
      * @param $object
      * @param $propertyName
      * @param $value
      * @param bool $revoke whether to make property inaccessible after setting
+     *
      * @throws \ReflectionException
      */
     protected function setInaccessibleProperty($object, $propertyName, $value, bool $revoke = true): void
@@ -50,14 +55,16 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         }
     }
 
-
     /**
      * Gets an inaccessible object property.
+     *
      * @param $object
      * @param string $propertyName
      * @param bool $revoke whether to make property inaccessible after getting
-     * @return mixed
+     *
      * @throws \ReflectionException
+     *
+     * @return mixed
      */
     protected function getInaccessibleProperty($object, string $propertyName, bool $revoke = true)
     {

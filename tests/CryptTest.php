@@ -409,6 +409,7 @@ final class CryptTest extends TestCase
      * @param string $key encryption key hex string
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
+     *
      * @throws \Exception
      */
     public function testEncryptByKeyCompatibilityWithMcrypt(string $key, string $data, string $encrypted): void
@@ -428,6 +429,7 @@ final class CryptTest extends TestCase
      * @param string $key encryption key hex string
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
+     *
      * @throws \Exception
      */
     public function testEncryptByKeyCompatibilityWithOpenSsl(string $key, string $data, string $encrypted): void
@@ -747,6 +749,7 @@ final class CryptTest extends TestCase
      * @param string $password encryption password
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
+     *
      * @throws \Exception
      */
     public function testEncryptByPasswordCompatibilityWithMcrypt(
@@ -768,6 +771,7 @@ final class CryptTest extends TestCase
      * @param string $password encryption password
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
+     *
      * @throws \Exception
      */
     public function testEncryptByPasswordCompatibilityWithOpenSsl(
