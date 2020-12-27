@@ -76,7 +76,7 @@ final class Mac
      * @throws \RuntimeException When HMAC generation fails.
      * @throws DataIsTamperedException If the given data is tampered.
      *
-     * @return string The real data with the sign stripped off.
+     * @return string The real data with the signature stripped off.
      *
      * @see hash()
      */
