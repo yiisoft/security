@@ -1,6 +1,6 @@
 # Security Change Log
 
-## 1.0.1 under development
+## 1.0.1 February 10, 2021
 
 - Chg: Update yiisoft/strings dependency (samdark)
 
