@@ -25,6 +25,7 @@ final class TokenMask
     public static function apply(string $token): string
     {
         // The number of bytes in a mask is always equal to the number of bytes in a token.
+        /** @psalm-suppress ArgumentTypeCoercion */
         $mask = random_bytes(StringHelper::byteLength($token));
         return StringHelper::base64UrlEncode($mask . ($mask ^ $token));
     }
