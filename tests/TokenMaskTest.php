@@ -12,11 +12,9 @@ final class TokenMaskTest extends TestCase
     /**
      * @dataProvider maskProvider
      *
-     * @param mixed $unmaskedToken
-     *
      * @throws \Exception
      */
-    public function testMaskingAndUnmasking($unmaskedToken): void
+    public function testMaskingAndUnmasking(mixed $unmaskedToken): void
     {
         $maskedToken = TokenMask::apply($unmaskedToken);
 
