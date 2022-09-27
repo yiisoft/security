@@ -14,6 +14,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      * @param bool $revoke whether to make method inaccessible after execution
      *
      * @throws \ReflectionException
+     *
      * @return mixed
      */
     protected function invokeMethod($object, $method, array $args = [], bool $revoke = true)
@@ -60,6 +61,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      * @param bool $revoke whether to make property inaccessible after getting
      *
      * @throws \ReflectionException
+     *
      * @return mixed
      */
     protected function getInaccessibleProperty($object, string $propertyName, bool $revoke = true)
