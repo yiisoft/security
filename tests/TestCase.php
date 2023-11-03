@@ -11,7 +11,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @param $object
      * @param $method
-     * @param array $args
      * @param bool $revoke whether to make method inaccessible after execution
      *
      * @throws \ReflectionException
@@ -59,7 +58,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      * Gets an inaccessible object property.
      *
      * @param $object
-     * @param string $propertyName
      * @param bool $revoke whether to make property inaccessible after getting
      *
      * @throws \ReflectionException
