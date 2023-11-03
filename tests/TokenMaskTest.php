@@ -12,8 +12,6 @@ final class TokenMaskTest extends TestCase
     /**
      * @dataProvider maskProvider
      *
-     * @param mixed $unmaskedToken
-     *
      * @throws \Exception
      */
     public function testMaskingAndUnmasking($unmaskedToken): void

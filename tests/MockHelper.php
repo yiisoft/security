@@ -45,7 +45,7 @@ class MockHelper
      * @var bool|null value to be returned by mocked extension_loaded() function.
      * null means normal extension_loaded() behavior.
      */
-    public static ?bool $mock_extension_loaded;
+    public static ?bool $mock_extension_loaded = null;
     /**
      * @var false|string|null value to be returned by mocked openssl_encrypt() function.
      * null means normal openssl_encrypt() behavior.

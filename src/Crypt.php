@@ -65,8 +65,6 @@ final class Crypt
      * @psalm-mutation-free
      *
      * @param string $algorithm Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
-     *
-     * @return self
      */
     public function withKdfAlgorithm(string $algorithm): self
     {
@@ -79,8 +77,6 @@ final class Crypt
      * @psalm-mutation-free
      *
      * @param string $info HKDF info value for derivation of message authentication key.
-     *
-     * @return self
      */
     public function withAuthorizationKeyInfo(string $info): self
     {
@@ -94,8 +90,6 @@ final class Crypt
      *
      * @param int $iterations Derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
-     *
-     * @return self
      */
     public function withDerivationIterations(int $iterations): self
     {
