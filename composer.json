@@ -27,7 +27,6 @@
         "php": "^7.4|^8.0",
         "ext-hash": "*",
         "ext-openssl": "*",
-        "ext-random": "*",
         "yiisoft/strings": "^2.0"
     },
     "require-dev": {
