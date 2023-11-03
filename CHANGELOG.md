@@ -1,13 +1,12 @@
-# Security Change Log
-
+# Yii Security Change Log
 
 ## 1.0.2 under development
 
-- Enh: Add composer require checker into CI
+- no changes in this release.
 
 ## 1.0.1 February 10, 2021
 
-- Chg: Update yiisoft/strings dependency (samdark)
+- Chg: Update `yiisoft/strings` dependency (@samdark)
 
 ## 1.0.0 November 1, 2020
 
