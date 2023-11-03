@@ -2,7 +2,7 @@
 
 ## 1.0.2 under development
 
-- no changes in this release.
+- Bug #35: Add missed `ext-hash`, `ext-openssl` and `ext-random` dependencies (@vjik)
 
 ## 1.0.1 February 10, 2021
 
