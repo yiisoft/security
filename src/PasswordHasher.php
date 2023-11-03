@@ -9,6 +9,7 @@ namespace Yiisoft\Security;
  */
 final class PasswordHasher
 {
+    private ?string $algorithm;
     private array $parameters;
 
     private const SAFE_PARAMETERS = [
@@ -24,8 +25,10 @@ final class PasswordHasher
      *
      * @see https://www.php.net/manual/en/function.password-hash.php
      */
-    public function __construct(private ?string $algorithm = PASSWORD_DEFAULT, array $parameters = null)
+    public function __construct(?string $algorithm = PASSWORD_DEFAULT, array $parameters = null)
     {
+        $this->algorithm = $algorithm;
+
         if ($parameters === null) {
             $this->parameters = self::SAFE_PARAMETERS[$algorithm] ?? [];
         } else {

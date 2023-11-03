@@ -272,7 +272,7 @@ final class Crypt
 
         try {
             $data = (new Mac())->getMessage(StringHelper::byteSubstring($data, $keySize), $authKey);
-        } catch (DataIsTamperedException) {
+        } catch (DataIsTamperedException $e) {
             throw new AuthenticationException();
         }
 

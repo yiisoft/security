@@ -14,12 +14,20 @@ use Yiisoft\Strings\StringHelper;
 final class Mac
 {
     /**
+     * @var string Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
+     *
+     * @see http://php.net/manual/en/function.hash-algos.php
+     */
+    private string $algorithm;
+
+    /**
      * @param string $algorithm Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
      *
      * @see http://php.net/manual/en/function.hash-algos.php
      */
-    public function __construct(private string $algorithm = 'sha256')
+    public function __construct(string $algorithm = 'sha256')
     {
+        $this->algorithm = $algorithm;
     }
 
     /**
