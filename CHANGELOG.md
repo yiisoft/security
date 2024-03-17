@@ -3,6 +3,7 @@
 ## 1.0.2 under development
 
 - Bug #35: Add missed `ext-hash` and `ext-openssl` dependencies (@vjik)
+- Enh #53: Add more specific psalm type for result of `Random::string()` method (@vjik)
 
 ## 1.0.1 February 10, 2021
 

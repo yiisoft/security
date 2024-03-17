@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security;
 
+use Exception;
+use InvalidArgumentException;
 use Yiisoft\Strings\StringHelper;
 
 /**
@@ -23,19 +25,25 @@ final class Random
      *
      * @param int $length The length of the key in characters.
      *
-     * @throws \Exception On failure.
+     * @throws Exception On failure.
      *
      * @return string The generated random key.
+     *
+     * @psalm-return non-empty-string
      */
     public static function string(int $length = 32): string
     {
         if ($length < 1) {
-            throw new \InvalidArgumentException('First parameter ($length) must be greater than 0.');
+            throw new InvalidArgumentException('First parameter ($length) must be greater than 0.');
         }
 
-        // Optimization: we can generate a quarter fewer bits to completely cover the desired length in base64
-        /** @psalm-suppress ArgumentTypeCoercion */
+        /**
+         * Optimization: we can generate a quarter fewer bits to completely cover the desired length in base64
+         * @psalm-suppress ArgumentTypeCoercion
+         */
         $bytes = random_bytes((int) ceil($length * 0.75));
+
+        /** @var non-empty-string */
         return substr(StringHelper::base64UrlEncode($bytes), 0, $length);
     }
 }
