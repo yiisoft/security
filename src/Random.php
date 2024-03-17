@@ -11,7 +11,7 @@ use Yiisoft\Strings\StringHelper;
 /**
  * Random allows generating random values.
  *
- * Currently it has a single method "string".
+ * Currently, it has a single method "string".
  * The following extras are available via PHP directly:
  *
  * - `random_bytes()` for bytes. Note that output may not be ASCII.
