@@ -1,5 +1,9 @@
 # Yii Security Change Log
 
+## 1.0.3 under development
+
+- no changes in this release.
+
 ## 1.0.2 March 18, 2024
 
 - Enh #53: Add more specific psalm type for result of `Random::string()` method (@vjik)
