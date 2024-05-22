@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
+        <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="100px" alt="Yii">
     </a>
     <h1 align="center">Yii Security</h1>
     <br>
@@ -55,7 +55,7 @@ The following extras are available via PHP directly:
 ### Password hashing and validation
 
 Working with passwords includes two steps. Saving password hashes:
- 
+
 ```php
 $hash = (new PasswordHasher())->hash($password);
 
@@ -172,8 +172,8 @@ hash_equals($expected, $actual);
 
 - [Internals](docs/internals.md)
 
-If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place
-for that. You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
+If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.
+You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
 
 ## License
 

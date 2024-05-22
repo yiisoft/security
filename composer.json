@@ -17,11 +17,11 @@
     "license": "BSD-3-Clause",
     "support": {
         "issues": "https://github.com/yiisoft/security/issues?state=open",
+        "source": "https://github.com/yiisoft/security",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "ircs://irc.libera.chat:6697/yii",
-        "chat": "https://t.me/yii3en",
-        "source": "https://github.com/yiisoft/security"
+        "chat": "https://t.me/yii3en"
     },
     "require": {
         "php": "^7.4|^8.0",
