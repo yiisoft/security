@@ -32,7 +32,7 @@ final class Crypt
     /**
      * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
      *
-     * @see http://php.net/manual/en/function.hash-algos.php
+     * @see https://php.net/manual/en/function.hash-algos.php
      */
     private string $kdfAlgorithm = 'sha256';
 

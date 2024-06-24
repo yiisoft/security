@@ -59,7 +59,7 @@ final class PasswordHasher
      * @param string $password The password to be hashed.
      *
      * @return string The password hash string. The output length might increase
-     * in future versions of PHP (http://php.net/manual/en/function.password-hash.php)
+     * in future versions of PHP (https://php.net/manual/en/function.password-hash.php)
      *
      * @see validate()
      * @psalm-suppress InvalidNullableReturnType
