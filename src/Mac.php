@@ -51,7 +51,7 @@ final class Mac
      * @see hkdf()
      * @see pbkdf2()
      */
-    public function sign(string $data, string $key, bool $rawHash = false): string
+    public function sign(string $data, #[\SensitiveParameter] string $key, bool $rawHash = false): string
     {
         $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
         if (!$hash) {
@@ -80,7 +80,7 @@ final class Mac
      *
      * @see hash()
      */
-    public function getMessage(string $data, string $key, bool $rawHash = false): string
+    public function getMessage(string $data, #[\SensitiveParameter] string $key, bool $rawHash = false): string
     {
         $test = hash_hmac($this->algorithm, '', '', $rawHash);
         if (!$test) {
