@@ -65,7 +65,7 @@ final class PasswordHasher
      * @psalm-suppress InvalidNullableReturnType
      * @psalm-suppress NullableReturnStatement
      */
-    public function hash(string $password): string
+    public function hash(#[\SensitiveParameter] string $password): string
     {
         return password_hash($password, $this->algorithm, $this->parameters);
     }
@@ -83,7 +83,7 @@ final class PasswordHasher
      *
      * @see hash()
      */
-    public function validate(string $password, string $hash): bool
+    public function validate(#[\SensitiveParameter] string $password, string $hash): bool
     {
         if ($password === '') {
             throw new \InvalidArgumentException('Password must be a string and cannot be empty.');
