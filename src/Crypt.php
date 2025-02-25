@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security;
 
+use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
 
 final class Crypt
@@ -123,8 +124,11 @@ final class Crypt
      * @see decryptByPassword()
      * @see encryptByKey()
      */
-    public function encryptByPassword(string $data, string $password): string
-    {
+    public function encryptByPassword(
+        string $data,
+        #[SensitiveParameter]
+        string $password
+    ): string {
         return $this->encrypt($data, true, $password, '');
     }
 
@@ -150,8 +154,12 @@ final class Crypt
      * @see decryptByKey()
      * @see encryptByPassword()
      */
-    public function encryptByKey(string $data, string $inputKey, string $info = ''): string
-    {
+    public function encryptByKey(
+        string $data,
+        #[SensitiveParameter]
+        string $inputKey,
+        string $info = ''
+    ): string {
         return $this->encrypt($data, false, $inputKey, $info);
     }
 
@@ -169,8 +177,11 @@ final class Crypt
      *
      * @see encryptByPassword()
      */
-    public function decryptByPassword(string $data, string $password): string
-    {
+    public function decryptByPassword(
+        string $data,
+        #[SensitiveParameter]
+        string $password
+    ): string {
         return $this->decrypt($data, true, $password, '');
     }
 
@@ -190,8 +201,12 @@ final class Crypt
      *
      * @see encryptByKey()
      */
-    public function decryptByKey(string $data, string $inputKey, string $info = ''): string
-    {
+    public function decryptByKey(
+        string $data,
+        #[SensitiveParameter]
+        string $inputKey,
+        string $info = ''
+    ): string {
         return $this->decrypt($data, false, $inputKey, $info);
     }
 
@@ -211,8 +226,13 @@ final class Crypt
      *
      * @see decrypt()
      */
-    private function encrypt(string $data, bool $passwordBased, string $secret, string $info = ''): string
-    {
+    private function encrypt(
+        string $data,
+        bool $passwordBased,
+        #[SensitiveParameter]
+        string $secret,
+        string $info = ''
+    ): string {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
         $keySalt = random_bytes($keySize);
@@ -257,8 +277,13 @@ final class Crypt
      *
      * @see encrypt()
      */
-    private function decrypt(string $data, bool $passwordBased, string $secret, string $info): string
-    {
+    private function decrypt(
+        string $data,
+        bool $passwordBased,
+        #[SensitiveParameter]
+        string $secret,
+        string $info
+    ): string {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
         $keySalt = StringHelper::byteSubstring($data, 0, $keySize);
