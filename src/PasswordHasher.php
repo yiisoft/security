@@ -91,8 +91,7 @@ final class PasswordHasher
         #[SensitiveParameter]
         string $password,
         string $hash
-    ): bool
-    {
+    ): bool {
         if ($password === '') {
             throw new \InvalidArgumentException('Password must be a string and cannot be empty.');
         }
