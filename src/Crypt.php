@@ -26,11 +26,6 @@ final class Crypt
     ];
 
     /**
-     * @var string The cipher to use for encryption and decryption.
-     */
-    private string $cipher;
-
-    /**
      * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
      *
      * @see https://php.net/manual/en/function.hash-algos.php
@@ -50,16 +45,15 @@ final class Crypt
     /**
      * @param string $cipher The cipher to use for encryption and decryption.
      */
-    public function __construct(string $cipher = 'AES-128-CBC')
-    {
+    public function __construct(
+        private readonly string $cipher = 'AES-128-CBC'
+    ) {
         if (!extension_loaded('openssl')) {
             throw new \RuntimeException('Encryption requires the OpenSSL PHP extension.');
         }
         if (!array_key_exists($cipher, self::ALLOWED_CIPHERS)) {
             throw new \RuntimeException($cipher . ' is not an allowed cipher.');
         }
-
-        $this->cipher = $cipher;
     }
 
     /**
@@ -297,7 +291,7 @@ final class Crypt
 
         try {
             $data = (new Mac())->getMessage(StringHelper::byteSubstring($data, $keySize), $authKey);
-        } catch (DataIsTamperedException $e) {
+        } catch (DataIsTamperedException) {
             throw new AuthenticationException();
         }
 

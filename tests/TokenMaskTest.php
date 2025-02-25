@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMask;
 
 final class TokenMaskTest extends TestCase
 {
-    /**
-     * @dataProvider maskProvider
-     *
-     * @throws \Exception
-     */
+    #[DataProvider('maskProvider')]
     public function testMaskingAndUnmasking($unmaskedToken): void
     {
         $maskedToken = TokenMask::apply($unmaskedToken);
@@ -34,7 +31,7 @@ final class TokenMaskTest extends TestCase
         TokenMask::apply('');
     }
 
-    public function maskProvider(): array
+    public static function maskProvider(): array
     {
         return [
             ['1'],
