@@ -2,7 +2,7 @@
 
 ## 1.0.3 under development
 
-- no changes in this release.
+- Enh #62: Use `SensitiveParameter` attribute to mark sensitive parameters (@dehbka, @vjik)
 
 ## 1.0.2 March 18, 2024
 
