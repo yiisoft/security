@@ -70,8 +70,7 @@ final class PasswordHasher
     public function hash(
         #[SensitiveParameter]
         string $password
-    ): string
-    {
+    ): string {
         return password_hash($password, $this->algorithm, $this->parameters);
     }
 

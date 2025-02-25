@@ -26,8 +26,7 @@ final class TokenMask
     public static function apply(
         #[SensitiveParameter]
         string $token
-    ): string
-    {
+    ): string {
         // The number of bytes in a mask is always equal to the number of bytes in a token.
         /** @psalm-suppress ArgumentTypeCoercion */
         $mask = random_bytes(StringHelper::byteLength($token));
@@ -44,8 +43,7 @@ final class TokenMask
     public static function remove(
         #[SensitiveParameter]
         string $maskedToken
-    ): string
-    {
+    ): string {
         $decoded = StringHelper::base64UrlDecode($maskedToken);
         $length = StringHelper::byteLength($decoded) / 2;
         // Check if the masked token has an even length.

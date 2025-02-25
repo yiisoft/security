@@ -57,8 +57,7 @@ final class Mac
         #[SensitiveParameter]
         string $key,
         bool $rawHash = false
-    ): string
-    {
+    ): string {
         $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
         if (!$hash) {
             throw new \RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
@@ -91,8 +90,7 @@ final class Mac
         #[SensitiveParameter]
         string $key,
         bool $rawHash = false
-    ): string
-    {
+    ): string {
         $test = hash_hmac($this->algorithm, '', '', $rawHash);
         if (!$test) {
             throw new \RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");

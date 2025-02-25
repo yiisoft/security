@@ -159,8 +159,7 @@ final class Crypt
         #[SensitiveParameter]
         string $inputKey,
         string $info = ''
-    ): string
-    {
+    ): string {
         return $this->encrypt($data, false, $inputKey, $info);
     }
 
@@ -182,8 +181,7 @@ final class Crypt
         string $data,
         #[SensitiveParameter]
         string $password
-    ): string
-    {
+    ): string {
         return $this->decrypt($data, true, $password, '');
     }
 
@@ -208,8 +206,7 @@ final class Crypt
         #[SensitiveParameter]
         string $inputKey,
         string $info = ''
-    ): string
-    {
+    ): string {
         return $this->decrypt($data, false, $inputKey, $info);
     }
 
@@ -235,8 +232,7 @@ final class Crypt
         #[SensitiveParameter]
         string $secret,
         string $info = ''
-    ): string
-    {
+    ): string {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
         $keySalt = random_bytes($keySize);
@@ -287,8 +283,7 @@ final class Crypt
         #[SensitiveParameter]
         string $secret,
         string $info
-    ): string
-    {
+    ): string {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
         $keySalt = StringHelper::byteSubstring($data, 0, $keySize);
