@@ -90,6 +90,7 @@ final class PasswordHasher
     public function validate(
         #[SensitiveParameter]
         string $password,
+        #[SensitiveParameter]
         string $hash
     ): bool {
         if ($password === '') {
