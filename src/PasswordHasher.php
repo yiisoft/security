@@ -28,7 +28,7 @@ final class PasswordHasher
      */
     public function __construct(
         private readonly ?string $algorithm = PASSWORD_DEFAULT,
-        array $parameters = null,
+        ?array $parameters = null,
     ) {
         if ($parameters === null) {
             $this->parameters = self::SAFE_PARAMETERS[$this->algorithm] ?? [];
