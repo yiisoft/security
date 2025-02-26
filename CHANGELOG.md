@@ -1,5 +1,9 @@
 # Yii Security Change Log
 
+## 1.1.1 under development
+
+- no changes in this release.
+
 ## 1.1.0 February 26, 2025
 
 - Chg #66: Bump minimal required PHP version to 8.1 (@vjik)
