@@ -6,6 +6,7 @@ namespace Yiisoft\Security\Tests;
 
 require_once __DIR__ . '/MockHelper.php';
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Yiisoft\Security\AuthenticationException;
 use Yiisoft\Security\Crypt;
 use Yiisoft\Security\MockHelper;
@@ -106,7 +107,7 @@ final class CryptTest extends TestCase
     /**
      * @return array ciphertexts generated using Yii 2.0.2 which is based on mcrypt
      */
-    public function dataProviderEncryptByKeyCompatibilityWithMcrypt(): array
+    public static function dataProviderEncryptByKeyCompatibilityWithMcrypt(): array
     {
         return [
             [
@@ -256,7 +257,7 @@ final class CryptTest extends TestCase
     /**
      * @return array ciphertexts generated using openssl
      */
-    public function dataProviderEncryptByKeyCompatibilityWithOpenSsl(): array
+    public static function dataProviderEncryptByKeyCompatibilityWithOpenSsl(): array
     {
         return [
             [
@@ -404,14 +405,13 @@ final class CryptTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderEncryptByKeyCompatibilityWithMcrypt
-     *
      * @param string $key encryption key hex string
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
      * @throws \Exception
      */
+    #[DataProvider('dataProviderEncryptByKeyCompatibilityWithMcrypt')]
     public function testEncryptByKeyCompatibilityWithMcrypt(string $key, string $data, string $encrypted): void
     {
         $crypt = $this->getCrypt();
@@ -424,14 +424,13 @@ final class CryptTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderEncryptByKeyCompatibilityWithOpenSsl
-     *
      * @param string $key encryption key hex string
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
      * @throws \Exception
      */
+    #[DataProvider('dataProviderEncryptByKeyCompatibilityWithOpenSsl')]
     public function testEncryptByKeyCompatibilityWithOpenSsl(string $key, string $data, string $encrypted): void
     {
         $crypt = $this->getCrypt();
@@ -446,7 +445,7 @@ final class CryptTest extends TestCase
     /**
      * @return array ciphertexts generated using Yii 2.0.2 which is based on mcrypt
      */
-    public function dataProviderEncryptByPasswordMcryptCompatibility(): array
+    public static function dataProviderEncryptByPasswordMcryptCompatibility(): array
     {
         return [
             [
@@ -596,7 +595,7 @@ final class CryptTest extends TestCase
     /**
      * @return array ciphertexts generated using openssl
      */
-    public function dataProviderEncryptByPasswordOpenSslCompatibility(): array
+    public static function dataProviderEncryptByPasswordOpenSslCompatibility(): array
     {
         return [
             [
@@ -744,14 +743,13 @@ final class CryptTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderEncryptByPasswordMcryptCompatibility
-     *
      * @param string $password encryption password
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
      * @throws \Exception
      */
+    #[DataProvider('dataProviderEncryptByPasswordMcryptCompatibility')]
     public function testEncryptByPasswordCompatibilityWithMcrypt(
         string $password,
         string $data,
@@ -766,14 +764,13 @@ final class CryptTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderEncryptByPasswordOpenSslCompatibility
-     *
      * @param string $password encryption password
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
      * @throws \Exception
      */
+    #[DataProvider('dataProviderEncryptByPasswordOpenSslCompatibility')]
     public function testEncryptByPasswordCompatibilityWithOpenSsl(
         string $password,
         string $data,
