@@ -240,6 +240,10 @@ final class Crypt
 
         $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $iv);
         if ($encrypted === false) {
+            /**
+             * @psalm-suppress PossiblyFalseOperand `openssl_encrypt()` is returned `false`, so `openssl_error_string()`
+             * always returns string.
+             */
             throw new \RuntimeException('OpenSSL failure on encryption: ' . openssl_error_string());
         }
 
@@ -300,6 +304,10 @@ final class Crypt
 
         $decrypted = openssl_decrypt($encrypted, $this->cipher, $key, OPENSSL_RAW_DATA, $iv);
         if ($decrypted === false) {
+            /**
+             * @psalm-suppress PossiblyFalseOperand `openssl_decrypt()` is returned `false`, so `openssl_error_string()`
+             * always returns string.
+             */
             throw new \RuntimeException('OpenSSL failure on decryption: ' . openssl_error_string());
         }
 
