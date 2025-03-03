@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\PasswordHasher;
+
+use function password_hash;
+
+use const PASSWORD_DEFAULT;
 
 final class PasswordHasherTest extends TestCase
 {
@@ -38,7 +43,7 @@ final class PasswordHasherTest extends TestCase
 
     public function testValidateEmptyPasswordException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $password = new PasswordHasher();
         $password->validate('', 'test');
@@ -57,5 +62,42 @@ final class PasswordHasherTest extends TestCase
     {
         $hasher = new PasswordHasher(PASSWORD_BCRYPT);
         $this->assertSame('$2y$13$', substr($hasher->hash('42'), 0, 7));
+    }
+
+    public static function needsRehashDataProvider(): array
+    {
+        $hasher = new PasswordHasher();
+
+        return [
+            [
+                $hasher->hash('test'),
+                false,
+            ],
+            [
+                password_hash('test', PASSWORD_DEFAULT),
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider needsRehashDataProvider
+     * @param string $hash
+     * @param bool $expected
+     * @return void
+     */
+    public function testNeedsRehash(string $hash, bool $expected): void
+    {
+        $hasher = new PasswordHasher();
+        $this->assertSame($hasher->needsRehash($hash), $expected);
+    }
+
+    public function testNeedsRehashException(): void
+    {
+        $hasher = new PasswordHasher();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Hash must be a string and cannot be empty.');
+
+        $hasher->needsRehash('');
     }
 }
