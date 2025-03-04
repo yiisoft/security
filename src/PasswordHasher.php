@@ -114,7 +114,7 @@ final class PasswordHasher
      *
      * @return bool Whether rehash is needed.
      *
-     * @see password_needs_rehash()
+     * @see https://www.php.net/manual/function.password-needs-rehash.php
      */
     public function needsRehash(
         #[SensitiveParameter]

@@ -8,10 +8,6 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\PasswordHasher;
 
-use function password_hash;
-
-use const PASSWORD_DEFAULT;
-
 final class PasswordHasherTest extends TestCase
 {
     public function testPasswordHashWithDefaults(): void
@@ -64,31 +60,19 @@ final class PasswordHasherTest extends TestCase
         $this->assertSame('$2y$13$', substr($hasher->hash('42'), 0, 7));
     }
 
-    public static function needsRehashDataProvider(): array
+    public function testNeedsRehashTrue(): void
     {
-        $hasher = new PasswordHasher();
+        $hash = (new PasswordHasher(PASSWORD_BCRYPT, ['cost' => 12]))->hash('test');
+        $hasher = new PasswordHasher(PASSWORD_BCRYPT, ['cost' => 13]);
 
-        return [
-            [
-                $hasher->hash('test'),
-                false,
-            ],
-            [
-                password_hash('test', PASSWORD_DEFAULT),
-                true,
-            ],
-        ];
+        $this->assertTrue($hasher->needsRehash($hash));
     }
 
-    /**
-     * @dataProvider needsRehashDataProvider
-     * @param string $hash
-     * @param bool $expected
-     * @return void
-     */
-    public function testNeedsRehash(string $hash, bool $expected): void
+    public function testNeedsRehashFalse(): void
     {
         $hasher = new PasswordHasher();
-        $this->assertSame($hasher->needsRehash($hash), $expected);
+        $hash = $hasher->hash('test');
+
+        $this->assertFalse($hasher->needsRehash($hash));
     }
 }
