@@ -108,13 +108,11 @@ final class PasswordHasher
     }
 
     /**
-     * Verifies a hash needs rehash.
+     * Verifies if a hash needs rehash.
      *
-     * @param string $hash The hash to verify the password against.
+     * @param string $hash The hash to verify.
      *
-     * @throws InvalidArgumentException on empty hash parameters
-     *
-     * @return bool whether the hash is need to rehash or not.
+     * @return bool Whether rehash is needed.
      *
      * @see password_needs_rehash()
      */
@@ -122,10 +120,6 @@ final class PasswordHasher
         #[SensitiveParameter]
         string $hash
     ): bool {
-        if ($hash === '') {
-            throw new InvalidArgumentException('Hash must be a string and cannot be empty.');
-        }
-
         return password_needs_rehash($hash, $this->algorithm, $this->parameters);
     }
 }

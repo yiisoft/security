@@ -91,13 +91,4 @@ final class PasswordHasherTest extends TestCase
         $hasher = new PasswordHasher();
         $this->assertSame($hasher->needsRehash($hash), $expected);
     }
-
-    public function testNeedsRehashException(): void
-    {
-        $hasher = new PasswordHasher();
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Hash must be a string and cannot be empty.');
-
-        $hasher->needsRehash('');
-    }
 }
