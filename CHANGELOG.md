@@ -2,7 +2,7 @@
 
 ## 1.1.1 under development
 
-- no changes in this release.
+- New #64: Add `PasswordHasher::needsRehash()` method (@Gerych1984)
 
 ## 1.1.0 February 26, 2025
 

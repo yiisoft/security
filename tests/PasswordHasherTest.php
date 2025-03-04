@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\PasswordHasher;
 
@@ -38,7 +39,7 @@ final class PasswordHasherTest extends TestCase
 
     public function testValidateEmptyPasswordException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $password = new PasswordHasher();
         $password->validate('', 'test');
@@ -57,5 +58,21 @@ final class PasswordHasherTest extends TestCase
     {
         $hasher = new PasswordHasher(PASSWORD_BCRYPT);
         $this->assertSame('$2y$13$', substr($hasher->hash('42'), 0, 7));
+    }
+
+    public function testNeedsRehashTrue(): void
+    {
+        $hash = (new PasswordHasher(PASSWORD_BCRYPT, ['cost' => 12]))->hash('test');
+        $hasher = new PasswordHasher(PASSWORD_BCRYPT, ['cost' => 13]);
+
+        $this->assertTrue($hasher->needsRehash($hash));
+    }
+
+    public function testNeedsRehashFalse(): void
+    {
+        $hasher = new PasswordHasher();
+        $hash = $hasher->hash('test');
+
+        $this->assertFalse($hasher->needsRehash($hash));
     }
 }
