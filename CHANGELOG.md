@@ -3,6 +3,7 @@
 ## 1.1.1 under development
 
 - New #64: Add `PasswordHasher::needsRehash()` method (@Gerych1984)
+- Enh #69: Add PHP 8.5 support (@vjik)
 
 ## 1.1.0 February 26, 2025
 

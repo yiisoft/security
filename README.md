@@ -24,7 +24,7 @@ Security package provides a set of classes to handle common security-related tas
 
 ## Requirements
 
-- PHP 8.1 or higher.
+- PHP 8.1 - 8.5.
 - `hash` PHP extension.
 - `openssl` PHP extension.
 

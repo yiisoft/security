@@ -34,18 +34,17 @@
         }
     ],
     "require": {
-        "php": "8.1 - 8.4",
+        "php": "8.1 - 8.5",
         "ext-hash": "*",
         "ext-openssl": "*",
         "yiisoft/strings": "^2.0"
     },
     "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.8.2",
         "maglnet/composer-require-checker": "^4.7.1",
         "phpunit/phpunit": "^10.5.45",
         "rector/rector": "^2.0.9",
-        "roave/infection-static-analysis-plugin": "^1.35",
-        "spatie/phpunit-watcher": "^1.24",
-        "vimeo/psalm": "^5.26.1 || ^6.8.8"
+        "spatie/phpunit-watcher": "^1.24"
     },
     "autoload": {
         "psr-4": {
@@ -57,15 +56,21 @@
             "Yiisoft\\Security\\Tests\\": "tests"
         }
     },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "target-directory": "tools",
+            "forward-command": true
+        }
+    },
     "scripts": {
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch"
     },
     "config": {
         "sort-packages": true,
-        "bump-after-update": "dev",
         "allow-plugins": {
-            "infection/extension-installer": true,
+            "bamarni/composer-bin-plugin": true,
             "composer/package-versions-deprecated": true
         }
     }
