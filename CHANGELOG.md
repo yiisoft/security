@@ -1,6 +1,6 @@
 # Yii Security Change Log
 
-## 1.1.1 under development
+## 1.2.0 November 25, 2025
 
 - New #64: Add `PasswordHasher::needsRehash()` method (@Gerych1984)
 - Enh #69: Add PHP 8.5 support (@vjik)
