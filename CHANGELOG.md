@@ -1,5 +1,9 @@
 # Yii Security Change Log
 
+## 1.2.1 under development
+
+- no changes in this release.
+
 ## 1.2.0 November 25, 2025
 
 - New #64: Add `PasswordHasher::needsRehash()` method (@Gerych1984)
