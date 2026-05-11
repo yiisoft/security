@@ -9,6 +9,12 @@ use Yiisoft\Security\Crypt\KdfInterface;
 use function 
     hash_hkdf;
 
+/**
+ * KDF that directly applies HKDF (HMAC-based Key Derivation Function) to the input secret.
+ * Suitable for deriving additional keys from a high-entropy secret (e.g., another key).
+ *
+ * @psalm-immutable
+ */
 final readonly class KdfKey implements KdfInterface
 {
     public function __construct(
@@ -16,6 +22,18 @@ final readonly class KdfKey implements KdfInterface
     ) {
     }
 
+    /**
+     * Derives a key using HKDF (RFC 5869).
+     *
+     * @param string $secret High-entropy secret key (must be at least as long as the hash output).
+     * @param int $keySize Desired key length in bytes.
+     * @param string $context Application-specific context (used as HKDF info).
+     * @param string $salt Salt value (optional, but recommended for stronger extraction).
+     *
+     * @return string Derived key (raw binary).
+     *
+     * @throws RuntimeException If HKDF fails.
+     */
     public function createKey(
         #[SensitiveParameter]
         string $secret,
