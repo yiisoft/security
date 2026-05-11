@@ -39,9 +39,11 @@ return [
         '__construct()' => [
             'cryptors' => ReferencesArray::from([
                 //chr(0b00000001) => SessionCryptor::class,
-                pack('C', 20) => SessionCryptor::class,
+                //pack('C', 20) => SessionCryptor::class,
+                chr(20) => SessionCryptor::class,
+                chr(200) => EnvelopeCryptor::class,
             ]),
-            'currentVersion' => pack('C', 20),
+            'currentVersion' => chr(200),
             'versionSize' => 1
         ],
     ],
