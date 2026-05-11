@@ -74,7 +74,7 @@ final class VersionedCryptor implements CryptorInterface
         if (mb_strlen($data, '8bit') < $this->versionSize) {
             throw new RuntimeException('Encrypted data is too short to contain a version identifier.');
         }
-        
+
         $version = mb_substr($data, 0, $this->versionSize, '8bit');
         $cryptor = $this->cryptors[$version]
                 ?? throw new RuntimeException('version not found');

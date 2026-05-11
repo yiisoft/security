@@ -54,7 +54,8 @@ final class SodiumCipher implements AeadCipherInterface
 
     public function encrypt(
         string $data,
-        #[SensitiveParameter] string $key,
+        #[SensitiveParameter]
+        string $key,
         string $nounce,
     ): string
     {
@@ -73,7 +74,8 @@ final class SodiumCipher implements AeadCipherInterface
 
     public function decrypt(
         string $data,
-        #[SensitiveParameter] string $key,
+        #[SensitiveParameter]
+        string $key,
         string $nounce,
     ): string
     {

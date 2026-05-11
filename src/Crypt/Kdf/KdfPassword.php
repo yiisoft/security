@@ -19,7 +19,8 @@ final class KdfPassword implements KdfInterface
     }
 
     public function createKey(
-        #[SensitiveParameter] string $secret,
+        #[SensitiveParameter]
+        string $secret,
         int $keySize,
         string $context,
         string $salt,

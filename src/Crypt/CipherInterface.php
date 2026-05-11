@@ -10,13 +10,15 @@ interface CipherInterface
 {
     public function encrypt(
         string $data,
-        #[SensitiveParameter] string $key,
+        #[SensitiveParameter]
+        string $key,
         string $nounce,
     ): string;
 
     public function decrypt(
         string $date,
-        #[SensitiveParameter] string $key,
+        #[SensitiveParameter]
+        string $key,
         string $nounce,
     ): string;
 
