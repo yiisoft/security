@@ -7,8 +7,6 @@ namespace Yiisoft\Security\Crypt;
 use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
-use function
-    mb_strlen;
 
 /**
  * VersionedCryptor wraps multiple cryptors and adds a version prefix to the ciphertext.
@@ -75,7 +73,7 @@ final readonly class VersionedCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        if (mb_strlen($data, '8bit') < $this->versionSize) {
+        if (StringHelper::byteLength($data) < $this->versionSize) {
             throw new EncryptionException('Encrypted data is too short to contain a version identifier.');
         }
 
@@ -106,7 +104,7 @@ final readonly class VersionedCryptor implements CryptorInterface
                 throw new RuntimeException('All cryptors must implement CryptorInterface.');
             }
 
-            if (mb_strlen($version, '8bit') !== $this->versionSize) {
+            if (StringHelper::byteLength($version) !== $this->versionSize) {
                 throw new RuntimeException("Version identifier '$version' must be exactly {$this->versionSize} bytes.");
             }
 

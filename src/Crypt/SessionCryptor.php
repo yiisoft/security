@@ -68,7 +68,7 @@ final readonly class SessionCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        if (mb_strlen($data, '8bit') < $this->keyNonceSize) {
+        if (StringHelper::byteLength($data) < $this->keyNonceSize) {
             throw new EncryptionException('Encrypted data is too short.');
         }
 

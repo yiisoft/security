@@ -84,7 +84,7 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        if (mb_strlen($data, '8bit') < $this->prefixSize) {
+        if (StringHelper::byteLength($data) < $this->prefixSize) {
             throw new EncryptionException('Encrypted data is too short.');
         }
 
