@@ -6,23 +6,54 @@ namespace Yiisoft\Security\Crypt;
 
 use SensitiveParameter;
 
+/**
+ * Base interface for symmetric encryption ciphers.
+ */
 interface CipherInterface
 {
+    /**
+     * Encrypts the provided data with the given key and nonce.
+     *
+     * @param string $data Plaintext to encrypt.
+     * @param string $key Secret encryption key (sensitive).
+     * @param string $nonce Initialization vector or nonce.
+     *
+     * @return string Ciphertext.
+     *
+     * @throws EncryptionException If encryption fails.
+     */
     public function encrypt(
         string $data,
         #[SensitiveParameter]
         string $key,
-        string $nounce,
+        string $nonce,
     ): string;
 
+    /**
+     * Decrypts the provided ciphertext with the given key and nonce.
+     *
+     * @param string $data Ciphertext to decrypt.
+     * @param string $key Secret encryption key (sensitive).
+     * @param string $nonce Nonce used during encryption.
+     *
+     * @return string Decrypted plaintext.
+     *
+     * @throws EncryptionException If decryption fails.
+     */
     public function decrypt(
-        string $date,
+        string $data,
         #[SensitiveParameter]
         string $key,
-        string $nounce,
+        string $nonce,
     ): string;
 
-    public function getNounceSize(): int;
+    /**
+     * @return int Nonce size in bytes
+     */
+    public function getNonceSize(): int;
 
+    /**
+     * @return int Key size in bytes.
+     */
     public function getKeySize(): int;
 }

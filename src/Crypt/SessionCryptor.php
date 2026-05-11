@@ -12,9 +12,9 @@ use function
 final readonly class SessionCryptor implements CryptorInterface
 {
     private int $keySize;
-    private int $nounceSize;
+    private int $nonceSize;
 
-    private int $keyNounceSize;
+    private int $keyNonceSize;
 
     /**
      * @param string $cipher The cipher to use for encryption and decryption.
@@ -25,8 +25,8 @@ final readonly class SessionCryptor implements CryptorInterface
         private KdfInterface $kdf,
     ) {
         $this->keySize = $this->cipher->getKeySize();
-        $this->nounceSize = $this->cipher->getNounceSize();
-        $this->keyNounceSize = $this->keySize + $this->nounceSize;
+        $this->nonceSize = $this->cipher->getNonceSize();
+        $this->keyNonceSize = $this->keySize + $this->nonceSize;
     }
 
     public function encrypt(
@@ -36,13 +36,13 @@ final readonly class SessionCryptor implements CryptorInterface
         string $context = ''
     ): string {
         $keySalt = random_bytes($this->keySize);
-        $dataNounce = random_bytes($this->nounceSize);
+        $dataNonce = random_bytes($this->nonceSize);
 
         $dek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
-        $dataEncrypted = $this->cipher->encrypt($data, $dek, $dataNounce);
+        $dataEncrypted = $this->cipher->encrypt($data, $dek, $dataNonce);
 
-        // keySalt || nounce || ciphertext || tag
-        return $keySalt . $dataNounce . $dataEncrypted;
+        // keySalt || nonce || ciphertext || tag
+        return $keySalt . $dataNonce . $dataEncrypted;
     }
 
     public function decrypt(
@@ -51,16 +51,16 @@ final readonly class SessionCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        if (mb_strlen($data, '8bit') < $this->keyNounceSize) {
+        if (mb_strlen($data, '8bit') < $this->keyNonceSize) {
             throw new EncryptionException('Encrypted data is too short.');
         }
 
         $keySalt = mb_substr($data, 0, $this->keySize, '8bit');
-        $dataNounce = mb_substr($data, $this->keySize, $this->nounceSize, '8bit');
-        $dataEncrypted = mb_substr($data, $this->keyNounceSize, null, '8bit');
+        $dataNonce = mb_substr($data, $this->keySize, $this->nonceSize, '8bit');
+        $dataEncrypted = mb_substr($data, $this->keyNonceSize, null, '8bit');
 
         $dek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
-        $decrypted = $this->cipher->decrypt($dataEncrypted, $dek, $dataNounce);
+        $decrypted = $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
 
         return $decrypted;
     }

@@ -9,19 +9,29 @@ use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
 
+/**
+ * AEAD cipher implementation using OpenSSL extension.
+ * Supports only AES-GCM family (128, 192, 256) with 16-byte authentication tags.
+ *
+ * @psalm-immutable
+ */
 final readonly class OpenSSLCipher implements AeadCipherInterface
 {
+    /**
+     * Authentication tag size in bytes (always 16 for GCM).
+     */
     private const TAG_SIZE = 16;
 
     /**
-     * @var array[] Look-up table of block sizes and key sizes for each supported OpenSSL cipher.
+     * Look-up table of allowed OpenSSL ciphers.
      *
-     * In each element, the key is one of the ciphers supported by OpenSSL {@see openssl_get_cipher_methods()}.
-     * The value is an array of two integers, the first is the cipher's block size in bytes and the second is
-     * the key size in bytes.
+     * Each entry maps a cipher name to:
+     * - Nonce size (bytes) – used as IV length.
+     * - Key size (bytes)   – required key length.
      *
-     * > Note: Yii's encryption protocol uses the same size for cipher key, HMAC signature key and key
-     * derivation salt.
+     * @var array<string, array{0: int, 1: int}>
+     *
+     * @psalm-var array<string, array{int, int}>
      */
     private const ALLOWED_CIPHERS = [
         'AES-128-GCM' => [12, 16],
@@ -30,8 +40,9 @@ final readonly class OpenSSLCipher implements AeadCipherInterface
     ];
 
     /**
-     * @param string $cipher The cipher to use for encryption and decryption.
-     * @param string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512. @see https://php.net/manual/en/function.hash-algos.php
+     * @param string $cipher Cipher method (must be one of ALLOWED_CIPHERS keys).
+     *
+     * @throws RuntimeException If OpenSSL extension is not loaded or the cipher is not allowed.
      */
     public function __construct(
         private string $cipher = 'AES-256-GCM',
@@ -48,13 +59,13 @@ final readonly class OpenSSLCipher implements AeadCipherInterface
         string $data,
         #[SensitiveParameter]
         string $key,
-        string $nounce,
+        string $nonce,
     ): string
     {
-        $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $nounce, $tag, '', self::TAG_SIZE);
+        $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag, '', self::TAG_SIZE);
 
         if ($encrypted === false) {
-            throw new EncryptionException('Sodium failure on encryption');
+            throw new EncryptionException('OpenSSL failure on encryption: ' . openssl_error_string());
         }
 
         return $encrypted . $tag;
@@ -64,22 +75,22 @@ final readonly class OpenSSLCipher implements AeadCipherInterface
         string $data,
         #[SensitiveParameter]
         string $key,
-        string $nounce,
+        string $nonce,
     ): string
     {
         $tag = mb_substr($data, -self::TAG_SIZE, null, '8bit');
-        $encrypted = mb_substr($data, 0, -self::TAG_SIZE, '8bit');
+        $ciphertext = mb_substr($data, 0, -self::TAG_SIZE, '8bit');
 
-        $decrypted = openssl_decrypt($encrypted, $this->cipher, $key, OPENSSL_RAW_DATA, $nounce, $tag);
+        $decrypted = openssl_decrypt($ciphertext, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag);
 
         if ($decrypted === false) {
-            throw new EncryptionException('Sodium failure on decryption');
+            throw new EncryptionException('OpenSSL failure on decryption: ' . openssl_error_string());
         }
 
         return $decrypted;
     }
 
-    public function getNounceSize(): int
+    public function getNonceSize(): int
     {
         return self::ALLOWED_CIPHERS[$this->cipher][0];
     }
