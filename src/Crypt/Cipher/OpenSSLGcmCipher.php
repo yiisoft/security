@@ -16,7 +16,7 @@ use Yiisoft\Strings\StringHelper;
  *
  * @psalm-immutable
  */
-final readonly class OpenSSLCipher implements AeadCipherInterface
+final readonly class OpenSSLGcmCipher implements AeadCipherInterface
 {
     /**
      * Authentication tag size in bytes (always 16 for GCM).

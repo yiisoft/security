@@ -5,14 +5,14 @@ declare(strict_types=1);
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Definitions\ReferencesArray;
 
-use Yiisoft\Security\CryptorInterface;
-use Yiisoft\Security\EnvelopeCryptor;
-use Yiisoft\Security\SessionCryptor;
-use Yiisoft\Security\VersionedCryptor;
-use Yiisoft\Security\Cipher\OpenSSLCipher;
-use Yiisoft\Security\Cipher\SodiumCipher;
-use Yiisoft\Security\Kdf\KdfKey;
-use Yiisoft\Security\Kdf\KdfPassword;
+use Yiisoft\Security\Crypt\CryptorInterface;
+use Yiisoft\Security\Crypt\EnvelopeCryptor;
+use Yiisoft\Security\Crypt\SessionCryptor;
+use Yiisoft\Security\Crypt\VersionedCryptor;
+use Yiisoft\Security\Crypt\Cipher\OpenSSLGcmCipher;
+use Yiisoft\Security\Crypt\Cipher\SodiumCipher;
+use Yiisoft\Security\Crypt\Kdf\KdfKey;
+use Yiisoft\Security\Crypt\Kdf\KdfPassword;
 
 /** @var array $params */
 
@@ -21,7 +21,7 @@ return [
 
     SessionCryptor::class => [
         '__construct()' => [
-            'cipher' => Reference::to(OpenSSLCipher::class),
+            'cipher' => Reference::to(OpenSSLGcmCipher::class),
             //'cipher' => Reference::to(SodiumCipher::class),
             'kdf' => Reference::to(KdfKey::class),
             //'kdf' => Reference::to(KdfPassword::class),
@@ -30,7 +30,7 @@ return [
 
     EnvelopeCryptor::class => [
         '__construct()' => [
-            'cipher' => Reference::to(OpenSSLCipher::class),
+            'cipher' => Reference::to(OpenSSLGcmCipher::class),
             'kdf' => Reference::to(KdfKey::class),
         ],
     ],
