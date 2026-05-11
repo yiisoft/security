@@ -11,10 +11,11 @@ use function
     mb_substr;
 
 /**
- * VersionedCryptor provides a wrapper for multiple cryptors, identifying them by a version prefix.
- * 
- * This allows for seamless migration between different encryption algorithms or configurations.
- * Each encrypted message is prefixed with a version identifier of a fixed size.
+ * VersionedCryptor wraps multiple cryptors and adds a version prefix to the ciphertext.
+ * This enables seamless migration between different encryption algorithms or key lengths.
+ * Each encrypted message begins with a fixed‑length version identifier.
+ *
+ * @psalm-immutable
  */
 final readonly class VersionedCryptor implements CryptorInterface
 {
@@ -23,12 +24,12 @@ final readonly class VersionedCryptor implements CryptorInterface
      */
     private array $cryptors;
 
-    /**
-     * @param array<string, CryptorInterface> $cryptors List of cryptors where the key is the version string and the value is a CryptorInterface instance.
-     * @param string $currentVersion The version identifier to be used for new encryptions.
-     * @param int $versionSize The fixed byte length of the version prefix.
-     * 
-     * @throws RuntimeException If the current version is missing or identifiers have invalid length.
+        /**
+     * @param array<string, CryptorInterface> $cryptors List of cryptors indexed by version string.
+     * @param string $currentVersion Version identifier used for new encryptions.
+     * @param int $versionSize Fixed byte length of the version prefix (must be >=1).
+     *
+     * @throws RuntimeException If validation fails or current version is not registered.
      */
     public function __construct(
         array $cryptors,
@@ -36,7 +37,7 @@ final readonly class VersionedCryptor implements CryptorInterface
         private int $versionSize,
     ) {
         if ($versionSize < 1) {
-            throw new RuntimeException('Version size must be greather than 0.');
+            throw new RuntimeException('Version size must be greater than 0.');
         }
 
         $this->cryptors = $this->validateAndNormalize($cryptors);
@@ -48,6 +49,8 @@ final readonly class VersionedCryptor implements CryptorInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws RuntimeException If encryption fails.
      */
     public function encrypt(
         string $data,
@@ -62,8 +65,9 @@ final readonly class VersionedCryptor implements CryptorInterface
 
     /**
      * {@inheritdoc}
-     * 
-     * @throws RuntimeException If the version prefix is not recognized or data is malformed.
+     *
+     * @throws RuntimeException If the version prefix cannot be read or no cryptor matches.
+     * @throws EncryptionException If decryption fails .
      */
     public function decrypt(
         string $data,
@@ -72,7 +76,7 @@ final readonly class VersionedCryptor implements CryptorInterface
         string $context = ''
     ): string {
         if (mb_strlen($data, '8bit') < $this->versionSize) {
-            throw new RuntimeException('Encrypted data is too short to contain a version identifier.');
+            throw new EncryptionException('Encrypted data is too short to contain a version identifier.');
         }
 
         $version = mb_substr($data, 0, $this->versionSize, '8bit');
@@ -85,11 +89,12 @@ final readonly class VersionedCryptor implements CryptorInterface
     }
 
     /**
-     * Validates input array and ensures all version identifiers match the required size.
-     * 
-     * @param array $cryptors Map of version => cryptor instances.
-     * @return array<string, CryptorInterface> Normalized array.
-     * @throws RuntimeException If validation fails.
+     * Validates the input array, normalises keys to strings,
+     * and ensures each version identifier has exactly `$versionSize` bytes.
+     *
+     * @param array $cryptors Raw input mapping.
+     * @return array<string, CryptorInterface> Normalised array.
+     * @throws RuntimeException On validation error.
      */
     private function validateAndNormalize(array $cryptors): array
     {

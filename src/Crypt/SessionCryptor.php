@@ -9,6 +9,13 @@ use function
     mb_substr,
     random_bytes;
 
+/**
+ * Session‑oriented encryption (single key derived per message, no key wrapping).
+ * A fresh data encryption key (DEK) is derived from the secret and a random salt.
+ * This is suitable for encrypting large amounts of data in a single session.
+ *
+ * @psalm-immutable
+ */
 final readonly class SessionCryptor implements CryptorInterface
 {
     private int $keySize;
@@ -17,8 +24,8 @@ final readonly class SessionCryptor implements CryptorInterface
     private int $keyNonceSize;
 
     /**
-     * @param string $cipher The cipher to use for encryption and decryption.
-     * @param string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512. @see https://php.net/manual/en/function.hash-algos.php
+     * @param CipherInterface $cipher Low‑level cipher
+     * @param KdfInterface $kdf Key derivation function
      */
     public function __construct(
         private CipherInterface $cipher,
@@ -29,6 +36,11 @@ final readonly class SessionCryptor implements CryptorInterface
         $this->keyNonceSize = $this->keySize + $this->nonceSize;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Structure: keySalt || nonce || ciphertext (with tag for AEAD ciphers)
+     */
     public function encrypt(
         string $data,
         #[SensitiveParameter]
@@ -45,6 +57,11 @@ final readonly class SessionCryptor implements CryptorInterface
         return $keySalt . $dataNonce . $dataEncrypted;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws EncryptionException If decryption fails.
+     */
     public function decrypt(
         string $data,
         #[SensitiveParameter]

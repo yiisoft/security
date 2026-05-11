@@ -6,23 +6,22 @@ namespace Yiisoft\Security\Crypt;
 
 use SensitiveParameter;
 
+/**
+ * Interface for high-level encryption/decryption with key derivation.
+ */
 interface CryptorInterface
 {
     /**
-     * Encrypts data.
+     * Encrypts the given data using the secret and context string.
      *
-     * @param string $data data to be encrypted
-     * @param bool $passwordBased set true to use password-based key derivation
-     * @param string $secret the encryption password or key
-     * @param string $info context/application specific information, e.g. a user ID
-     * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
+     * @param string $data Plaintext to encrypt.
+     * @param string $secret Password or raw key (sensitive).
+     * @param string $context Application-specific context (used in key derivation).
      *
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL error
+     * @return string Encrypted payload (includes nonce, salt, authentication tag, etc.).
      *
-     * @return string the encrypted data as byte string
-     *
-     * @see decrypt()
+     * @throws EncryptionException If encryption fails.
+     * @throws \RuntimeException If required PHP extension is missing.
      */
     public function encrypt(
         string $data,
@@ -32,20 +31,16 @@ interface CryptorInterface
     ): string;
 
     /**
-     * Decrypts data.
+     * Decrypts the given data using the secret and context string.
      *
-     * @param string $data encrypted data to be decrypted.
-     * @param bool $passwordBased set true to use password-based key derivation
-     * @param string $secret the decryption password or key
-     * @param string $info context/application specific information, @see encrypt()
+     * @param string $data Encrypted payload to decrypt.
+     * @param string $secret Password or raw key (sensitive).
+     * @param string $context Application-specific context (must match the one used for encryption).
      *
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL errors
-     * @throws AuthenticationException on authentication failure
+     * @return string Decrypted plaintext.
      *
-     * @return string the decrypted data
-     *
-     * @see encrypt()
+     * @throws EncryptionException If decryption fails.
+     * @throws \RuntimeException If required PHP extension is missing or data is malformed.
      */
     public function decrypt(
         string $data,

@@ -9,6 +9,16 @@ use function
     mb_substr,
     random_bytes;
 
+/**
+ * Envelope encryption (key wrapping) using a KDF to derive a Key Encryption Key (KEK)
+ * and a random Data Encryption Key (DEK). The DEK is encrypted with the KEK and stored
+ * together with the ciphertext.
+ *
+ * This scheme enables secure handling of long‑term secrets: the DEK is fresh for each
+ * encryption, and the KEK never touches the actual data payload.
+ *
+ * @psalm-immutable
+ */
 final readonly class EnvelopeCryptor implements CryptorInterface
 {
     private int $nonceSize;
@@ -20,8 +30,8 @@ final readonly class EnvelopeCryptor implements CryptorInterface
     private int $prefixSize;
 
     /**
-     * @param string $cipher The cipher to use for encryption and decryption.
-     * @param string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512. @see https://php.net/manual/en/function.hash-algos.php
+     * @param AeadCipherInterface $cipher AEAD cipher (e.g., AES-256-GCM)
+     * @param KdfInterface $kdf Key derivation function (used to derive KEK from secret)
      */
     public function __construct(
         private AeadCipherInterface $cipher,
@@ -36,6 +46,13 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         $this->prefixSize = $this->keyNonceSize + $this->encKeyNonceSize;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Structure: keySalt (keySize) || dekNonce (nonceSize) ||
+     *            encrypted(dek || dataNonce) (keyNonceSize + tagSize) ||
+     *            encrypted(data) (variable + tag)
+     */
     public function encrypt(
         string $data,
         #[SensitiveParameter]
@@ -56,6 +73,11 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         //return $keySalt.$dekNonce.$dekEncrypted . $dataNonce.$dataEncrypted;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws EncryptionException If decryption fails.
+     */
     public function decrypt(
         string $data,
         #[SensitiveParameter]
