@@ -6,9 +6,9 @@ namespace Yiisoft\Security\Crypt;
 
 use RuntimeException;
 use SensitiveParameter;
+use Yiisoft\Strings\StringHelper;
 use function
-    mb_strlen,
-    mb_substr;
+    mb_strlen;
 
 /**
  * VersionedCryptor wraps multiple cryptors and adds a version prefix to the ciphertext.
@@ -79,11 +79,11 @@ final readonly class VersionedCryptor implements CryptorInterface
             throw new EncryptionException('Encrypted data is too short to contain a version identifier.');
         }
 
-        $version = mb_substr($data, 0, $this->versionSize, '8bit');
+        $version = StringHelper::byteSubstring($data, 0, $this->versionSize);
         $cryptor = $this->cryptors[$version]
                 ?? throw new RuntimeException('version not found');
 
-        $payload = mb_substr($data, $this->versionSize, null, '8bit');
+        $payload = StringHelper::byteSubstring($data, $this->versionSize);
 
         return $cryptor->decrypt($payload, $secret, $context);
     }

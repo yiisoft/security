@@ -8,6 +8,7 @@ use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
+use Yiisoft\Strings\StringHelper;
 
 /**
  * AEAD cipher implementation using OpenSSL extension.
@@ -78,8 +79,8 @@ final readonly class OpenSSLCipher implements AeadCipherInterface
         string $nonce,
     ): string
     {
-        $tag = mb_substr($data, -self::TAG_SIZE, null, '8bit');
-        $ciphertext = mb_substr($data, 0, -self::TAG_SIZE, '8bit');
+        $tag = StringHelper::byteSubstring($data, -self::TAG_SIZE);
+        $ciphertext = StringHelper::byteSubstring($data, 0, -self::TAG_SIZE);
 
         $decrypted = openssl_decrypt($ciphertext, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag);
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Security\Crypt;
 
 use SensitiveParameter;
+use Yiisoft\Strings\StringHelper;
 use function
-    mb_substr,
     random_bytes;
 
 /**
@@ -88,14 +88,18 @@ final readonly class EnvelopeCryptor implements CryptorInterface
             throw new EncryptionException('Encrypted data is too short.');
         }
 
-        $keySalt = mb_substr($data, 0, $this->keySize, '8bit');
-        $dekNonce = mb_substr($data, $this->keySize, $this->nonceSize, '8bit');
-        $encDekWithNonce = mb_substr($data, $this->keyNonceSize, $this->encKeyNonceSize, '8bit');
-        $dataEncrypted = mb_substr($data, $this->prefixSize, null, '8bit');
+        $keySalt = StringHelper::byteSubstring($data, 0, $this->keySize);
+        $dekNonce = StringHelper::byteSubstring($data, $this->keySize, $this->nonceSize);
+        $encDekWithNonce = StringHelper::byteSubstring($data, $this->keyNonceSize, $this->encKeyNonceSize);
+        $dataEncrypted = StringHelper::byteSubstring($data, $this->prefixSize);
 
         $kek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
         $dekWithNonce = $this->cipher->decrypt($encDekWithNonce, $kek, $dekNonce);
-        $decrypted = $this->cipher->decrypt($dataEncrypted, mb_substr($dekWithNonce, 0, $this->keySize, '8bit'), mb_substr($dekWithNonce, $this->keySize, null, '8bit'));
+
+        $dek = StringHelper::byteSubstring($dekWithNonce, 0, $this->keySize);
+        $dataNonce = StringHelper::byteSubstring($dekWithNonce, $this->keySize);
+
+        $decrypted = $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
 
         return $decrypted;
     }
