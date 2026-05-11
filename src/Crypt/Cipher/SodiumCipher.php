@@ -14,7 +14,7 @@ use function
     sodium_crypto_aead_aes256gcm_is_available,
     sodium_crypto_aead_aes256gcm_encrypt;
 
-final class SodiumCipher implements AeadCipherInterface
+final readonly class SodiumCipher implements AeadCipherInterface
 {
     private const TAG_SIZE = 16;
 
@@ -39,7 +39,7 @@ final class SodiumCipher implements AeadCipherInterface
      * @param string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512. @see https://php.net/manual/en/function.hash-algos.php
      */
     public function __construct(
-        private readonly string $cipher = 'AES-256-GCM',
+        private string $cipher = 'AES-256-GCM',
     ) {
         if (!extension_loaded('sodium')) {
             throw new RuntimeException('Encryption requires the Sodium PHP extension.');

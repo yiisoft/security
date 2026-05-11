@@ -10,7 +10,7 @@ use function
     hash_hkdf,
     hash_pbkdf2;
 
-final class KdfPassword implements KdfInterface
+final readonly class KdfPassword implements KdfInterface
 {
     public function __construct(
         private string $algorithm = 'sha256',

@@ -16,12 +16,12 @@ use function
  * This allows for seamless migration between different encryption algorithms or configurations.
  * Each encrypted message is prefixed with a version identifier of a fixed size.
  */
-final class VersionedCryptor implements CryptorInterface
+final readonly class VersionedCryptor implements CryptorInterface
 {
     /**
      * @var array<string, CryptorInterface> Storage for registered cryptors indexed by their version identifier.
      */
-    private readonly array $cryptors;
+    private array $cryptors;
 
     /**
      * @param array<string, CryptorInterface> $cryptors List of cryptors where the key is the version string and the value is a CryptorInterface instance.
@@ -32,8 +32,8 @@ final class VersionedCryptor implements CryptorInterface
      */
     public function __construct(
         array $cryptors,
-        private readonly string $currentVersion,
-        private readonly int $versionSize,
+        private string $currentVersion,
+        private int $versionSize,
     ) {
         if ($versionSize < 1) {
             throw new RuntimeException('Version size must be greather than 0.');

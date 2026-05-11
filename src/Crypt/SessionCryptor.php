@@ -9,7 +9,7 @@ use function
     mb_substr,
     random_bytes;
 
-final class SessionCryptor implements CryptorInterface
+final readonly class SessionCryptor implements CryptorInterface
 {
     private int $keySize;
     private int $nounceSize;
@@ -21,8 +21,8 @@ final class SessionCryptor implements CryptorInterface
      * @param string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512. @see https://php.net/manual/en/function.hash-algos.php
      */
     public function __construct(
-        private readonly CipherInterface $cipher,
-        private readonly KdfInterface $kdf,
+        private CipherInterface $cipher,
+        private KdfInterface $kdf,
     ) {
         $this->keySize = $this->cipher->getKeySize();
         $this->nounceSize = $this->cipher->getNounceSize();

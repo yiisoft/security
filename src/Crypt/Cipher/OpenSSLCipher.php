@@ -9,7 +9,7 @@ use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
 
-final class OpenSSLCipher implements AeadCipherInterface
+final readonly class OpenSSLCipher implements AeadCipherInterface
 {
     private const TAG_SIZE = 16;
 
@@ -34,7 +34,7 @@ final class OpenSSLCipher implements AeadCipherInterface
      * @param string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512. @see https://php.net/manual/en/function.hash-algos.php
      */
     public function __construct(
-        private readonly string $cipher = 'AES-256-GCM',
+        private string $cipher = 'AES-256-GCM',
     ) {
         if (!extension_loaded('openssl')) {
             throw new RuntimeException('Encryption requires the OpenSSL PHP extension.');

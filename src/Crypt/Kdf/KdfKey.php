@@ -9,7 +9,7 @@ use Yiisoft\Security\Crypt\KdfInterface;
 use function 
     hash_hkdf;
 
-final class KdfKey implements KdfInterface
+final readonly class KdfKey implements KdfInterface
 {
     public function __construct(
         private string $algorithm = 'sha256',
