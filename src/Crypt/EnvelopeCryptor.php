@@ -21,12 +21,13 @@ use function
  */
 final readonly class EnvelopeCryptor implements CryptorInterface
 {
-    private int $nonceSize;
     private int $keySize;
+    private int $nonceSize;
     private int $tagSize;
 
     private int $keyNonceSize;
-    private int $encKeyNonceSize;
+    private int $encKeySize;
+    private int $keyNonceEncKeySize;
     private int $prefixSize;
 
     /**
@@ -37,21 +38,22 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         private AeadCipherInterface $cipher,
         private KdfInterface $kdf,
     ) {
-        $this->nonceSize = $this->cipher->getNonceSize();
         $this->keySize = $this->cipher->getKeySize();
+        $this->nonceSize = $this->cipher->getNonceSize();
         $this->tagSize = $this->cipher->getTagSize();
 
         $this->keyNonceSize = $this->keySize + $this->nonceSize;
-        $this->encKeyNonceSize = $this->keyNonceSize + $this->tagSize;
-        $this->prefixSize = $this->keyNonceSize + $this->encKeyNonceSize;
+        $this->encKeySize = $this->keySize + $this->tagSize;
+        $this->keyNonceEncKeySize = $this->keyNonceSize + $this->encKeySize;
+        $this->prefixSize = $this->keyNonceEncKeySize + $this->nonceSize;
     }
 
     /**
      * {@inheritdoc}
      *
      * Structure: keySalt (keySize) || dekNonce (nonceSize) ||
-     *            encrypted(dek || dataNonce) (keyNonceSize + tagSize) ||
-     *            encrypted(data) (variable + tag)
+     *            encrypted(dek) (keySize + tagSize) ||
+     *            dataNonce (nonceSize) || encrypted(data) (variable + tagSize)
      */
     public function encrypt(
         string $data,
@@ -65,12 +67,11 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         $dataNonce = random_bytes($this->nonceSize);
 
         $kek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
-        $dekEncrypted = $this->cipher->encrypt($dek . $dataNonce, $kek, $dekNonce);
+        $dekEncrypted = $this->cipher->encrypt($dek, $kek, $dekNonce);
         $dataEncrypted = $this->cipher->encrypt($data, $dek, $dataNonce);
 
-        // keySalt || dekNonce || cipher(dek + dataNonce) || tag || ciphertext || tag
-        return $keySalt.$dekNonce.$dekEncrypted . $dataEncrypted;
-        //return $keySalt.$dekNonce.$dekEncrypted . $dataNonce.$dataEncrypted;
+        // keySalt || dekNonce || cipherdek || tag || dataNonce || ciphertext || tag
+        return $keySalt . $dekNonce . $dekEncrypted . $dataNonce . $dataEncrypted;
     }
 
     /**
@@ -90,15 +91,12 @@ final readonly class EnvelopeCryptor implements CryptorInterface
 
         $keySalt = StringHelper::byteSubstring($data, 0, $this->keySize);
         $dekNonce = StringHelper::byteSubstring($data, $this->keySize, $this->nonceSize);
-        $encDekWithNonce = StringHelper::byteSubstring($data, $this->keyNonceSize, $this->encKeyNonceSize);
+        $encDek = StringHelper::byteSubstring($data, $this->keyNonceSize, $this->encKeySize);
+        $dataNonce = StringHelper::byteSubstring($data, $this->keyNonceEncKeySize, $this->nonceSize);
         $dataEncrypted = StringHelper::byteSubstring($data, $this->prefixSize);
 
         $kek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
-        $dekWithNonce = $this->cipher->decrypt($encDekWithNonce, $kek, $dekNonce);
-
-        $dek = StringHelper::byteSubstring($dekWithNonce, 0, $this->keySize);
-        $dataNonce = StringHelper::byteSubstring($dekWithNonce, $this->keySize);
-
+        $dek = $this->cipher->decrypt($encDek, $kek, $dekNonce);
         $decrypted = $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
 
         return $decrypted;
