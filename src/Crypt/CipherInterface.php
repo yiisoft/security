@@ -47,13 +47,14 @@ interface CipherInterface
         string $nonce,
     ): string;
 
-    /**
-     * @return int Nonce size in bytes
-     */
-    public function getNonceSize(): int;
 
     /**
      * @return int Key size in bytes.
      */
     public function getKeySize(): int;
+
+    /**
+     * @return int Nonce size in bytes
+     */
+    public function getNonceSize(): int;
 }

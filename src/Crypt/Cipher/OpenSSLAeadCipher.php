@@ -9,6 +9,12 @@ use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Strings\StringHelper;
+use function
+    array_key_exists,
+    extension_loaded,
+    openssl_decrypt,
+    openssl_encrypt,
+    openssl_error_string;
 
 /**
  * AEAD cipher implementation using OpenSSL extension.
@@ -16,28 +22,31 @@ use Yiisoft\Strings\StringHelper;
  *
  * @psalm-immutable
  */
-final readonly class OpenSSLGcmCipher implements AeadCipherInterface
+final readonly class OpenSSLAeadCipher implements AeadCipherInterface
 {
     /**
      * Authentication tag size in bytes (always 16 for GCM).
      */
     private const TAG_SIZE = 16;
 
+    private int $keySize;
+    private int $nonceSize;
+
     /**
      * Look-up table of allowed OpenSSL ciphers.
      *
      * Each entry maps a cipher name to:
-     * - Nonce size (bytes) – used as IV length.
      * - Key size (bytes)   – required key length.
+     * - Nonce size (bytes) – used as IV length.
      *
      * @var array<string, array{0: int, 1: int}>
      *
      * @psalm-var array<string, array{int, int}>
      */
     private const ALLOWED_CIPHERS = [
-        'AES-128-GCM' => [12, 16],
-        'AES-192-GCM' => [12, 24],
-        'AES-256-GCM' => [12, 32],
+        'AES-128-GCM' => [16, 12],
+        'AES-192-GCM' => [24, 12],
+        'AES-256-GCM' => [32, 12],
     ];
 
     /**
@@ -54,6 +63,8 @@ final readonly class OpenSSLGcmCipher implements AeadCipherInterface
         if (!array_key_exists($cipher, self::ALLOWED_CIPHERS)) {
             throw new RuntimeException($cipher . ' is not an allowed cipher.');
         }
+
+        [$this->keySize, $this->nonceSize] = self::ALLOWED_CIPHERS[$this->cipher];
     }
 
     public function encrypt(
@@ -63,6 +74,13 @@ final readonly class OpenSSLGcmCipher implements AeadCipherInterface
         string $nonce,
     ): string
     {
+        if (StringHelper::byteLength($key) !== $this->keySize) {
+            throw new EncryptionException("Key must be {$this->keySize} bytes long.");
+        }
+        if (StringHelper::byteLength($nonce) !== $this->nonceSize) {
+            throw new EncryptionException("Nonce must be {$this->nonceSize} bytes long.");
+        }
+
         $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag, '', self::TAG_SIZE);
 
         if ($encrypted === false) {
@@ -79,6 +97,13 @@ final readonly class OpenSSLGcmCipher implements AeadCipherInterface
         string $nonce,
     ): string
     {
+        if (StringHelper::byteLength($key) !== $this->keySize) {
+            throw new EncryptionException("Key must be {$this->keySize} bytes long.");
+        }
+        if (StringHelper::byteLength($nonce) !== $this->nonceSize) {
+            throw new EncryptionException("Nonce must be {$this->nonceSize} bytes long.");
+        }
+
         $tag = StringHelper::byteSubstring($data, -self::TAG_SIZE);
         $ciphertext = StringHelper::byteSubstring($data, 0, -self::TAG_SIZE);
 
@@ -91,14 +116,14 @@ final readonly class OpenSSLGcmCipher implements AeadCipherInterface
         return $decrypted;
     }
 
-    public function getNonceSize(): int
-    {
-        return self::ALLOWED_CIPHERS[$this->cipher][0];
-    }
-
     public function getKeySize(): int
     {
-        return self::ALLOWED_CIPHERS[$this->cipher][1];
+        return $this->keySize;
+    }
+
+    public function getNonceSize(): int
+    {
+        return $this->nonceSize;
     }
 
     public function getTagSize(): int

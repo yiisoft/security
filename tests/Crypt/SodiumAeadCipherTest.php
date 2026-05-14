@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Yiisoft\Security\Tests\Crypt;
+
+use Yiisoft\Security\Crypt\CipherInterface;
+use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
+
+final class SodiumAeadCipherTest extends AbstractCipherCase
+{
+    protected function setUp(): void
+    {
+        if (!extension_loaded('sodium')) {
+            $this->markTestSkipped('Sodium extension is required for these tests.');
+        }
+    }
+
+    protected function createCipherInstance(string $cipher): CipherInterface
+    {
+        return new SodiumAeadCipher($cipher);
+    }
+
+    public static function dataProviderCiphers(): iterable
+    {
+        yield ['ChaCha20-Poly1305-IETF'];
+        yield ['XChaCha20-Poly1305-IETF'];
+    }
+
+    public static function dataProviderEncrypted(): iterable
+    {
+        yield [
+            'ChaCha20-Poly1305-IETF',
+            'adcc610fd179117c7b383b9c9e4c2b106fc72f98290c095452a07b0ad5ed5767',
+            '353bf3e8a440ddd5b125b8df',
+            'test-plain-data',
+            '75058e089d84a58fed82a822b462b2a3dcdf5b5b4cda445fdba26ccd012503',
+        ];
+        yield [
+            'XChaCha20-Poly1305-IETF',
+            '89fe0c0b2c9b74cdb87d13f0b9f835bde84a3f0c4940c026c5d888db254271f0',
+            'fc6f945727c02ac590d53cc17c2f144949526a4f2d2fef41',
+            'test-plain-data',
+            '4c88400da53f878bf9de7749a70b38022ce8166effecc64b8c8a49c2c0f28c',
+        ];
+    }
+}

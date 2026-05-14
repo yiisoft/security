@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Crypt\Cipher;
 
+use Exception;
 use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
@@ -25,24 +26,31 @@ use function
  *
  * @psalm-immutable
  */
-final readonly class SodiumCipher implements AeadCipherInterface
+final readonly class SodiumAeadCipher implements AeadCipherInterface
 {
     /**
      * Authentication tag size in bytes (always 16 for these AEAD modes).
      */
     private const TAG_SIZE = 16;
 
+    private int $keySize;
+    private int $nonceSize;
+
     /**
-     * Look-up table of allowed sodium ciphers with their nonce and key sizes.
+     * Look-up table of allowed Sodium ciphers.
+     *
+     * Each entry maps a cipher name to:
+     * - Key size (bytes)   – required key length.
+     * - Nonce size (bytes) – used as nonce length.
      *
      * @var array<string, array{0: int, 1: int}>
      *
      * @psalm-var array<string, array{int, int}>
      */
     private const ALLOWED_CIPHERS = [
-        'AES-256-GCM' => [SODIUM_CRYPTO_AEAD_AES256GCM_NPUBBYTES, SODIUM_CRYPTO_AEAD_AES256GCM_KEYBYTES],
-        'ChaCha20-Poly1305-IETF' => [SODIUM_CRYPTO_AEAD_CHACHA20POLY1305_IETF_NPUBBYTES, SODIUM_CRYPTO_AEAD_CHACHA20POLY1305_IETF_KEYBYTES],
-        'XChaCha20-Poly1305-IETF' => [SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES, SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_KEYBYTES],
+        'AES-256-GCM' => [SODIUM_CRYPTO_AEAD_AES256GCM_KEYBYTES, SODIUM_CRYPTO_AEAD_AES256GCM_NPUBBYTES],
+        'ChaCha20-Poly1305-IETF' => [SODIUM_CRYPTO_AEAD_CHACHA20POLY1305_IETF_KEYBYTES, SODIUM_CRYPTO_AEAD_CHACHA20POLY1305_IETF_NPUBBYTES],
+        'XChaCha20-Poly1305-IETF' => [SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_KEYBYTES, SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES],
     ];
 
     /**
@@ -62,6 +70,8 @@ final readonly class SodiumCipher implements AeadCipherInterface
         if ($cipher === 'AES-256-GCM' && !sodium_crypto_aead_aes256gcm_is_available()) {
             throw new RuntimeException($cipher . ' requires hardware that supports hardware-accelerated AES.');
         }
+
+        [$this->keySize, $this->nonceSize] = self::ALLOWED_CIPHERS[$this->cipher];
     }
 
     public function encrypt(
@@ -71,11 +81,15 @@ final readonly class SodiumCipher implements AeadCipherInterface
         string $nonce,
     ): string
     {
-        $encrypted = match ($this->cipher) {
-            'AES-256-GCM' => sodium_crypto_aead_aes256gcm_encrypt($data, '', $nonce, $key),
-            'ChaCha20-Poly1305-IETF' => sodium_crypto_aead_chacha20poly1305_ietf_encrypt($data, '', $nonce, $key),
-            'XChaCha20-Poly1305-IETF' => sodium_crypto_aead_xchacha20poly1305_ietf_encrypt($data, '', $nonce, $key),
-        };
+        try {
+            $encrypted = match ($this->cipher) {
+                'AES-256-GCM' => sodium_crypto_aead_aes256gcm_encrypt($data, '', $nonce, $key),
+                'ChaCha20-Poly1305-IETF' => sodium_crypto_aead_chacha20poly1305_ietf_encrypt($data, '', $nonce, $key),
+                'XChaCha20-Poly1305-IETF' => sodium_crypto_aead_xchacha20poly1305_ietf_encrypt($data, '', $nonce, $key),
+            };
+        } catch (Exception $e) {
+            throw new EncryptionException($e->getMessage());
+        }
 
         if ($encrypted === false) {
             throw new EncryptionException('Sodium failure on encryption');
@@ -91,11 +105,15 @@ final readonly class SodiumCipher implements AeadCipherInterface
         string $nonce,
     ): string
     {
-        $decrypted = match ($this->cipher) {
-            'AES-256-GCM' => sodium_crypto_aead_aes256gcm_decrypt($data, '', $nonce, $key),
-            'ChaCha20-Poly1305-IETF' => sodium_crypto_aead_chacha20poly1305_ietf_decrypt($data, '', $nonce, $key),
-            'XChaCha20-Poly1305-IETF' => sodium_crypto_aead_xchacha20poly1305_ietf_decrypt($data, '', $nonce, $key),
-        };
+        try {
+            $decrypted = match ($this->cipher) {
+                'AES-256-GCM' => sodium_crypto_aead_aes256gcm_decrypt($data, '', $nonce, $key),
+                'ChaCha20-Poly1305-IETF' => sodium_crypto_aead_chacha20poly1305_ietf_decrypt($data, '', $nonce, $key),
+                'XChaCha20-Poly1305-IETF' => sodium_crypto_aead_xchacha20poly1305_ietf_decrypt($data, '', $nonce, $key),
+            };
+        } catch (Exception $e) {
+            throw new EncryptionException($e->getMessage());
+        }
 
         if ($decrypted === false) {
             throw new EncryptionException('Sodium failure on decryption');
@@ -104,14 +122,14 @@ final readonly class SodiumCipher implements AeadCipherInterface
         return $decrypted;
     }
 
-    public function getNonceSize(): int
-    {
-        return self::ALLOWED_CIPHERS[$this->cipher][0];
-    }
-
     public function getKeySize(): int
     {
-        return self::ALLOWED_CIPHERS[$this->cipher][1];
+        return $this->keySize;
+    }
+
+    public function getNonceSize(): int
+    {
+        return $this->nonceSize;
     }
 
     public function getTagSize(): int
