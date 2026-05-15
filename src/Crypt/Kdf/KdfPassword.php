@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Crypt\Kdf;
 
+use RuntimeException;
 use SensitiveParameter;
+use ValueError;
+use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Security\Crypt\KdfInterface;
 use function 
     hash_hkdf,
@@ -26,6 +29,13 @@ final readonly class KdfPassword implements KdfInterface
         private string $algorithm = 'sha256',
         private int $iterations = 600_000,
     ) {
+        if (!in_array($algorithm, hash_hmac_algos())) {
+            throw new RuntimeException($algorithm . ' is not an allowed algorithm.');
+        }
+
+        if ($iterations <= 0) {
+            throw new RuntimeException("Iterations must be greather then 0, but {$iterations} provided.");
+        }
     }
 
     /**
@@ -52,8 +62,12 @@ final readonly class KdfPassword implements KdfInterface
         string $salt,
     ): string
     {
-        $key = hash_pbkdf2($this->algorithm, $secret, $salt, $this->iterations, $keySize, true);
+        try {
+            $key = hash_pbkdf2($this->algorithm, $secret, $salt, $this->iterations, $keySize, true);
 
-        return hash_hkdf($this->algorithm, $key, $keySize, $context);
+            return hash_hkdf($this->algorithm, $key, $keySize, $context);
+        } catch (ValueError $e) {
+            throw new EncryptionException($e->getMessage());
+        }
     }
 }
