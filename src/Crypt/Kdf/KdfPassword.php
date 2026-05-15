@@ -16,8 +16,6 @@ use function
 /**
  * KDF that first applies PBKDF2 to the input password,
  * then applies HKDF to the result. Suitable for deriving cryptographic keys from low-entropy passwords.
- *
- * @psalm-immutable
  */
 final readonly class KdfPassword implements KdfInterface
 {
@@ -53,6 +51,8 @@ final readonly class KdfPassword implements KdfInterface
      * @return string Derived key (raw binary).
      *
      * @throws RuntimeException If PBKDF2 or HKDF fails.
+     * 
+     * @psalm-mutation-free
      */
     public function createKey(
         #[SensitiveParameter]

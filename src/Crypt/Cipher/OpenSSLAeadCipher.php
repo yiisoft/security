@@ -19,8 +19,6 @@ use function
 /**
  * AEAD cipher implementation using OpenSSL extension.
  * Supports only AES-GCM family (128, 192, 256) with 16-byte authentication tags.
- *
- * @psalm-immutable
  */
 final readonly class OpenSSLAeadCipher implements AeadCipherInterface
 {
@@ -29,7 +27,14 @@ final readonly class OpenSSLAeadCipher implements AeadCipherInterface
      */
     private const TAG_SIZE = 16;
 
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $keySize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $nonceSize;
 
     /**
@@ -84,7 +89,8 @@ final readonly class OpenSSLAeadCipher implements AeadCipherInterface
         $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag, '', self::TAG_SIZE);
 
         if ($encrypted === false) {
-            throw new EncryptionException('OpenSSL failure on encryption: ' . openssl_error_string());
+            $error = openssl_error_string() ?: 'Unknown error';
+            throw new EncryptionException('OpenSSL failure on encryption: ' . $error);
         }
 
         return $encrypted . $tag;
@@ -110,7 +116,8 @@ final readonly class OpenSSLAeadCipher implements AeadCipherInterface
         $decrypted = openssl_decrypt($ciphertext, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag);
 
         if ($decrypted === false) {
-            throw new EncryptionException('OpenSSL failure on decryption: ' . openssl_error_string());
+            $error = openssl_error_string() ?: 'Unknown error';
+            throw new EncryptionException('OpenSSL failure on decryption: ' . $error);
         }
 
         return $decrypted;

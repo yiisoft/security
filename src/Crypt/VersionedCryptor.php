@@ -12,8 +12,6 @@ use Yiisoft\Strings\StringHelper;
  * VersionedCryptor wraps multiple cryptors and adds a version prefix to the ciphertext.
  * This enables seamless migration between different encryption algorithms or key lengths.
  * Each encrypted message begins with a fixed‑length version identifier.
- *
- * @psalm-immutable
  */
 final readonly class VersionedCryptor implements CryptorInterface
 {

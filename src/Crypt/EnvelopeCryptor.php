@@ -16,13 +16,22 @@ use function
  *
  * This scheme enables secure handling of long‑term secrets: the DEK is fresh for each
  * encryption, and the KEK never touches the actual data payload.
- *
- * @psalm-immutable
  */
 final readonly class EnvelopeCryptor implements CryptorInterface
 {
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $keySize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $nonceSize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $tagSize;
 
     private int $keyNonceSize;

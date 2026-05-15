@@ -11,6 +11,8 @@ interface AeadCipherInterface extends CipherInterface
 {
     /**
      * @return int Tag size in bytes.
+     * 
+     * @psalm-return int<1, max>
      */
     public function getTagSize(): int;
 }

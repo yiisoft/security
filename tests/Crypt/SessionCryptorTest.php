@@ -18,7 +18,7 @@ final class SessionCryptorTest extends TestCase
 
     public function testEncryptProducesExpectedStructure(): void
     {
-        $plain = 'test-plain-data';
+        $plaintext = 'test-plain-data';
         $secret = 'test-secret';
         $context = 'test-context';
 
@@ -33,11 +33,11 @@ final class SessionCryptorTest extends TestCase
         // encrypt should be called with data, derived key, and a nonce of nonceSize
         $cipher->expects($this->once())
             ->method('encrypt')
-            ->with($plain, 'test-derivedkey-123456', $this->callback(static fn($nonce) => StringHelper::byteLength($nonce) === self::NONCE_SIZE))
+            ->with($plaintext, 'test-derivedkey-123456', $this->callback(static fn($nonce) => StringHelper::byteLength($nonce) === self::NONCE_SIZE))
             ->willReturn('test-ciphertext-and-tag');
 
         $cryptor = new SessionCryptor($cipher, $kdf);
-        $result = $cryptor->encrypt($plain, $secret, $context);
+        $result = $cryptor->encrypt($plaintext, $secret, $context);
 
         // result structure: keySalt || nonce || ciphertext
         $this->assertIsString($result);
@@ -57,7 +57,7 @@ final class SessionCryptorTest extends TestCase
 
     public function testDecryptReturnsPlaintextAndUsesKdfAndCipher(): void
     {
-        $plain = 'test-plain-data';
+        $plaintext = 'test-plain-data';
         $secret = 'test-secret';
         $context = 'test-context';
 
@@ -76,13 +76,13 @@ final class SessionCryptorTest extends TestCase
         $cipher->expects($this->once())
             ->method('decrypt')
             ->with($encryptedPayload, 'dek', $nonce)
-            ->willReturn($plain);
+            ->willReturn($plaintext);
 
         // Build the encrypted blob: keySalt || nonce || encryptedPayload
         $blob = $keySalt . $nonce . $encryptedPayload;
         $cryptor = new SessionCryptor($cipher, $kdf);
         $decrypted = $cryptor->decrypt($blob, $secret, $context);
-        $this->assertSame($plain, $decrypted);
+        $this->assertSame($plaintext, $decrypted);
     }
 
     public function testEncryptionIsRandomized(): void

@@ -50,11 +50,15 @@ interface CipherInterface
 
     /**
      * @return int Key size in bytes.
+     * 
+     * @psalm-return int<1, max>
      */
     public function getKeySize(): int;
 
     /**
      * @return int Nonce size in bytes
+     * 
+     * @psalm-return int<1, max>
      */
     public function getNonceSize(): int;
 }

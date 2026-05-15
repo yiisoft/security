@@ -23,8 +23,6 @@ use function
 /**
  * AEAD cipher implementation using libsodium extension.
  * Supports AES-256-GCM (hardware accelerated), ChaCha20-Poly1305-IETF, and XChaCha20-Poly1305-IETF.
- *
- * @psalm-immutable
  */
 final readonly class SodiumAeadCipher implements AeadCipherInterface
 {
@@ -33,7 +31,14 @@ final readonly class SodiumAeadCipher implements AeadCipherInterface
      */
     private const TAG_SIZE = 16;
 
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $keySize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $nonceSize;
 
     /**
@@ -89,10 +94,6 @@ final readonly class SodiumAeadCipher implements AeadCipherInterface
             };
         } catch (Exception $e) {
             throw new EncryptionException($e->getMessage());
-        }
-
-        if ($encrypted === false) {
-            throw new EncryptionException('Sodium failure on encryption');
         }
 
         return $encrypted;

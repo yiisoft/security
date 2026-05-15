@@ -13,12 +13,17 @@ use function
  * Session‑oriented encryption (single key derived per message, no key wrapping).
  * A fresh data encryption key (DEK) is derived from the secret and a random salt.
  * This is suitable for encrypting large amounts of data in a single session.
- *
- * @psalm-immutable
  */
 final readonly class SessionCryptor implements CryptorInterface
 {
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $keySize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
     private int $nonceSize;
 
     private int $keyNonceSize;

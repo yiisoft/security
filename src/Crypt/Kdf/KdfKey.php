@@ -15,8 +15,6 @@ use function
 /**
  * KDF that directly applies HKDF (HMAC-based Key Derivation Function) to the input secret.
  * Suitable for deriving additional keys from a high-entropy secret (e.g., another key).
- *
- * @psalm-immutable
  */
 final readonly class KdfKey implements KdfInterface
 {
@@ -39,6 +37,8 @@ final readonly class KdfKey implements KdfInterface
      * @return string Derived key (raw binary).
      *
      * @throws RuntimeException If HKDF fails.
+     * 
+     * @psalm-mutation-free
      */
     public function createKey(
         #[SensitiveParameter]
