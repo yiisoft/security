@@ -6,6 +6,7 @@ namespace Yiisoft\Security\Crypt;
 
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
+
 use function random_bytes;
 
 /**

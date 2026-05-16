@@ -50,7 +50,7 @@ final class KdfPassword implements KdfInterface
      *
      * @throws RuntimeException If PBKDF2 or HKDF fails.
      * @return string Derived key (raw binary).
-     * 
+     *
      * @psalm-mutation-free
      */
     public function createKey(

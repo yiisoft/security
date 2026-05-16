@@ -9,6 +9,7 @@ use SensitiveParameter;
 use ValueError;
 use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Security\Crypt\KdfInterface;
+
 use function hash_hkdf;
 
 /**
@@ -35,7 +36,7 @@ final class KdfKey implements KdfInterface
      *
      * @throws RuntimeException If HKDF fails.
      * @return string Derived key (raw binary).
-     * 
+     *
      * @psalm-mutation-free
      */
     public function createKey(

@@ -20,7 +20,7 @@ final class VersionedCryptor implements CryptorInterface
      */
     private readonly array $cryptors;
 
-        /**
+     /**
      * @param array<string, CryptorInterface> $cryptors List of cryptors indexed by version string.
      * @param string $currentVersion Version identifier used for new encryptions.
      * @param int $versionSize Fixed byte length of the version prefix (must be >=1).

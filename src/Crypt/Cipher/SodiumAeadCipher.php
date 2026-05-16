@@ -9,6 +9,7 @@ use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
+
 use function array_key_exists;
 use function extension_loaded;
 use function sodium_crypto_aead_aes256gcm_is_available;

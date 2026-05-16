@@ -9,6 +9,7 @@ use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Strings\StringHelper;
+
 use function array_key_exists;
 use function extension_loaded;
 use function openssl_decrypt;
