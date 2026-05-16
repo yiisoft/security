@@ -20,8 +20,9 @@ use function
 final readonly class KdfPassword implements KdfInterface
 {
     /**
-     * @param string $algorithm
-     * @param int $iterations {@see https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2}
+     * @param string $algorithm Hash algorithm for key derivation.
+     * @param int $iterations Derivation iterations count.
+     * See [PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) for more details.
      */
     public function __construct(
         private string $algorithm = 'sha256',
