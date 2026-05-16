@@ -17,7 +17,7 @@ use function
  * KDF that first applies PBKDF2 to the input password,
  * then applies HKDF to the result. Suitable for deriving cryptographic keys from low-entropy passwords.
  */
-final readonly class KdfPassword implements KdfInterface
+final class KdfPassword implements KdfInterface
 {
     /**
      * @param string $algorithm Hash algorithm for key derivation.
@@ -25,8 +25,8 @@ final readonly class KdfPassword implements KdfInterface
      * See [PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) for more details.
      */
     public function __construct(
-        private string $algorithm = 'sha256',
-        private int $iterations = 600_000,
+        private readonly string $algorithm = 'sha256',
+        private readonly int $iterations = 600_000,
     ) {
         if (!in_array($algorithm, hash_hmac_algos())) {
             throw new RuntimeException($algorithm . ' is not an allowed algorithm.');

@@ -17,35 +17,35 @@ use function
  * This scheme enables secure handling of long‑term secrets: the DEK is fresh for each
  * encryption, and the KEK never touches the actual data payload.
  */
-final readonly class EnvelopeCryptor implements CryptorInterface
+final class EnvelopeCryptor implements CryptorInterface
 {
     /**
      * @psalm-var int<1, max>
      */
-    private int $keySize;
+    private readonly int $keySize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private int $nonceSize;
+    private readonly int $nonceSize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private int $tagSize;
+    private readonly int $tagSize;
 
-    private int $keyNonceSize;
-    private int $encKeySize;
-    private int $keyNonceEncKeySize;
-    private int $prefixSize;
+    private readonly int $keyNonceSize;
+    private readonly int $encKeySize;
+    private readonly int $keyNonceEncKeySize;
+    private readonly int $prefixSize;
 
     /**
      * @param AeadCipherInterface $cipher AEAD cipher (e.g., AES-256-GCM)
      * @param KdfInterface $kdf Key derivation function (used to derive KEK from secret)
      */
     public function __construct(
-        private AeadCipherInterface $cipher,
-        private KdfInterface $kdf,
+        private readonly AeadCipherInterface $cipher,
+        private readonly KdfInterface $kdf,
     ) {
         $this->keySize = $this->cipher->getKeySize();
         $this->nonceSize = $this->cipher->getNonceSize();

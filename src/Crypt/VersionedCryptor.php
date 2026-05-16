@@ -13,12 +13,12 @@ use Yiisoft\Strings\StringHelper;
  * This enables seamless migration between different encryption algorithms or key lengths.
  * Each encrypted message begins with a fixed‑length version identifier.
  */
-final readonly class VersionedCryptor implements CryptorInterface
+final class VersionedCryptor implements CryptorInterface
 {
     /**
      * @var array<string, CryptorInterface> Storage for registered cryptors indexed by their version identifier.
      */
-    private array $cryptors;
+    private readonly array $cryptors;
 
         /**
      * @param array<string, CryptorInterface> $cryptors List of cryptors indexed by version string.
@@ -29,8 +29,8 @@ final readonly class VersionedCryptor implements CryptorInterface
      */
     public function __construct(
         array $cryptors,
-        private string $currentVersion,
-        private int $versionSize,
+        private readonly string $currentVersion,
+        private readonly int $versionSize,
     ) {
         if ($versionSize < 1) {
             throw new RuntimeException('Version size must be greater than 0.');

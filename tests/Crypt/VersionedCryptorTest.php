@@ -118,7 +118,7 @@ final class VersionedCryptorTest extends TestCase
         $versionedCryptor->decrypt('v2' . 'test-plain-data', 'test-secret');
     }
 
-     public function testConstructThrowsWhenCurrentVersionNotRegistered(): void
+    public function testConstructThrowsWhenCurrentVersionNotRegistered(): void
     {
         $this->expectException(RuntimeException::class);
         new VersionedCryptor(['v1' => $this->createMock(CryptorInterface::class)], 'v2', 2);
@@ -133,7 +133,7 @@ final class VersionedCryptorTest extends TestCase
     public function testConstructorThrowsExceptionWhenCryptorNotInstanceOfInterface(): void
     {
         $this->expectException(RuntimeException::class);
-        new VersionedCryptor(['v1' =>  new \stdClass()], 'v1', 2);
+        new VersionedCryptor(['v1' => new \stdClass()], 'v1', 2);
     }
 
     public function testConstructorThrowsExceptionWhenVersionSizeLessThanOne(): void

@@ -20,7 +20,7 @@ use function
  * AEAD cipher implementation using OpenSSL extension.
  * Supports only AES-GCM family (128, 192, 256) with 16-byte authentication tags.
  */
-final readonly class OpenSSLAeadCipher implements AeadCipherInterface
+final class OpenSSLAeadCipher implements AeadCipherInterface
 {
     /**
      * Authentication tag size in bytes (always 16 for GCM).
@@ -30,12 +30,12 @@ final readonly class OpenSSLAeadCipher implements AeadCipherInterface
     /**
      * @psalm-var int<1, max>
      */
-    private int $keySize;
+    private readonly int $keySize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private int $nonceSize;
+    private readonly int $nonceSize;
 
     /**
      * Look-up table of allowed OpenSSL ciphers.
@@ -60,7 +60,7 @@ final readonly class OpenSSLAeadCipher implements AeadCipherInterface
      * @throws RuntimeException If OpenSSL extension is not loaded or the cipher is not allowed.
      */
     public function __construct(
-        private string $cipher = 'AES-256-GCM',
+        private readonly string $cipher = 'AES-256-GCM',
     ) {
         if (!extension_loaded('openssl')) {
             throw new RuntimeException('Encryption requires the OpenSSL PHP extension.');

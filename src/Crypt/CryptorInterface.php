@@ -18,10 +18,9 @@ interface CryptorInterface
      * @param string $secret Password or raw key (sensitive).
      * @param string $context Application-specific context (used in key derivation).
      *
-     * @return string Encrypted payload (includes nonce, salt, authentication tag, etc.).
-     *
      * @throws EncryptionException If encryption fails.
      * @throws \RuntimeException If required PHP extension is missing.
+     * @return string Encrypted payload (includes nonce, salt, authentication tag, etc.).
      */
     public function encrypt(
         string $data,
@@ -37,10 +36,9 @@ interface CryptorInterface
      * @param string $secret Password or raw key (sensitive).
      * @param string $context Application-specific context (must match the one used for encryption).
      *
-     * @return string Decrypted plaintext.
-     *
      * @throws EncryptionException If decryption fails.
      * @throws \RuntimeException If required PHP extension is missing or data is malformed.
+     * @return string Decrypted plaintext.
      */
     public function decrypt(
         string $data,

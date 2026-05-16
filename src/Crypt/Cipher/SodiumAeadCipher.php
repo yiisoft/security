@@ -24,7 +24,7 @@ use function
  * AEAD cipher implementation using libsodium extension.
  * Supports AES-256-GCM (hardware accelerated), ChaCha20-Poly1305-IETF, and XChaCha20-Poly1305-IETF.
  */
-final readonly class SodiumAeadCipher implements AeadCipherInterface
+final class SodiumAeadCipher implements AeadCipherInterface
 {
     /**
      * Authentication tag size in bytes (always 16 for these AEAD modes).
@@ -34,12 +34,12 @@ final readonly class SodiumAeadCipher implements AeadCipherInterface
     /**
      * @psalm-var int<1, max>
      */
-    private int $keySize;
+    private readonly int $keySize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private int $nonceSize;
+    private readonly int $nonceSize;
 
     /**
      * Look-up table of allowed Sodium ciphers.
@@ -64,7 +64,7 @@ final readonly class SodiumAeadCipher implements AeadCipherInterface
      * @throws RuntimeException If sodium extension is missing, cipher not allowed, or AES-256-GCM without hardware support.
      */
     public function __construct(
-        private string $cipher = 'AES-256-GCM',
+        private readonly string $cipher = 'AES-256-GCM',
     ) {
         if (!extension_loaded('sodium')) {
             throw new RuntimeException('Encryption requires the Sodium PHP extension.');

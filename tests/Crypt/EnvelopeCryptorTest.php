@@ -26,7 +26,7 @@ final class EnvelopeCryptorTest extends TestCase
         $kek = random_bytes(self::KEY_SIZE);
 
         [$cipher, $kdf] = $this->createMocks();
-        
+
         $kdf->expects($this->once())
             ->method('createKey')
             ->with($secret, self::KEY_SIZE, $context, $this->callback(static fn($salt) => StringHelper::byteLength($salt) === self::KEY_SIZE))
@@ -46,17 +46,14 @@ final class EnvelopeCryptorTest extends TestCase
                     $this->assertEquals($kek, $key);
                     $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($nonce));
 
-                    //return 'encDekWithTag-------------------';
                     return 'encDek--------------------------';
                 }
 
-                // Второй вызов: payload = data, key = dek (keySize), nonce length = nonceSize
                 [$payload, $key, $nonce] = $args;
                 $this->assertEquals($plaintext, $payload);
                 $this->assertEquals(self::KEY_SIZE, StringHelper::byteLength($key));
                 $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($nonce));
 
-                //return 'encDataWithTag';
                 return 'encData';
             });
 
@@ -99,12 +96,12 @@ final class EnvelopeCryptorTest extends TestCase
         $encDataWithTag = $plaintext . $tag;
 
         [$cipher, $kdf] = $this->createMocks();
-        
+
         $kdf->expects($this->once())
             ->method('createKey')
             ->with($secret, self::KEY_SIZE, $context, $keySalt)
             ->willReturn('kek');
-        
+
         $cipher->expects($this->exactly(2))
             ->method('decrypt')
             ->willReturnCallback(function (...$args) use ($plaintext, $encDekWithTag, $encDataWithTag, $dekNonce, $dek, $dataNonce) {

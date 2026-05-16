@@ -20,9 +20,8 @@ interface KdfInterface
      * @param string $context Application-specific context string (used as HKDF info).
      * @param string $salt Salt value (must be random and unique for each derivation).
      *
-     * @return string The derived key (raw binary string).
-     *
      * @throws \RuntimeException If key derivation fails.
+     * @return string The derived key (raw binary string).
      */
     public function createKey(
         #[SensitiveParameter]

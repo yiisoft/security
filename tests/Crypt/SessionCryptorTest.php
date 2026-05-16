@@ -23,14 +23,12 @@ final class SessionCryptorTest extends TestCase
         $context = 'test-context';
 
         [$cipher, $kdf] = $this->createMocks();
-        
-        //$kdf = $this->createMock(KdfInterface::class);
+
         $kdf->expects($this->once())
             ->method('createKey')
             ->with($secret, self::KEY_SIZE, $context, $this->callback(static fn($salt) => StringHelper::byteLength($salt) === self::KEY_SIZE))
             ->willReturn('test-derivedkey-123456');
 
-        // encrypt should be called with data, derived key, and a nonce of nonceSize
         $cipher->expects($this->once())
             ->method('encrypt')
             ->with($plaintext, 'test-derivedkey-123456', $this->callback(static fn($nonce) => StringHelper::byteLength($nonce) === self::NONCE_SIZE))

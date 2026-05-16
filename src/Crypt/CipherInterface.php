@@ -18,9 +18,8 @@ interface CipherInterface
      * @param string $key Secret encryption key (sensitive).
      * @param string $nonce Initialization vector or nonce.
      *
-     * @return string Ciphertext.
-     *
      * @throws EncryptionException If encryption fails.
+     * @return string Ciphertext.
      */
     public function encrypt(
         string $data,
@@ -36,9 +35,8 @@ interface CipherInterface
      * @param string $key Secret encryption key (sensitive).
      * @param string $nonce Nonce used during encryption.
      *
-     * @return string Decrypted plaintext.
-     *
      * @throws EncryptionException If decryption fails.
+     * @return string Decrypted plaintext.
      */
     public function decrypt(
         string $data,
@@ -50,14 +48,14 @@ interface CipherInterface
 
     /**
      * @return int Key size in bytes.
-     * 
+     *
      * @psalm-return int<1, max>
      */
     public function getKeySize(): int;
 
     /**
      * @return int Nonce size in bytes
-     * 
+     *
      * @psalm-return int<1, max>
      */
     public function getNonceSize(): int;

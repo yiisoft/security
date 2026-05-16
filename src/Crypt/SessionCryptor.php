@@ -14,27 +14,27 @@ use function
  * A fresh data encryption key (DEK) is derived from the secret and a random salt.
  * This is suitable for encrypting large amounts of data in a single session.
  */
-final readonly class SessionCryptor implements CryptorInterface
+final class SessionCryptor implements CryptorInterface
 {
     /**
      * @psalm-var int<1, max>
      */
-    private int $keySize;
+    private readonly int $keySize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private int $nonceSize;
+    private readonly int $nonceSize;
 
-    private int $keyNonceSize;
+    private readonly int $keyNonceSize;
 
     /**
      * @param CipherInterface $cipher Low‑level cipher
      * @param KdfInterface $kdf Key derivation function
      */
     public function __construct(
-        private CipherInterface $cipher,
-        private KdfInterface $kdf,
+        private readonly CipherInterface $cipher,
+        private readonly KdfInterface $kdf,
     ) {
         $this->keySize = $this->cipher->getKeySize();
         $this->nonceSize = $this->cipher->getNonceSize();

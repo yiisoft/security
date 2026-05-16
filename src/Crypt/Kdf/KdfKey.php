@@ -16,10 +16,10 @@ use function
  * KDF that directly applies HKDF (HMAC-based Key Derivation Function) to the input secret.
  * Suitable for deriving additional keys from a high-entropy secret (e.g., another key).
  */
-final readonly class KdfKey implements KdfInterface
+final class KdfKey implements KdfInterface
 {
     public function __construct(
-        private string $algorithm = 'sha256',
+        private readonly string $algorithm = 'sha256',
     ) {
         if (!in_array($algorithm, hash_hmac_algos())) {
             throw new RuntimeException($algorithm . ' is not an allowed algorithm.');

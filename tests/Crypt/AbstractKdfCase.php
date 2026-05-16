@@ -35,7 +35,6 @@ abstract class AbstractKdfCase extends TestCase
     {
         $kdf = $this->createKdfInstance($algo);
 
-        
         $secret = hex2bin(preg_replace('{\s+}', '', $secret));
         $salt = hex2bin(preg_replace('{\s+}', '', $salt));
         $key = hex2bin(preg_replace('{\s+}', '', $key));
