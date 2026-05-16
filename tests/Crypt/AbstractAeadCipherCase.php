@@ -13,9 +13,9 @@ use Yiisoft\Security\Crypt\CipherInterface;
 /**
  * @abstract
  */
-abstract class AbstractCipherCase extends TestCase
+abstract class AbstractAeadCipherCase extends TestCase
 {
-    abstract protected function createCipherInstance(string $cipher): CipherInterface;
+    abstract protected function createCipherInstance(?string $cipher = null): CipherInterface;
 
     abstract public static function dataProviderCiphers(): iterable;
 
@@ -155,5 +155,14 @@ abstract class AbstractCipherCase extends TestCase
 
         $this->expectException(EncryptionException::class);
         $cipherInstance->decrypt($ciphertext, $key, $wrongNonce);
+    }
+
+    public function testGetSizes(): void
+    {
+        $cipher = $this->createCipherInstance();
+
+        $this->assertIsInt($cipher->getKeySize());
+        $this->assertIsInt($cipher->getNonceSize());
+        $this->assertIsInt($cipher->getTagSize());
     }
 }

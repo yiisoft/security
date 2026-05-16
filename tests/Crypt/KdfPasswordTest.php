@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests\Crypt;
 
+use RuntimeException;
 use Yiisoft\Security\Crypt\KdfInterface;
 use Yiisoft\Security\Crypt\Kdf\KdfPassword;
 
@@ -47,5 +48,11 @@ final class KdfPasswordTest extends AbstractKdfCase
             'aa24ea6b979b1a857d9f9dfa0dcac8a44c3f7b9ea061551529556ac70dd0cfeb',
             '07f140674180f0ba9d4c6dea90a0ad389274624bc966c550519c98704f1df504',
         ];
+    }
+
+    public function testConstructorThrowsExceptionWhenIterationsLessThanOne(): void
+    {
+        $this->expectException(RuntimeException::class);
+        new KdfPassword('sha256', 0);
     }
 }
