@@ -2,7 +2,7 @@
 
 ## 1.2.1 under development
 
-- no changes in this release.
+- New #71: Add Session, Envelope and Versioned Cryptors (@olegbaturin)
 
 ## 1.2.0 November 25, 2025
 
