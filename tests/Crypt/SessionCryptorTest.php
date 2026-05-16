@@ -40,8 +40,8 @@ final class SessionCryptorTest extends TestCase
         // result structure: keySalt || nonce || ciphertext
         $this->assertIsString($result);
         $this->assertEquals(
-                self::KEY_SIZE + self::NONCE_SIZE + StringHelper::byteLength('test-ciphertext-and-tag'),
-                StringHelper::byteLength($result)
+            self::KEY_SIZE + self::NONCE_SIZE + StringHelper::byteLength('test-ciphertext-and-tag'),
+            StringHelper::byteLength($result)
         );
 
         $keySalt = StringHelper::byteSubstring($result, 0, self::KEY_SIZE);
@@ -63,7 +63,7 @@ final class SessionCryptorTest extends TestCase
         $nonce = str_repeat("\x02", self::NONCE_SIZE);
 
         $encryptedPayload = 'encrypted-by-cipher';
-        
+
         [$cipher, $kdf] = $this->createMocks();
 
         $kdf->expects($this->once())
@@ -119,5 +119,4 @@ final class SessionCryptorTest extends TestCase
 
         return [$cipher, $kdf];
     }
-    
 }

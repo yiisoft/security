@@ -45,7 +45,6 @@ interface CipherInterface
         string $nonce,
     ): string;
 
-
     /**
      * @return int Key size in bytes.
      *

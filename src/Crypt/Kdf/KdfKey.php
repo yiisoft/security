@@ -9,8 +9,7 @@ use SensitiveParameter;
 use ValueError;
 use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Security\Crypt\KdfInterface;
-use function 
-    hash_hkdf;
+use function hash_hkdf;
 
 /**
  * KDF that directly applies HKDF (HMAC-based Key Derivation Function) to the input secret.
@@ -34,9 +33,8 @@ final class KdfKey implements KdfInterface
      * @param string $context Application-specific context (used as HKDF info).
      * @param string $salt Salt value (optional, but recommended for stronger extraction).
      *
-     * @return string Derived key (raw binary).
-     *
      * @throws RuntimeException If HKDF fails.
+     * @return string Derived key (raw binary).
      * 
      * @psalm-mutation-free
      */
@@ -46,8 +44,7 @@ final class KdfKey implements KdfInterface
         int $keySize,
         string $context,
         string $salt,
-    ): string
-    {
+    ): string {
         try {
             return hash_hkdf($this->algorithm, $secret, $keySize, $context, $salt);
         } catch (ValueError $e) {

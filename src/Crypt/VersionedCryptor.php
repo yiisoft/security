@@ -89,8 +89,8 @@ final class VersionedCryptor implements CryptorInterface
      * and ensures each version identifier has exactly `$versionSize` bytes.
      *
      * @param array $cryptors Raw input mapping.
-     * @return array<string, CryptorInterface> Normalised array.
      * @throws RuntimeException On validation error.
+     * @return array<string, CryptorInterface> Normalised array.
      */
     private function validateAndNormalize(array $cryptors): array
     {

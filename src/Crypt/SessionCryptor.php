@@ -6,8 +6,7 @@ namespace Yiisoft\Security\Crypt;
 
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
-use function
-    random_bytes;
+use function random_bytes;
 
 /**
  * Session‑oriented encryption (single key derived per message, no key wrapping).
@@ -82,8 +81,7 @@ final class SessionCryptor implements CryptorInterface
         $dataEncrypted = StringHelper::byteSubstring($data, $this->keyNonceSize);
 
         $dek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
-        $decrypted = $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
 
-        return $decrypted;
+        return $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
     }
 }

@@ -6,8 +6,7 @@ namespace Yiisoft\Security\Crypt;
 
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
-use function
-    random_bytes;
+use function random_bytes;
 
 /**
  * Envelope encryption (key wrapping) using a KDF to derive a Key Encryption Key (KEK)
@@ -106,8 +105,7 @@ final class EnvelopeCryptor implements CryptorInterface
 
         $kek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
         $dek = $this->cipher->decrypt($encDek, $kek, $dekNonce);
-        $decrypted = $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
 
-        return $decrypted;
+        return $this->cipher->decrypt($dataEncrypted, $dek, $dataNonce);
     }
 }

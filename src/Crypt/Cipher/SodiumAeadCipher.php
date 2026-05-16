@@ -9,16 +9,15 @@ use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
-use function 
-    array_key_exists,
-    extension_loaded,
-    sodium_crypto_aead_aes256gcm_is_available,
-    sodium_crypto_aead_aes256gcm_encrypt,
-    sodium_crypto_aead_aes256gcm_decrypt,
-    sodium_crypto_aead_chacha20poly1305_ietf_encrypt,
-    sodium_crypto_aead_chacha20poly1305_ietf_decrypt,
-    sodium_crypto_aead_xchacha20poly1305_ietf_encrypt,
-    sodium_crypto_aead_xchacha20poly1305_ietf_decrypt;
+use function array_key_exists;
+use function extension_loaded;
+use function sodium_crypto_aead_aes256gcm_is_available;
+use function sodium_crypto_aead_aes256gcm_encrypt;
+use function sodium_crypto_aead_aes256gcm_decrypt;
+use function sodium_crypto_aead_chacha20poly1305_ietf_encrypt;
+use function sodium_crypto_aead_chacha20poly1305_ietf_decrypt;
+use function sodium_crypto_aead_xchacha20poly1305_ietf_encrypt;
+use function sodium_crypto_aead_xchacha20poly1305_ietf_decrypt;
 
 /**
  * AEAD cipher implementation using libsodium extension.
@@ -84,8 +83,7 @@ final class SodiumAeadCipher implements AeadCipherInterface
         #[SensitiveParameter]
         string $key,
         string $nonce,
-    ): string
-    {
+    ): string {
         try {
             $encrypted = match ($this->cipher) {
                 'AES-256-GCM' => sodium_crypto_aead_aes256gcm_encrypt($data, '', $nonce, $key),
@@ -104,8 +102,7 @@ final class SodiumAeadCipher implements AeadCipherInterface
         #[SensitiveParameter]
         string $key,
         string $nonce,
-    ): string
-    {
+    ): string {
         try {
             $decrypted = match ($this->cipher) {
                 'AES-256-GCM' => sodium_crypto_aead_aes256gcm_decrypt($data, '', $nonce, $key),

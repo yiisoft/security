@@ -9,12 +9,11 @@ use SensitiveParameter;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Strings\StringHelper;
-use function
-    array_key_exists,
-    extension_loaded,
-    openssl_decrypt,
-    openssl_encrypt,
-    openssl_error_string;
+use function array_key_exists;
+use function extension_loaded;
+use function openssl_decrypt;
+use function openssl_encrypt;
+use function openssl_error_string;
 
 /**
  * AEAD cipher implementation using OpenSSL extension.
@@ -77,8 +76,7 @@ final class OpenSSLAeadCipher implements AeadCipherInterface
         #[SensitiveParameter]
         string $key,
         string $nonce,
-    ): string
-    {
+    ): string {
         if (StringHelper::byteLength($key) !== $this->keySize) {
             throw new EncryptionException("Key must be {$this->keySize} bytes long.");
         }
@@ -101,8 +99,7 @@ final class OpenSSLAeadCipher implements AeadCipherInterface
         #[SensitiveParameter]
         string $key,
         string $nonce,
-    ): string
-    {
+    ): string {
         if (StringHelper::byteLength($key) !== $this->keySize) {
             throw new EncryptionException("Key must be {$this->keySize} bytes long.");
         }

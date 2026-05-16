@@ -9,9 +9,8 @@ use SensitiveParameter;
 use ValueError;
 use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Security\Crypt\KdfInterface;
-use function 
-    hash_hkdf,
-    hash_pbkdf2;
+use function hash_hkdf;
+use function hash_pbkdf2;
 
 /**
  * KDF that first applies PBKDF2 to the input password,
@@ -49,9 +48,8 @@ final class KdfPassword implements KdfInterface
      * @param string $context Application-specific context (used as HKDF info).
      * @param string $salt Salt value (must be random and unique, at least 16 bytes).
      *
-     * @return string Derived key (raw binary).
-     *
      * @throws RuntimeException If PBKDF2 or HKDF fails.
+     * @return string Derived key (raw binary).
      * 
      * @psalm-mutation-free
      */
@@ -61,8 +59,7 @@ final class KdfPassword implements KdfInterface
         int $keySize,
         string $context,
         string $salt,
-    ): string
-    {
+    ): string {
         try {
             $key = hash_pbkdf2($this->algorithm, $secret, $salt, $this->iterations, $keySize, true);
 
