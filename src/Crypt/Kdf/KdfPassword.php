@@ -20,9 +20,11 @@ use function hash_pbkdf2;
 final class KdfPassword implements KdfInterface
 {
     /**
-     * @param string $algorithm Hash algorithm for key derivation.
+     * @param string $algorithm Hash algorithm for key derivation. {@see hash_hmac_algos()}
      * @param int $iterations Derivation iterations count.
      * See [PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) for more details.
+     *
+     * @throws RuntimeException
      */
     public function __construct(
         private readonly string $algorithm = 'sha256',

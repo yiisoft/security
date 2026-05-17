@@ -18,6 +18,11 @@ use function hash_hkdf;
  */
 final class KdfKey implements KdfInterface
 {
+    /**
+     * @param string $algorithm Hash algorithm for key derivation. {@see hash_hmac_algos()}
+     *
+     * @throws RuntimeException
+     */
     public function __construct(
         private readonly string $algorithm = 'sha256',
     ) {
