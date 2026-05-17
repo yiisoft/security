@@ -27,6 +27,7 @@ Security package provides a set of classes to handle common security-related tas
 - PHP 8.1 - 8.5.
 - `hash` PHP extension.
 - `openssl` PHP extension.
+- `sodium` PHP extension.
 
 ## Installation
 
@@ -69,46 +70,6 @@ Validating password against the hash:
 $hash = getHash();
 
 $result = (new PasswordHasher())->validate($password, $hash); 
-```
-
-### Encryption and decryption by password
-
-Encrypting data:
-
-```php
-$encryptedData = (new Crypt())->encryptByPassword($data, $password);
-
-// save data to database or another storage
-saveData($encryptedData);
-```
-
-Decrypting it:
-
-```php
-// obtain encrypted data from database or another storage
-$encryptedData = getEncryptedData();
-
-$data = (new Crypt())->decryptByPassword($encryptedData, $password);
-```
-
-### Encryption and decryption by key
-
-Encrypting data:
-
-```php
-$encryptedData = (new Crypt())->encryptByKey($data, $key);
-
-// save data to database or another storage
-saveData($encryptedData);
-```
-
-Decrypting it:
-
-```php
-// obtain encrypted data from database or another storage
-$encryptedData = getEncryptedData();
-
-$data = (new Crypt())->decryptByKey($encryptedData, $key);
 ```
 
 ### Data tampering prevention
@@ -165,6 +126,213 @@ There is a special function in PHP that compares strings in a constant time:
 
 ```php
 hash_equals($expected, $actual);
+```
+
+## New cryptor
+
+`Crypt` provides encryption layer based on `AEAD` algorithms.
+It supports key derivation, session‑oriented encryption, envelope encryption, and versioned ciphertexts for seamless algorithm migration.
+
+All high‑level encryptors implement the `CryptorInterface`. Inject the desired cryptor (`SessionCryptor`, `EnvelopeCryptor` or `VersionedCryptor`) and use it as follows:
+
+```php
+use Yiisoft\Security\Crypt\CryptorInterface;
+
+$cryptor = $contaier->get(CryptorInterface::class);
+/** @var high‑entropy key or low‑entropy password */
+$secret;
+/** @var Optional application‑specific string that is mixed into the KDF */
+$context;
+
+$encrypted = $cryptor->encrypt('secret data', $secret, $context);
+$data = $cryptor->decrypt($encrypted, $secret, $context);
+```
+
+### Session cryptor
+
+Session‑oriented encryption (single key derived per message, no key wrapping).
+A fresh data encryption key (DEK) is derived from the secret and a random salt.
+
+Structure:
+```
+keySalt || nonce || encrypted(data) + tag
+```
+
+DI Configuration:
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\SessionCryptor;
+use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypt\Kdf\KdfKey;
+
+SessionCryptor::class => [
+    '__construct()' => [
+        'cipher' => Reference::to(SodiumAeadCipher::class),
+        'kdf' => Reference::to(KdfKey::class),
+    ],
+],
+```
+
+### Envelope cryptor
+
+Envelope encryption (key wrapping) using a KDF to derive a Key Encryption Key (KEK)
+and a random Data Encryption Key (DEK). The DEK is encrypted with the KEK and stored
+together with the ciphertext.
+
+Structure:
+```
+keySalt || dekNonce || encrypted(DEK) + tag || dataNonce || encrypted(data) + tag
+```
+
+DI Configuration:
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\EnvelopeCryptor;
+use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypt\Kdf\KdfKey;
+
+EnvelopeCryptor::class => [
+    '__construct()' => [
+        'cipher' => Reference::to(SodiumAeadCipher::class),
+        'kdf' => Reference::to(KdfKey::class),
+    ],
+],
+```
+
+
+### Versioned cryptor
+
+Wraps multiple cryptors and adds a fixed‑length version prefix to every ciphertext.
+
+DI Configuration:
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\VersionedCryptor;
+use Yiisoft\Security\Crypt\SessionCryptor;
+use Yiisoft\Security\Crypt\EnvelopeCryptor;
+
+VersionedCryptor::class => [
+    '__construct()' => [
+        'cryptors' => ReferencesArray::from([
+            chr(0x01) => SessionCryptor::class,
+            chr(0x96) => EnvelopeCryptor::class,
+        ]),
+        'currentVersion' => chr(0x01),
+        'versionSize' => 1
+    ],
+],
+```
+
+### Configure KDF
+
+The KDF is responsible for deriving cryptographic keys from the provided secret. Choose the appropriate KDF based on the type of secret.
+
+#### KdfKey - for high‑entropy keys
+Use this when the secret is already a strong cryptographic key (e.g. a 256‑bit random value). It applies `HKDF` directly.
+
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\Kdf\KdfKey;
+
+KdfKey::class => [
+    '__construct()' => [
+        'algorithm' => 'sha512', // any hash_hmac_algos()
+    ],
+],
+```
+
+#### KdfPassword - for low‑entropy passwords
+This first applies `PBKDF2` with a configurable iteration count, then `HKDF` to derive the final key.
+Follow OWASP recommendations for iteration counts.
+
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\Kdf\KdfPassword;
+
+KdfPassword::class => [
+    '__construct()' => [
+        'algorithm' => 'sha512', // any hash_hmac_algos()
+        'iterations' => 700_000,
+    ],
+],
+```
+
+### Configuring AEAD Ciphers
+
+Two backends are available: `OpenSSL` and `Sodium` (libsodium).
+
+#### OpenSSLAeadCipher
+Supports `AES‑GCM` family.
+
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\Cipher\OpenSSLAeadCipher;
+
+OpenSSLAeadCipher::class => [
+    '__construct()' => [
+        'cipher' => 'AES-192-GCM',
+    ],
+],
+```
+
+#### SodiumAeadCipher
+Supports `AES‑256‑GCM` (hardware accelerated), `ChaCha20‑Poly1305‑IETF`, and `XChaCha20‑Poly1305‑IETF`.
+Note: `AES‑256‑GCM` with `Sodium` requires CPU support for AES instructions (`AES‑NI`). Use `ChaCha20‑Poly1305‑IETF` for a safe, non‑hardware‑dependent alternative.
+
+```php
+// /config/di.php
+use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
+
+SodiumAeadCipher::class => [
+    '__construct()' => [
+        'cipher' => 'ChaCha20-Poly1305-IETF',
+    ],
+],
+```
+
+## Old cryptor
+
+Note: This is the legacy encryption component based on `CBC` mode + `HMAC`.
+For new projects, prefer the AEAD‑based cryptors (`AES‑GCM`, `ChaCha20‑Poly1305`) which provide authenticated encryption in a single step and are less error‑prone.
+
+### Encryption and decryption by password
+
+Encrypting data:
+
+```php
+$encryptedData = (new Crypt())->encryptByPassword($data, $password);
+
+// save data to database or another storage
+saveData($encryptedData);
+```
+
+Decrypting it:
+
+```php
+// obtain encrypted data from database or another storage
+$encryptedData = getEncryptedData();
+
+$data = (new Crypt())->decryptByPassword($encryptedData, $password);
+```
+
+### Encryption and decryption by key
+
+Encrypting data:
+
+```php
+$encryptedData = (new Crypt())->encryptByKey($data, $key);
+
+// save data to database or another storage
+saveData($encryptedData);
+```
+
+Decrypting it:
+
+```php
+// obtain encrypted data from database or another storage
+$encryptedData = getEncryptedData();
+
+$data = (new Crypt())->decryptByKey($encryptedData, $key);
 ```
 
 ## Documentation
