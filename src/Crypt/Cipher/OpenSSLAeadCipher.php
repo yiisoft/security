@@ -85,7 +85,7 @@ final class OpenSSLAeadCipher implements AeadCipherInterface
             throw new EncryptionException("Nonce must be {$this->nonceSize} bytes long.");
         }
 
-        $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag, '', self::TAG_SIZE);
+        $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY, $nonce, $tag, '', self::TAG_SIZE);
 
         if ($encrypted === false) {
             $error = openssl_error_string() ?: 'Unknown error';
@@ -111,7 +111,7 @@ final class OpenSSLAeadCipher implements AeadCipherInterface
         $tag = StringHelper::byteSubstring($data, -self::TAG_SIZE);
         $ciphertext = StringHelper::byteSubstring($data, 0, -self::TAG_SIZE);
 
-        $decrypted = openssl_decrypt($ciphertext, $this->cipher, $key, OPENSSL_RAW_DATA, $nonce, $tag);
+        $decrypted = openssl_decrypt($ciphertext, $this->cipher, $key, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY, $nonce, $tag);
 
         if ($decrypted === false) {
             $error = openssl_error_string() ?: 'Unknown error';
