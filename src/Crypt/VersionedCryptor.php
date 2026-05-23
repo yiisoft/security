@@ -7,6 +7,7 @@ namespace Yiisoft\Security\Crypt;
 use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
+use function bin2hex;
 
 /**
  * VersionedCryptor wraps multiple cryptors and adds a version prefix to the ciphertext.
@@ -77,7 +78,7 @@ final class VersionedCryptor implements CryptorInterface
 
         $version = StringHelper::byteSubstring($data, 0, $this->versionSize);
         $cryptor = $this->cryptors[$version]
-                ?? throw new RuntimeException('version not found');
+                ?? throw new EncryptionException(sprintf('Unsupported encrypted data version "0x%s"', bin2hex($version)));
 
         $payload = StringHelper::byteSubstring($data, $this->versionSize);
 

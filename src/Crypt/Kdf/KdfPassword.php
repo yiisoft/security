@@ -35,7 +35,7 @@ final class KdfPassword implements KdfInterface
         }
 
         if ($iterations <= 0) {
-            throw new RuntimeException("Iterations must be greather then 0, but {$iterations} provided.");
+            throw new RuntimeException("Iterations must be greater than 0, but {$iterations} provided.");
         }
     }
 

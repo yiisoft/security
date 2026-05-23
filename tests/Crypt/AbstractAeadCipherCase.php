@@ -8,14 +8,14 @@ use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yiisoft\Security\Crypt\EncryptionException;
-use Yiisoft\Security\Crypt\CipherInterface;
+use Yiisoft\Security\Crypt\AeadCipherInterface;
 
 /**
  * @abstract
  */
 abstract class AbstractAeadCipherCase extends TestCase
 {
-    abstract protected function createCipherInstance(?string $cipher = null): CipherInterface;
+    abstract protected function createCipherInstance(?string $cipher = null): AeadCipherInterface;
 
     abstract public static function dataProviderCiphers(): iterable;
 
@@ -66,7 +66,7 @@ abstract class AbstractAeadCipherCase extends TestCase
     public function testEncryptWithWrongKeySizeThrowsException(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
-        $key = random_bytes($cipherInstance->getKeySize() + 1); // неверный размер
+        $key = random_bytes($cipherInstance->getKeySize() + 1); // wrong key size
         $nonce = random_bytes($cipherInstance->getNonceSize());
         $plaintext = 'test-plain-data';
 
@@ -79,7 +79,7 @@ abstract class AbstractAeadCipherCase extends TestCase
     {
         $cipherInstance = $this->createCipherInstance($cipher);
         $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize() + 1); // неверный размер
+        $nonce = random_bytes($cipherInstance->getNonceSize() + 1); // wrong nounce size
         $plaintext = 'test-plain-data';
 
         $this->expectException(EncryptionException::class);
@@ -104,7 +104,7 @@ abstract class AbstractAeadCipherCase extends TestCase
     {
         $cipherInstance = $this->createCipherInstance($cipher);
         $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize()); // неверный размер
+        $nonce = random_bytes($cipherInstance->getNonceSize()); // wrong nounce size
         $plaintext = 'test-plain-data';
         $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
 

@@ -138,7 +138,7 @@ All high‑level encryptors implement the `CryptorInterface`. Inject the desired
 ```php
 use Yiisoft\Security\Crypt\CryptorInterface;
 
-$cryptor = $contaier->get(CryptorInterface::class);
+$cryptor = $container->get(CryptorInterface::class);
 /** @var high‑entropy key or low‑entropy password */
 $secret;
 /** @var Optional application‑specific string that is mixed into the KDF */

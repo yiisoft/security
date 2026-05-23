@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests\Crypt;
 
-use Yiisoft\Security\Crypt\CipherInterface;
+use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
 
 final class SodiumGcmCipherTest extends AbstractAeadCipherCase
@@ -18,7 +18,7 @@ final class SodiumGcmCipherTest extends AbstractAeadCipherCase
         }
     }
 
-    protected function createCipherInstance(?string $cipher = null): CipherInterface
+    protected function createCipherInstance(?string $cipher = null): AeadCipherInterface
     {
         return $cipher ? new SodiumAeadCipher($cipher) : new SodiumAeadCipher();
     }

@@ -39,14 +39,14 @@ final class EnvelopeCryptorTest extends TestCase
                 $callCount++;
 
                 if ($callCount === 1) {
-                    // Первый вызов: payload = dek + dataNonce, key = kek, nonce length = nonceSize
+                    // First call: payload = dek, key = kek, nonce length = nonceSize
                     [$payload, $key, $nonce] = $args;
                     $this->assertIsString($payload);
                     $this->assertEquals(self::KEY_SIZE, StringHelper::byteLength($payload));
                     $this->assertEquals($kek, $key);
                     $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($nonce));
 
-                    return 'encDek--------------------------';
+                    return 'encDek--------------------------' . '________________';
                 }
 
                 [$payload, $key, $nonce] = $args;
@@ -62,21 +62,20 @@ final class EnvelopeCryptorTest extends TestCase
         $result = $cryptor->encrypt($plaintext, $secret, $context);
         $this->assertIsString($result);
         $this->assertEquals(
-            self::KEY_SIZE + self::NONCE_SIZE + self::KEY_SIZE + self::NONCE_SIZE + StringHelper::byteLength('encData'),
-            //self::KEY_SIZE + self::NONCE_SIZE + StringHelper::byteLength('encDekWithTag') + StringHelper::byteLength('encDataWithTag'),
+            self::KEY_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE) + self::NONCE_SIZE + StringHelper::byteLength('encData'),
             StringHelper::byteLength($result)
         );
 
         $keySalt = StringHelper::byteSubstring($result, 0, self::KEY_SIZE);
         $dekNonce = StringHelper::byteSubstring($result, self::KEY_SIZE, self::NONCE_SIZE);
-        $encDek = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE, self::KEY_SIZE);
-        $dataNonce = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE + self::KEY_SIZE, self::NONCE_SIZE);
-        $ciphertext = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE + self::KEY_SIZE + self::NONCE_SIZE);
+        $encDek = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE, self::KEY_SIZE + self::TAG_SIZE);
+        $dataNonce = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE), self::NONCE_SIZE);
+        $ciphertext = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE) + self::NONCE_SIZE);
 
         $this->assertEquals(self::KEY_SIZE, StringHelper::byteLength($keySalt));
         $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($dekNonce));
         $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($dataNonce));
-        $this->assertEquals('encDek--------------------------', $encDek);
+        $this->assertEquals('encDek--------------------------' . '________________', $encDek);
         $this->assertEquals('encData', $ciphertext);
     }
 

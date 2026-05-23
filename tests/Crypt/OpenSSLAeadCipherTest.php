@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests\Crypt;
 
-use Yiisoft\Security\Crypt\CipherInterface;
+use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\Cipher\OpenSSLAeadCipher;
 
 final class OpenSSLAeadCipherTest extends AbstractAeadCipherCase
@@ -16,7 +16,7 @@ final class OpenSSLAeadCipherTest extends AbstractAeadCipherCase
         }
     }
 
-    protected function createCipherInstance(?string $cipher = null): CipherInterface
+    protected function createCipherInstance(?string $cipher = null): AeadCipherInterface
     {
         return $cipher ? new OpenSSLAeadCipher($cipher) : new OpenSSLAeadCipher();
     }

@@ -12,7 +12,7 @@ use Yiisoft\Security\Crypt\VersionedCryptor;
 
 final class VersionedCryptorTest extends TestCase
 {
-    public function  testEncryptPrependsVersionAndDelegates(): void
+    public function testEncryptPrependsVersionAndDelegates(): void
     {
         $plaintext = 'test-plain-data';
         $secret = 'test-secret';
@@ -110,14 +110,6 @@ final class VersionedCryptorTest extends TestCase
         new VersionedCryptor([12 => $this->createMock(CryptorInterface::class)], '123', 3);
     }
 
-    public function testDecryptThrowsExceptionWhenVersionNotFound(): void
-    {
-        $versionedCryptor = new VersionedCryptor(['v1' => $this->createMock(CryptorInterface::class)], 'v1', 2);
-
-        $this->expectException(RuntimeException::class);
-        $versionedCryptor->decrypt('v2' . 'test-plain-data', 'test-secret');
-    }
-
     public function testConstructThrowsWhenCurrentVersionNotRegistered(): void
     {
         $this->expectException(RuntimeException::class);
@@ -155,6 +147,14 @@ final class VersionedCryptorTest extends TestCase
 
         $this->expectException(EncryptionException::class);
         $versionedCryptor->decrypt('x', 'secret');
+    }
+
+    public function testDecryptThrowsExceptionWhenVersionNotFound(): void
+    {
+        $versionedCryptor = new VersionedCryptor(['v1' => $this->createMock(CryptorInterface::class)], 'v1', 2);
+
+        $this->expectException(EncryptionException::class);
+        $versionedCryptor->decrypt('v2' . 'test-plain-data', 'test-secret');
     }
 
     public function testDecryptInvalidData(): void
