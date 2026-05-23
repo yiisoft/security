@@ -7,6 +7,7 @@ namespace Yiisoft\Security\Crypt;
 use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
+
 use function bin2hex;
 
 /**
