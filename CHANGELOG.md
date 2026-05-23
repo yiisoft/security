@@ -2,7 +2,7 @@
 
 ## 1.2.1 under development
 
-- Bug #72: Fix possibly null offset (@olegbaturin)
+- Bug #72: Fix possibly null offset in `PasswordHasher` (@olegbaturin)
 
 ## 1.2.0 November 25, 2025
 
