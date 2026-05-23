@@ -39,7 +39,7 @@ final class PasswordHasher
         array|null $parameters = null,
     ) {
         if ($parameters === null) {
-            $this->parameters = self::SAFE_PARAMETERS[$this->algorithm] ?? [];
+            $this->parameters = self::SAFE_PARAMETERS[$this->algorithm ?? ''] ?? [];
         } else {
             $this->parameters = $parameters;
         }
