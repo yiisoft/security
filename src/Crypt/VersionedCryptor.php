@@ -45,11 +45,6 @@ final class VersionedCryptor implements CryptorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws RuntimeException If encryption fails.
-     */
     public function encrypt(
         string $data,
         #[SensitiveParameter]
@@ -64,8 +59,7 @@ final class VersionedCryptor implements CryptorInterface
     /**
      * {@inheritdoc}
      *
-     * @throws RuntimeException If the version prefix cannot be read or no cryptor matches.
-     * @throws EncryptionException If decryption fails .
+     * @throws EncryptionException If the version prefix cannot be read or no cryptor matches.
      */
     public function decrypt(
         string $data,
