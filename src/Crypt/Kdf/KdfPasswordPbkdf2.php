@@ -19,7 +19,7 @@ use function in_array;
  * KDF that first applies PBKDF2 to the input password,
  * then applies HKDF to the result. Suitable for deriving cryptographic keys from low-entropy passwords.
  */
-final class KdfPasswordPbrdf2 implements KdfInterface
+final class KdfPasswordPbkdf2 implements KdfInterface
 {
     /**
      * @param string $hashAlgo Hash algorithm for key derivation. {@see hash_hmac_algos()}

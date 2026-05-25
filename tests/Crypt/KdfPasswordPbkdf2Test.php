@@ -6,13 +6,13 @@ namespace Yiisoft\Security\Tests\Crypt;
 
 use RuntimeException;
 use Yiisoft\Security\Crypt\KdfInterface;
-use Yiisoft\Security\Crypt\Kdf\KdfPasswordPbrdf2;
+use Yiisoft\Security\Crypt\Kdf\KdfPasswordPbkdf2;
 
-final class KdfPasswordPbrdf2Test extends AbstractKdfCase
+final class KdfPasswordPbkdf2Test extends AbstractKdfCase
 {
     protected function createKdfInstance(?string $hash = null): KdfInterface
     {
-        return $hash ? new KdfPasswordPbrdf2($hash, 100_000) : new KdfPasswordPbrdf2(iterations: 100_000);
+        return $hash ? new KdfPasswordPbkdf2($hash, 100_000) : new KdfPasswordPbkdf2(iterations: 100_000);
     }
 
     public static function dataProviderAlgos(): iterable
@@ -53,6 +53,6 @@ final class KdfPasswordPbrdf2Test extends AbstractKdfCase
     public function testConstructorThrowsExceptionWhenIterationsLessThanOne(): void
     {
         $this->expectException(RuntimeException::class);
-        new KdfPasswordPbrdf2('sha256', 0);
+        new KdfPasswordPbkdf2('sha256', 0);
     }
 }
