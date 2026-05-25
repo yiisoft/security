@@ -22,6 +22,9 @@ final class KdfKey implements KdfInterface
 {
     /**
      * @param string $algorithm Hash algorithm for key derivation. {@see hash_hmac_algos()}
+     * @param int $saltSize
+     *
+     * @psalm-param int<1, max> $saltSize
      *
      * @throws RuntimeException
      */

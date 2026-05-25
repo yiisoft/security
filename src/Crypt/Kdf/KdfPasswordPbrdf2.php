@@ -25,6 +25,9 @@ final class KdfPasswordPbrdf2 implements KdfInterface
      * @param string $hashAlgo Hash algorithm for key derivation. {@see hash_hmac_algos()}
      * @param int $iterations Derivation iterations count.
      * See [PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) for more details.
+     * @param int $saltSize
+     *
+     * @psalm-param int<1, max> $saltSize
      *
      * @throws RuntimeException
      */

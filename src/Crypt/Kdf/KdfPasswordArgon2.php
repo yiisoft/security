@@ -24,18 +24,13 @@ use function sodium_crypto_pwhash;
 final class KdfPasswordArgon2 implements KdfInterface
 {
     /**
-     * @param string $algorithm Hash algorithm for key derivation. {@see hash_hmac_algos()}
-     * @param int $iterations Derivation iterations count.
-     * See [PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) for more details.
-     *
-     * @throws RuntimeException
-     */
-    /**
      * @param string $hashAlgo Hash algorithm for the HKDF expansion step. {@see hash_hmac_algos()}
      * @param int $algo Argon2 variant (defaults to Argon2id).
      * @param int $opslimit Number of CPU iterations (time cost).
      * @param int $memlimit RAM limit in bytes (memory cost).
      * See [Argon2 recommendations](https://owasp.org) for details.
+     *
+     * @psalm-param int<1, max> $saltSize
      *
      * @throws RuntimeException If the Sodium extension is missing.
      */
