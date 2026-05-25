@@ -16,6 +16,7 @@ final class EnvelopeCryptorTest extends TestCase
     private const KEY_SIZE = 32;
     private const NONCE_SIZE = 12;
     private const TAG_SIZE = 16;
+    private const SALT_SIZE = 16;
 
     public function testEncryptProducesExpectedStructure(): void
     {
@@ -29,7 +30,7 @@ final class EnvelopeCryptorTest extends TestCase
 
         $kdf->expects($this->once())
             ->method('createKey')
-            ->with($secret, self::KEY_SIZE, $context, $this->callback(static fn($salt) => StringHelper::byteLength($salt) === self::KEY_SIZE))
+            ->with($secret, self::KEY_SIZE, $context, $this->callback(static fn($salt) => StringHelper::byteLength($salt) === self::SALT_SIZE))
             ->willReturn($kek);
 
         $cipher->expects($this->exactly(2))
@@ -62,17 +63,17 @@ final class EnvelopeCryptorTest extends TestCase
         $result = $cryptor->encrypt($plaintext, $secret, $context);
         $this->assertIsString($result);
         $this->assertEquals(
-            self::KEY_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE) + self::NONCE_SIZE + StringHelper::byteLength('encData'),
+            self::SALT_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE) + self::NONCE_SIZE + StringHelper::byteLength('encData'),
             StringHelper::byteLength($result)
         );
 
-        $keySalt = StringHelper::byteSubstring($result, 0, self::KEY_SIZE);
-        $dekNonce = StringHelper::byteSubstring($result, self::KEY_SIZE, self::NONCE_SIZE);
-        $encDek = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE, self::KEY_SIZE + self::TAG_SIZE);
-        $dataNonce = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE), self::NONCE_SIZE);
-        $ciphertext = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE) + self::NONCE_SIZE);
+        $keySalt = StringHelper::byteSubstring($result, 0, self::SALT_SIZE);
+        $dekNonce = StringHelper::byteSubstring($result, self::SALT_SIZE, self::NONCE_SIZE);
+        $encDek = StringHelper::byteSubstring($result, self::SALT_SIZE + self::NONCE_SIZE, self::KEY_SIZE + self::TAG_SIZE);
+        $dataNonce = StringHelper::byteSubstring($result, self::SALT_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE), self::NONCE_SIZE);
+        $ciphertext = StringHelper::byteSubstring($result, self::SALT_SIZE + self::NONCE_SIZE + (self::KEY_SIZE + self::TAG_SIZE) + self::NONCE_SIZE);
 
-        $this->assertEquals(self::KEY_SIZE, StringHelper::byteLength($keySalt));
+        $this->assertEquals(self::SALT_SIZE, StringHelper::byteLength($keySalt));
         $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($dekNonce));
         $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($dataNonce));
         $this->assertEquals('encDek--------------------------' . '________________', $encDek);
@@ -85,7 +86,7 @@ final class EnvelopeCryptorTest extends TestCase
         $secret = 'test-secret';
         $context = 'test-context';
 
-        $keySalt = str_repeat("\x01", self::KEY_SIZE);
+        $keySalt = str_repeat("\x01", self::SALT_SIZE);
         $dekNonce = str_repeat("\x02", self::NONCE_SIZE);
         $dek = str_repeat("\x10", self::KEY_SIZE);
         $dataNonce = str_repeat("\x20", self::NONCE_SIZE);
@@ -159,6 +160,7 @@ final class EnvelopeCryptorTest extends TestCase
     private function createMocks(): array
     {
         $kdf = $this->createMock(KdfInterface::class);
+        $kdf->method('getSaltSize')->willReturn(self::SALT_SIZE);
 
         $cipher = $this->createMock(AeadCipherInterface::class);
         $cipher->method('getKeySize')->willReturn(self::KEY_SIZE);

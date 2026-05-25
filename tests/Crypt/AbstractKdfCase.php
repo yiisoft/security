@@ -23,8 +23,9 @@ abstract class AbstractKdfCase extends TestCase
         $kdf = $this->createKdfInstance();
         $keySize = 32;
         $secret = random_bytes($keySize);
+        $salt = random_bytes($kdf->getSaltSize());
 
-        $key = $kdf->createKey($secret, $keySize, 'test-context', 'text-salt');
+        $key = $kdf->createKey($secret, $keySize, 'test-context', $salt);
 
         $this->assertSame($keySize, strlen($key));
         $this->assertNotEmpty($key);
@@ -47,8 +48,9 @@ abstract class AbstractKdfCase extends TestCase
     {
         $kdf = $this->createKdfInstance($algo);
         $secret = random_bytes($keySize);
+        $salt = random_bytes($kdf->getSaltSize());
 
-        $key = $kdf->createKey($secret, $keySize, 'test-context', 'test-salt');
+        $key = $kdf->createKey($secret, $keySize, 'test-context', $salt);
 
         $this->assertSame($keySize, strlen($key));
     }
@@ -58,9 +60,10 @@ abstract class AbstractKdfCase extends TestCase
         $kdf = $this->createKdfInstance();
         $keySize = 32;
         $secret = random_bytes($keySize);
+        $salt = random_bytes($kdf->getSaltSize());
 
-        $key1 = $kdf->createKey($secret, $keySize, 'test-context', 'test-salt');
-        $key2 = $kdf->createKey($secret, $keySize, 'test-context', 'test-salt');
+        $key1 = $kdf->createKey($secret, $keySize, 'test-context', $salt);
+        $key2 = $kdf->createKey($secret, $keySize, 'test-context', $salt);
 
         $this->assertSame($key1, $key2);
     }
@@ -71,17 +74,19 @@ abstract class AbstractKdfCase extends TestCase
         $keySize = 32;
         $secret = random_bytes($keySize);
         $secret2 = random_bytes($keySize);
+        $salt1 = random_bytes($kdf->getSaltSize());
+        $salt2 = random_bytes($kdf->getSaltSize());
 
-        $key11 = $kdf->createKey($secret, $keySize, 'test-context', 'test-salt-1');
-        $key12 = $kdf->createKey($secret, $keySize, 'test-context', 'test-salt-2');
+        $key11 = $kdf->createKey($secret, $keySize, 'test-context', $salt1);
+        $key12 = $kdf->createKey($secret, $keySize, 'test-context', $salt2);
         $this->assertNotSame($key11, $key12);
 
-        $key21 = $kdf->createKey($secret, $keySize, 'context-1', 'test-salt');
-        $key22 = $kdf->createKey($secret, $keySize, 'context-2', 'test-salt');
+        $key21 = $kdf->createKey($secret, $keySize, 'context-1', $salt1);
+        $key22 = $kdf->createKey($secret, $keySize, 'context-2', $salt1);
         $this->assertNotSame($key21, $key22);
 
-        $key31 = $kdf->createKey($secret, $keySize, 'test-context', 'test-salt');
-        $key32 = $kdf->createKey($secret2, $keySize, 'test-context', 'test-salt');
+        $key31 = $kdf->createKey($secret, $keySize, 'test-context', $salt1);
+        $key32 = $kdf->createKey($secret2, $keySize, 'test-context', $salt1);
         $this->assertNotSame($key31, $key32);
     }
 
@@ -97,5 +102,12 @@ abstract class AbstractKdfCase extends TestCase
 
         $this->expectException(EncryptionException::class);
         $kdf->createKey('test-secret', -1, 'test-context', 'test-salt');
+    }
+
+    public function testGetSizes(): void
+    {
+        $cipher = $this->createKdfInstance();
+
+        $this->assertIsInt($cipher->getSaltSize());
     }
 }

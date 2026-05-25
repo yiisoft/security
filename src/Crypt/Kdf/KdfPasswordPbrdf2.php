@@ -12,26 +12,29 @@ use Yiisoft\Security\Crypt\KdfInterface;
 
 use function hash_hkdf;
 use function hash_pbkdf2;
+use function hash_hmac_algos;
+use function in_array;
 
 /**
  * KDF that first applies PBKDF2 to the input password,
  * then applies HKDF to the result. Suitable for deriving cryptographic keys from low-entropy passwords.
  */
-final class KdfPassword implements KdfInterface
+final class KdfPasswordPbrdf2 implements KdfInterface
 {
     /**
-     * @param string $algorithm Hash algorithm for key derivation. {@see hash_hmac_algos()}
+     * @param string $hashAlgo Hash algorithm for key derivation. {@see hash_hmac_algos()}
      * @param int $iterations Derivation iterations count.
      * See [PBKDF2](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2) for more details.
      *
      * @throws RuntimeException
      */
     public function __construct(
-        private readonly string $algorithm = 'sha256',
+        private readonly string $hashAlgo = 'sha256',
         private readonly int $iterations = 600_000,
+        private readonly int $saltSize = 32,
     ) {
-        if (!in_array($algorithm, hash_hmac_algos())) {
-            throw new RuntimeException($algorithm . ' is not an allowed algorithm.');
+        if (!in_array($hashAlgo, hash_hmac_algos())) {
+            throw new RuntimeException($hashAlgo . ' is not an allowed algorithm.');
         }
 
         if ($iterations <= 0) {
@@ -64,11 +67,16 @@ final class KdfPassword implements KdfInterface
         string $salt,
     ): string {
         try {
-            $key = hash_pbkdf2($this->algorithm, $secret, $salt, $this->iterations, $keySize, true);
+            $key = hash_pbkdf2($this->hashAlgo, $secret, $salt, $this->iterations, $keySize, true);
 
-            return hash_hkdf($this->algorithm, $key, $keySize, $context);
+            return hash_hkdf($this->hashAlgo, $key, $keySize, $context);
         } catch (ValueError $e) {
             throw new EncryptionException($e->getMessage());
         }
+    }
+
+    public function getSaltSize(): int
+    {
+        return $this->saltSize;
     }
 }

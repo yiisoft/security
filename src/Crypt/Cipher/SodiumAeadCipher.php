@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Crypt\Cipher;
 
-use Exception;
 use RuntimeException;
 use SensitiveParameter;
+use SodiumException;
 use Yiisoft\Security\Crypt\AeadCipherInterface;
 use Yiisoft\Security\Crypt\EncryptionException;
 
@@ -91,7 +91,7 @@ final class SodiumAeadCipher implements AeadCipherInterface
                 'ChaCha20-Poly1305-IETF' => sodium_crypto_aead_chacha20poly1305_ietf_encrypt($data, '', $nonce, $key),
                 'XChaCha20-Poly1305-IETF' => sodium_crypto_aead_xchacha20poly1305_ietf_encrypt($data, '', $nonce, $key),
             };
-        } catch (Exception $e) {
+        } catch (SodiumException $e) {
             throw new EncryptionException($e->getMessage());
         }
 
@@ -110,7 +110,7 @@ final class SodiumAeadCipher implements AeadCipherInterface
                 'ChaCha20-Poly1305-IETF' => sodium_crypto_aead_chacha20poly1305_ietf_decrypt($data, '', $nonce, $key),
                 'XChaCha20-Poly1305-IETF' => sodium_crypto_aead_xchacha20poly1305_ietf_decrypt($data, '', $nonce, $key),
             };
-        } catch (Exception $e) {
+        } catch (SodiumException $e) {
             throw new EncryptionException($e->getMessage());
         }
 

@@ -34,9 +34,14 @@ final class EnvelopeCryptor implements CryptorInterface
      */
     private readonly int $tagSize;
 
-    private readonly int $keyNonceSize;
+    /**
+     * @psalm-var int<1, max>
+     */
+    private readonly int $saltSize;
+
+    private readonly int $saltNonceSize;
     private readonly int $encKeySize;
-    private readonly int $keyNonceEncKeySize;
+    private readonly int $saltNonceEncKeySize;
     private readonly int $prefixSize;
 
     /**
@@ -50,17 +55,18 @@ final class EnvelopeCryptor implements CryptorInterface
         $this->keySize = $this->cipher->getKeySize();
         $this->nonceSize = $this->cipher->getNonceSize();
         $this->tagSize = $this->cipher->getTagSize();
+        $this->saltSize = $this->kdf->getSaltSize();
 
-        $this->keyNonceSize = $this->keySize + $this->nonceSize;
+        $this->saltNonceSize = $this->saltSize + $this->nonceSize;
         $this->encKeySize = $this->keySize + $this->tagSize;
-        $this->keyNonceEncKeySize = $this->keyNonceSize + $this->encKeySize;
-        $this->prefixSize = $this->keyNonceEncKeySize + $this->nonceSize;
+        $this->saltNonceEncKeySize = $this->saltNonceSize + $this->encKeySize;
+        $this->prefixSize = $this->saltNonceEncKeySize + $this->nonceSize;
     }
 
     /**
      * {@inheritdoc}
      *
-     * Structure: keySalt (keySize) || dekNonce (nonceSize) ||
+     * Structure: keySalt (saltSize) || dekNonce (nonceSize) ||
      *            encrypted(dek) (keySize + tagSize) ||
      *            dataNonce (nonceSize) || encrypted(data) (variable + tagSize)
      */
@@ -70,7 +76,7 @@ final class EnvelopeCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        $keySalt = random_bytes($this->keySize);
+        $keySalt = random_bytes($this->saltSize);
         $dek = random_bytes($this->keySize);
         $dekNonce = random_bytes($this->nonceSize);
         $dataNonce = random_bytes($this->nonceSize);
@@ -98,10 +104,10 @@ final class EnvelopeCryptor implements CryptorInterface
             throw new EncryptionException('Encrypted data is too short.');
         }
 
-        $keySalt = StringHelper::byteSubstring($data, 0, $this->keySize);
-        $dekNonce = StringHelper::byteSubstring($data, $this->keySize, $this->nonceSize);
-        $encDek = StringHelper::byteSubstring($data, $this->keyNonceSize, $this->encKeySize);
-        $dataNonce = StringHelper::byteSubstring($data, $this->keyNonceEncKeySize, $this->nonceSize);
+        $keySalt = StringHelper::byteSubstring($data, 0, $this->saltSize);
+        $dekNonce = StringHelper::byteSubstring($data, $this->saltSize, $this->nonceSize);
+        $encDek = StringHelper::byteSubstring($data, $this->saltNonceSize, $this->encKeySize);
+        $dataNonce = StringHelper::byteSubstring($data, $this->saltNonceEncKeySize, $this->nonceSize);
         $dataEncrypted = StringHelper::byteSubstring($data, $this->prefixSize);
 
         $kek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);

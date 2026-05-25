@@ -15,6 +15,7 @@ final class SessionCryptorTest extends TestCase
 {
     private const KEY_SIZE = 32;
     private const NONCE_SIZE = 12;
+    private const SALT_SIZE = 16;
 
     public function testEncryptProducesExpectedStructure(): void
     {
@@ -26,7 +27,7 @@ final class SessionCryptorTest extends TestCase
 
         $kdf->expects($this->once())
             ->method('createKey')
-            ->with($secret, self::KEY_SIZE, $context, $this->callback(static fn($salt) => StringHelper::byteLength($salt) === self::KEY_SIZE))
+            ->with($secret, self::KEY_SIZE, $context, $this->callback(static fn($salt) => StringHelper::byteLength($salt) === self::SALT_SIZE))
             ->willReturn('test-derivedkey-123456');
 
         $cipher->expects($this->once())
@@ -40,15 +41,15 @@ final class SessionCryptorTest extends TestCase
         // result structure: keySalt || nonce || ciphertext
         $this->assertIsString($result);
         $this->assertEquals(
-            self::KEY_SIZE + self::NONCE_SIZE + StringHelper::byteLength('test-ciphertext-and-tag'),
+            self::SALT_SIZE + self::NONCE_SIZE + StringHelper::byteLength('test-ciphertext-and-tag'),
             StringHelper::byteLength($result)
         );
 
-        $keySalt = StringHelper::byteSubstring($result, 0, self::KEY_SIZE);
-        $nonce = StringHelper::byteSubstring($result, self::KEY_SIZE, self::NONCE_SIZE);
-        $ciphertext = StringHelper::byteSubstring($result, self::KEY_SIZE + self::NONCE_SIZE);
+        $keySalt = StringHelper::byteSubstring($result, 0, self::SALT_SIZE);
+        $nonce = StringHelper::byteSubstring($result, self::SALT_SIZE, self::NONCE_SIZE);
+        $ciphertext = StringHelper::byteSubstring($result, self::SALT_SIZE + self::NONCE_SIZE);
 
-        $this->assertEquals(self::KEY_SIZE, StringHelper::byteLength($keySalt));
+        $this->assertEquals(self::SALT_SIZE, StringHelper::byteLength($keySalt));
         $this->assertEquals(self::NONCE_SIZE, StringHelper::byteLength($nonce));
         $this->assertEquals('test-ciphertext-and-tag', $ciphertext);
     }
@@ -59,7 +60,7 @@ final class SessionCryptorTest extends TestCase
         $secret = 'test-secret';
         $context = 'test-context';
 
-        $keySalt = str_repeat("\x01", self::KEY_SIZE);
+        $keySalt = str_repeat("\x01", self::SALT_SIZE);
         $nonce = str_repeat("\x02", self::NONCE_SIZE);
 
         $encryptedPayload = 'encrypted-by-cipher';
@@ -112,6 +113,7 @@ final class SessionCryptorTest extends TestCase
     private function createMocks(): array
     {
         $kdf = $this->createMock(KdfInterface::class);
+        $kdf->method('getSaltSize')->willReturn(self::SALT_SIZE);
 
         $cipher = $this->createMock(CipherInterface::class);
         $cipher->method('getKeySize')->willReturn(self::KEY_SIZE);

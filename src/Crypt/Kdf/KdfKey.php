@@ -11,6 +11,8 @@ use Yiisoft\Security\Crypt\EncryptionException;
 use Yiisoft\Security\Crypt\KdfInterface;
 
 use function hash_hkdf;
+use function hash_hmac_algos;
+use function in_array;
 
 /**
  * KDF that directly applies HKDF (HMAC-based Key Derivation Function) to the input secret.
@@ -25,6 +27,7 @@ final class KdfKey implements KdfInterface
      */
     public function __construct(
         private readonly string $algorithm = 'sha256',
+        private readonly int $saltSize = 32,
     ) {
         if (!in_array($algorithm, hash_hmac_algos())) {
             throw new RuntimeException($algorithm . ' is not an allowed algorithm.');
@@ -56,5 +59,10 @@ final class KdfKey implements KdfInterface
         } catch (ValueError $e) {
             throw new EncryptionException($e->getMessage());
         }
+    }
+
+    public function getSaltSize(): int
+    {
+        return $this->saltSize;
     }
 }

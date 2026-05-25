@@ -26,7 +26,12 @@ final class SessionCryptor implements CryptorInterface
      */
     private readonly int $nonceSize;
 
-    private readonly int $keyNonceSize;
+    /**
+     * @psalm-var int<1, max>
+     */
+    private readonly int $saltSize;
+
+    private readonly int $saltNonceSize;
 
     /**
      * @param CipherInterface $cipher Low‑level cipher
@@ -38,7 +43,8 @@ final class SessionCryptor implements CryptorInterface
     ) {
         $this->keySize = $this->cipher->getKeySize();
         $this->nonceSize = $this->cipher->getNonceSize();
-        $this->keyNonceSize = $this->keySize + $this->nonceSize;
+        $this->saltSize = $this->kdf->getSaltSize();
+        $this->saltNonceSize = $this->saltSize + $this->nonceSize;
     }
 
     /**
@@ -52,7 +58,7 @@ final class SessionCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        $keySalt = random_bytes($this->keySize);
+        $keySalt = random_bytes($this->saltSize);
         $dataNonce = random_bytes($this->nonceSize);
 
         $dek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
@@ -73,13 +79,13 @@ final class SessionCryptor implements CryptorInterface
         string $secret,
         string $context = ''
     ): string {
-        if (StringHelper::byteLength($data) < $this->keyNonceSize) {
+        if (StringHelper::byteLength($data) < $this->saltNonceSize) {
             throw new EncryptionException('Encrypted data is too short.');
         }
 
-        $keySalt = StringHelper::byteSubstring($data, 0, $this->keySize);
-        $dataNonce = StringHelper::byteSubstring($data, $this->keySize, $this->nonceSize);
-        $dataEncrypted = StringHelper::byteSubstring($data, $this->keyNonceSize);
+        $keySalt = StringHelper::byteSubstring($data, 0, $this->saltSize);
+        $dataNonce = StringHelper::byteSubstring($data, $this->saltSize, $this->nonceSize);
+        $dataEncrypted = StringHelper::byteSubstring($data, $this->saltNonceSize);
 
         $dek = $this->kdf->createKey($secret, $this->keySize, $context, $keySalt);
 

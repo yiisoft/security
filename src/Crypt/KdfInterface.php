@@ -30,4 +30,11 @@ interface KdfInterface
         string $context,
         string $salt,
     ): string;
+
+    /**
+     * @return int Salt size in bytes.
+     *
+     * @psalm-return int<1, max>
+     */
+    public function getSaltSize(): int;
 }
