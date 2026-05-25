@@ -21,7 +21,7 @@ use function in_array;
 final class KdfKey implements KdfInterface
 {
     /**
-     * @param string $algorithm Hash algorithm for key derivation. {@see hash_hmac_algos()}
+     * @param string $hashAlgo Hash algorithm for key derivation. {@see hash_hmac_algos()}
      * @param int $saltSize
      *
      * @psalm-param int<1, max> $saltSize
@@ -29,11 +29,11 @@ final class KdfKey implements KdfInterface
      * @throws RuntimeException
      */
     public function __construct(
-        private readonly string $algorithm = 'sha256',
+        private readonly string $hashAlgo = 'sha256',
         private readonly int $saltSize = 32,
     ) {
-        if (!in_array($algorithm, hash_hmac_algos())) {
-            throw new RuntimeException($algorithm . ' is not an allowed algorithm.');
+        if (!in_array($hashAlgo, hash_hmac_algos())) {
+            throw new RuntimeException($hashAlgo . ' is not an allowed algorithm.');
         }
     }
 
@@ -58,7 +58,7 @@ final class KdfKey implements KdfInterface
         string $salt,
     ): string {
         try {
-            return hash_hkdf($this->algorithm, $secret, $keySize, $context, $salt);
+            return hash_hkdf($this->hashAlgo, $secret, $keySize, $context, $salt);
         } catch (ValueError $e) {
             throw new EncryptionException($e->getMessage());
         }

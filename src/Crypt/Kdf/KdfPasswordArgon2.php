@@ -20,6 +20,8 @@ use function sodium_crypto_pwhash;
 /**
  * KDF that applies Argon2id to the input password, followed by HKDF for key expansion.
  * Suitable for deriving high-entropy cryptographic keys from low-entropy passwords.
+ *
+ * Note: `sodium_crypto_pwhash()` always uses a single thread (p=1).
  */
 final class KdfPasswordArgon2 implements KdfInterface
 {
