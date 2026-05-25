@@ -126,6 +126,9 @@ final class SodiumAeadCipher implements AeadCipherInterface
         return $this->keySize;
     }
 
+    /**
+     * @psalm-return int<1, max>
+     */
     public function getNonceSize(): int
     {
         return $this->nonceSize;

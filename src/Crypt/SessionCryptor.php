@@ -42,6 +42,7 @@ final class SessionCryptor implements CryptorInterface
         private readonly KdfInterface $kdf,
     ) {
         $this->keySize = $this->cipher->getKeySize();
+        /** @psalm-var int<1, max> */
         $this->nonceSize = $this->cipher->getNonceSize();
         $this->saltSize = $this->kdf->getSaltSize();
         $this->saltNonceSize = $this->saltSize + $this->nonceSize;

@@ -55,7 +55,7 @@ interface CipherInterface
     /**
      * @return int Nonce size in bytes
      *
-     * @psalm-return int<1, max>
+     * @psalm-return int<0, max>
      */
     public function getNonceSize(): int;
 }

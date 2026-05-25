@@ -53,6 +53,7 @@ final class EnvelopeCryptor implements CryptorInterface
         private readonly KdfInterface $kdf,
     ) {
         $this->keySize = $this->cipher->getKeySize();
+        /** @psalm-var int<1, max> */
         $this->nonceSize = $this->cipher->getNonceSize();
         $this->tagSize = $this->cipher->getTagSize();
         $this->saltSize = $this->kdf->getSaltSize();
