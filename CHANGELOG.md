@@ -3,6 +3,7 @@
 ## 1.2.1 under development
 
 - New #71: Add Session, Envelope and Versioned Cryptors (@olegbaturin)
+- Bug #72: Fix possibly null offset in `PasswordHasher` (@olegbaturin)
 
 ## 1.2.0 November 25, 2025
 
