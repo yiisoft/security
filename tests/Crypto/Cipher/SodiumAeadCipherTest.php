@@ -9,8 +9,8 @@ use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
 
 final class SodiumAeadCipherTest extends AbstractCipherCase
 {
-    use CipherWithNonceTrait;
     use CipherWithAeadTrait;
+    use CipherWithNonceTrait;
 
     protected function setUp(): void
     {

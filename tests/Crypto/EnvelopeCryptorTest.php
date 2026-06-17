@@ -23,8 +23,7 @@ final class EnvelopeCryptorTest extends TestCase
         int $kwKeySize,
         int $kwNonceSize,
         int $kwOverheadSize,
-    ): void
-    {
+    ): void {
         $plaintext = 'test-plain-data';
         $cyphertext = 'testcypherdata';
         $secret = 'test-secret';
@@ -104,8 +103,7 @@ final class EnvelopeCryptorTest extends TestCase
         int $kwKeySize,
         int $kwNonceSize,
         int $kwOverheadSize,
-    ): void
-    {
+    ): void {
         $plaintext = 'test-plain-data';
         $secret = 'test-secret';
         $context = 'test-context';
@@ -159,8 +157,7 @@ final class EnvelopeCryptorTest extends TestCase
         int $kwKeySize,
         int $kwNonceSize,
         int $kwOverheadSize,
-    ): void
-    {
+    ): void {
         [$kdf, $cipher, $kwCipher] = $this->createMocks(
             $kdfSaltSize,
             $dataKeySize,

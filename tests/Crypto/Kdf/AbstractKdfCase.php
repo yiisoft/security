@@ -55,7 +55,7 @@ abstract class AbstractKdfCase extends TestCase
 
         $this->assertSame($keySize, StringHelper::byteLength($key));
     }
-    
+
     public function testDeriveWithHashStaticSalt(): void
     {
         $staticSalt = random_bytes(32);

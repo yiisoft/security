@@ -8,7 +8,6 @@ use Stringable;
 use Yiisoft\Security\Crypto\EncryptionException;
 use Yiisoft\Security\Crypto\KdfInterface;
 use Yiisoft\Security\Crypto\Kdf\KdfKey;
-use Yiisoft\Strings\StringHelper;
 
 final class KdfKeyTest extends AbstractKdfCase
 {

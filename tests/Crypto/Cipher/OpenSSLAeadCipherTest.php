@@ -9,8 +9,8 @@ use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
 
 final class OpenSSLAeadCipherTest extends AbstractCipherCase
 {
-    use CipherWithNonceTrait;
     use CipherWithAeadTrait;
+    use CipherWithNonceTrait;
 
     protected function setUp(): void
     {

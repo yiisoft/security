@@ -19,8 +19,7 @@ final class KdfCryptorTest extends TestCase
         int $kdfSaltSize,
         int $keySize,
         int $nonceSize,
-    ): void
-    {
+    ): void {
         $plaintext = 'test-plain-data';
         $secret = 'test-secret';
         $context = 'test-context';
@@ -65,8 +64,7 @@ final class KdfCryptorTest extends TestCase
         int $kdfSaltSize,
         int $keySize,
         int $nonceSize,
-    ): void
-    {
+    ): void {
         $plaintext = 'test-plain-data';
         $secret = 'test-secret';
         $context = 'test-context';
@@ -104,8 +102,7 @@ final class KdfCryptorTest extends TestCase
         int $kdfSaltSize,
         int $keySize,
         int $nonceSize,
-    ): void
-    {
+    ): void {
         [$kdf, $cipher] = $this->createMocks(
             $kdfSaltSize,
             $keySize,
