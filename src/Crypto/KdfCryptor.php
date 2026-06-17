@@ -53,9 +53,7 @@ final class KdfCryptor implements CryptorInterface
     /**
      * {@inheritdoc}
      *
-     * Structure: salt ||
-     *            nonce ||
-     *            ciphertext (with tag for AEAD ciphers)
+     * Structure: salt || nonce || ciphertext (with tag for AEAD ciphers)
      */
     public function encrypt(
         string $data,
