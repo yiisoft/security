@@ -169,6 +169,7 @@ final class KdfCryptorTest extends TestCase
 
         return [$kdf, $cipher];
     }
+
     /**
      * [kdfSaltSize, kwKeySize, kwNonceSize, kwOverheadSize, dataKeySize, dataNonceSize, dataOverheadSize]
      */

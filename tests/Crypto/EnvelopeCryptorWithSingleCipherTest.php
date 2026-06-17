@@ -77,7 +77,7 @@ final class EnvelopeCryptorWithSingleCipherTest extends TestCase
             {
                 return $this->saltSize;
             }
-       };
+        };
     }
 
     private function getCipherStub(int $keySize = 32, int $nonceSize = 12): CipherInterface

@@ -1,6 +1,8 @@
 {
     "symbol-whitelist": [
         "random_bytes",
+        "OPENSSL_DONT_ZERO_PAD_KEY",
+        "OPENSSL_RAW_DATA",
         "openssl_encrypt",
         "openssl_decrypt",
         "openssl_error_string",
