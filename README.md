@@ -128,7 +128,7 @@ There is a special function in PHP that compares strings in a constant time:
 hash_equals($expected, $actual);
 ```
 
-## New cryptor
+## Crypto
 
 `Crypt` provides encryption layer based on `AEAD` algorithms.
 It supports key derivation, session‑oriented encryption, envelope encryption, and versioned ciphertexts for seamless algorithm migration.
