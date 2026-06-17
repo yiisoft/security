@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Crypt;
+namespace Yiisoft\Security\Crypto;
 
 use SensitiveParameter;
 
@@ -16,11 +16,11 @@ interface CryptorInterface
      *
      * @param string $data Plaintext to encrypt.
      * @param string $secret Password or raw key (sensitive).
-     * @param string $context Application-specific context (used in key derivation).
+     * @param string $context Unique per-encryption context string. Must match during decryption.
      *
      * @throws EncryptionException If encryption fails.
-     * @throws \RuntimeException If required PHP extension is missing.
-     * @return string Encrypted payload (includes nonce, salt, authentication tag, etc.).
+     *
+     * @return string Encrypted payload.
      */
     public function encrypt(
         string $data,
@@ -33,11 +33,11 @@ interface CryptorInterface
      * Decrypts the given data using the secret and context string.
      *
      * @param string $data Encrypted payload to decrypt.
-     * @param string $secret Password or raw key (sensitive).
-     * @param string $context Application-specific context (must match the one used for encryption).
+     * @param string $secret Password or raw key (sensitive). Must be the same as used for encryption.
+     * @param string $context Context string that was used during encryption.
      *
      * @throws EncryptionException If decryption fails.
-     * @throws \RuntimeException If required PHP extension is missing or data is malformed.
+     *
      * @return string Decrypted plaintext.
      */
     public function decrypt(

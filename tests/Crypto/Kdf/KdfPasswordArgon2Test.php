@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Tests\Crypt;
+namespace Yiisoft\Security\Tests\Crypto\Kdf;
 
-use Yiisoft\Security\Crypt\KdfInterface;
-use Yiisoft\Security\Crypt\Kdf\KdfPasswordArgon2;
+use Stringable;
+use Yiisoft\Security\Crypto\KdfInterface;
+use Yiisoft\Security\Crypto\Kdf\KdfPasswordArgon2;
 
 final class KdfPasswordArgon2Test extends AbstractKdfCase
 {
-    protected function createKdfInstance(?string $hash = null): KdfInterface
+    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
     {
-        return $hash ? new KdfPasswordArgon2($hash) : new KdfPasswordArgon2();
+        return $hashAlgo
+            ? new KdfPasswordArgon2(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
+            : new KdfPasswordArgon2(hashStaticSalt: $hashStaticSalt);
     }
 
     public static function dataProviderAlgos(): iterable
@@ -37,7 +40,7 @@ final class KdfPasswordArgon2Test extends AbstractKdfCase
             64,
             'text-context',
             '7f22a943efd3537ef9e0dc98e7031d9f',
-            'abcd5a66003c25a8ff8190716c976825941265a50de8bef39d6f8c56d9b7bdd1cabf61ea1079eb38ba395986e3eba2605a888cc7c4433b5218624d95bdfcf0a7',
+            'ac666c6333f2aa0364465b9d4b5446dc1f0424795cb10f5ffcc9161b6266b939ff07e18f17261d5016b5dc2ab0ea464284e2a70d72f8b8c3f4456b015bf9d14d',
         ];
         yield [
             'sha3-256',

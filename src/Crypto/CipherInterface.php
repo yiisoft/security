@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Crypt;
+namespace Yiisoft\Security\Crypto;
 
 use SensitiveParameter;
 
@@ -12,37 +12,43 @@ use SensitiveParameter;
 interface CipherInterface
 {
     /**
-     * Encrypts the provided data with the given key and nonce.
+     * Encrypts the provided data with the given key, nonce, and additional authenticated data.
      *
      * @param string $data Plaintext to encrypt.
      * @param string $key Secret encryption key (sensitive).
      * @param string $nonce Initialization vector or nonce.
+     * @param string $aad Additional authenticated data.
      *
      * @throws EncryptionException If encryption fails.
+     *
      * @return string Ciphertext.
      */
     public function encrypt(
         string $data,
         #[SensitiveParameter]
         string $key,
-        string $nonce,
+        string $nonce = '',
+        string $aad = '',
     ): string;
 
     /**
-     * Decrypts the provided ciphertext with the given key and nonce.
+     * Decrypts the provided ciphertext with the given key, nonce, and additional authenticated data.
      *
      * @param string $data Ciphertext to decrypt.
      * @param string $key Secret encryption key (sensitive).
      * @param string $nonce Nonce used during encryption.
+     * @param string $aad Additional authenticated data (must match the value used during encryption).
      *
      * @throws EncryptionException If decryption fails.
+     *
      * @return string Decrypted plaintext.
      */
     public function decrypt(
         string $data,
         #[SensitiveParameter]
         string $key,
-        string $nonce,
+        string $nonce = '',
+        string $aad = '',
     ): string;
 
     /**
@@ -53,9 +59,16 @@ interface CipherInterface
     public function getKeySize(): int;
 
     /**
-     * @return int Nonce size in bytes
+     * @return int Nonce size in bytes (may be 0 if the cipher does not use a nonce).
      *
      * @psalm-return int<0, max>
      */
     public function getNonceSize(): int;
+
+    /**
+     * @return int Overhead size in bytes.
+     *
+     * @psalm-return int<0, max>
+     */
+    public function getOverheadSize(): int;
 }

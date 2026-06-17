@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Tests\Crypt;
+namespace Yiisoft\Security\Tests\Crypto\Cipher;
 
-use Yiisoft\Security\Crypt\AeadCipherInterface;
-use Yiisoft\Security\Crypt\Cipher\OpenSSLAeadCipher;
+use Yiisoft\Security\Crypto\CipherInterface;
+use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
 
-final class OpenSSLAeadCipherTest extends AbstractAeadCipherCase
+final class OpenSSLAeadCipherTest extends AbstractCipherCase
 {
+    use CipherWithNonceTrait;
+    use CipherWithAeadTrait;
+
     protected function setUp(): void
     {
         if (!extension_loaded('openssl')) {
@@ -16,9 +19,14 @@ final class OpenSSLAeadCipherTest extends AbstractAeadCipherCase
         }
     }
 
-    protected function createCipherInstance(?string $cipher = null): AeadCipherInterface
+    protected function createCipherInstance(?string $cipher = null): CipherInterface
     {
         return $cipher ? new OpenSSLAeadCipher($cipher) : new OpenSSLAeadCipher();
+    }
+
+    protected static function getPlainText(): string
+    {
+        return 'test-plain-data';
     }
 
     public static function dataProviderCiphers(): iterable
@@ -26,10 +34,18 @@ final class OpenSSLAeadCipherTest extends AbstractAeadCipherCase
         yield ['AES-128-GCM'];
         yield ['AES-192-GCM'];
         yield ['AES-256-GCM'];
+        yield ['CHACHA20-POLY1305'];
     }
 
     public static function dataProviderEncrypted(): iterable
     {
+        yield [
+            'AES-128-GCM',
+            '54c4cc0f038dc65dfaaebef3cecbfcec',
+            '553defeffbe4e315bf9816f6',
+            '',
+            '7b5f0f96b230d9847a7a72a078569df1',
+        ];
         yield [
             'AES-128-GCM',
             '54c4cc0f038dc65dfaaebef3cecbfcec',
@@ -50,6 +66,20 @@ final class OpenSSLAeadCipherTest extends AbstractAeadCipherCase
             '3437af16a83c0284b449a4a4',
             'test-plain-data',
             '7c5fd62f60ad234d9dbf8efd26252a71b273b66b5e9fa89d27c519aac6bb54',
+        ];
+        yield [
+            'CHACHA20-POLY1305',
+            'adcc610fd179117c7b383b9c9e4c2b106fc72f98290c095452a07b0ad5ed5767',
+            '353bf3e8a440ddd5b125b8df',
+            '',
+            '3584c3be670fa3a6d6ffc332beaf2302',
+        ];
+        yield [
+            'CHACHA20-POLY1305',
+            'adcc610fd179117c7b383b9c9e4c2b106fc72f98290c095452a07b0ad5ed5767',
+            '353bf3e8a440ddd5b125b8df',
+            'test-plain-data',
+            '75058e089d84a58fed82a822b462b2a3dcdf5b5b4cda445fdba26ccd012503',
         ];
     }
 }

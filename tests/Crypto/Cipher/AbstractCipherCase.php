@@ -2,20 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Tests\Crypt;
+namespace Yiisoft\Security\Tests\Crypto\Cipher;
 
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Yiisoft\Security\Crypt\EncryptionException;
-use Yiisoft\Security\Crypt\AeadCipherInterface;
+use Yiisoft\Security\Crypto\CipherInterface;
+use Yiisoft\Security\Crypto\EncryptionException;
 
 /**
  * @abstract
  */
-abstract class AbstractAeadCipherCase extends TestCase
+abstract class AbstractCipherCase extends TestCase
 {
-    abstract protected function createCipherInstance(?string $cipher = null): AeadCipherInterface;
+    abstract protected function createCipherInstance(?string $cipher = null): CipherInterface;
+
+    abstract protected static function getPlainText(): string;
 
     abstract public static function dataProviderCiphers(): iterable;
 
@@ -25,9 +27,9 @@ abstract class AbstractAeadCipherCase extends TestCase
     public function testEncryptDecryptSuccess(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
+        $plaintext = $this->getPlainText();
         $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize());
-        $plaintext = 'test-plain-data';
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
 
         $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
         $this->assertNotSame($plaintext, $ciphertext);
@@ -52,8 +54,8 @@ abstract class AbstractAeadCipherCase extends TestCase
         $nonce = hex2bin(preg_replace('{\s+}', '', $nonce));
         $encrypted = hex2bin(preg_replace('{\s+}', '', $encrypted));
 
-        $this->assertEquals($encrypted, $cipherInstance->encrypt($data, $key, $nonce));
-        $this->assertEquals($data, $cipherInstance->decrypt($encrypted, $key, $nonce));
+        $this->assertSame($encrypted, $cipherInstance->encrypt($data, $key, $nonce));
+        $this->assertSame($data, $cipherInstance->decrypt($encrypted, $key, $nonce));
     }
 
     public function testInvalidCipherThrowsException(): void
@@ -63,36 +65,49 @@ abstract class AbstractAeadCipherCase extends TestCase
     }
 
     #[DataProvider('dataProviderCiphers')]
-    public function testEncryptWithWrongKeySizeThrowsException(string $cipher): void
+    public function testEncryptWithKeyTooShortThrowsException(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
+        $plaintext = $this->getPlainText();
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+
+        $key = random_bytes($cipherInstance->getKeySize() - 1); // wrong key size
+
+        $this->expectException(EncryptionException::class);
+        $cipherInstance->encrypt($plaintext, $key, $nonce);
+    }
+
+    #[DataProvider('dataProviderCiphers')]
+    public function testEncryptWithKeyTooLongThrowsException(string $cipher): void
+    {
+        $cipherInstance = $this->createCipherInstance($cipher);
+        $plaintext = $this->getPlainText();
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+
         $key = random_bytes($cipherInstance->getKeySize() + 1); // wrong key size
-        $nonce = random_bytes($cipherInstance->getNonceSize());
-        $plaintext = 'test-plain-data';
 
         $this->expectException(EncryptionException::class);
         $cipherInstance->encrypt($plaintext, $key, $nonce);
     }
 
     #[DataProvider('dataProviderCiphers')]
-    public function testEncryptWithWrongNonceSizeThrowsException(string $cipher): void
+    public function testEncryptWithEmptyKeyThrowsException(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
-        $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize() + 1); // wrong nounce size
-        $plaintext = 'test-plain-data';
+        $plaintext = $this->getPlainText();
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
 
         $this->expectException(EncryptionException::class);
-        $cipherInstance->encrypt($plaintext, $key, $nonce);
+        $cipherInstance->encrypt($plaintext, '', $nonce);
     }
 
     #[DataProvider('dataProviderCiphers')]
-    public function testDecryptWithWrongKeySizeThrowsException(string $cipher): void
+    public function testDecryptWithKeyTooLongThrowsException(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
         $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize());
-        $plaintext = 'test-plain-data';
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+        $plaintext = $this->getPlainText();
         $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
 
         $this->expectException(EncryptionException::class);
@@ -100,31 +115,55 @@ abstract class AbstractAeadCipherCase extends TestCase
     }
 
     #[DataProvider('dataProviderCiphers')]
-    public function testDecryptWithWrongNonceSizeThrowsException(string $cipher): void
+    public function testDecryptWithKeyTooShortThrowsException(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
         $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize()); // wrong nounce size
-        $plaintext = 'test-plain-data';
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+        $plaintext = $this->getPlainText();
         $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
 
         $this->expectException(EncryptionException::class);
-        $cipherInstance->decrypt($ciphertext, $key, $nonce . 'X');
+        $cipherInstance->decrypt($ciphertext, substr($key, 1), $nonce);
     }
 
     #[DataProvider('dataProviderCiphers')]
-    public function testDecryptWithTamperedCiphertextThrowsException(string $cipher): void
+    public function testDecryptWithEmptyKeyThrowsException(string $cipher): void
     {
         $cipherInstance = $this->createCipherInstance($cipher);
         $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize());
-        $plaintext = 'test-plain-data';
-
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+        $plaintext = $this->getPlainText();
         $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
-        $tampered = substr_replace($ciphertext, 'XXX', -3);
 
         $this->expectException(EncryptionException::class);
-        $cipherInstance->decrypt($tampered, $key, $nonce);
+        $cipherInstance->decrypt($ciphertext, '', $nonce);
+    }
+
+    #[DataProvider('dataProviderCiphers')]
+    public function testDecryptWithCiphertextCorruptedThrowsException(string $cipher): void
+    {
+        $cipherInstance = $this->createCipherInstance($cipher);
+        $key = random_bytes($cipherInstance->getKeySize());
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+        $plaintext = $this->getPlainText();
+        $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
+
+        $this->expectException(EncryptionException::class);
+        $cipherInstance->decrypt(substr_replace($ciphertext, 'XXX', -3), $key, $nonce);
+    }
+
+    #[DataProvider('dataProviderCiphers')]
+    public function testDecryptWithCiphertextTruncatedThrowsException(string $cipher): void
+    {
+        $cipherInstance = $this->createCipherInstance($cipher);
+        $key = random_bytes($cipherInstance->getKeySize());
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+        $plaintext = $this->getPlainText();
+        $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
+
+        $this->expectException(EncryptionException::class);
+        $cipherInstance->decrypt(substr($ciphertext, 1), $key, $nonce);
     }
 
     #[DataProvider('dataProviderCiphers')]
@@ -133,28 +172,13 @@ abstract class AbstractAeadCipherCase extends TestCase
         $cipherInstance = $this->createCipherInstance($cipher);
         $key = random_bytes($cipherInstance->getKeySize());
         $wrongKey = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize());
-        $plaintext = 'test-plain-data';
+        $nonce = $cipherInstance->getNonceSize() ? random_bytes($cipherInstance->getNonceSize()) : '';
+        $plaintext = $this->getPlainText();
 
         $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
 
         $this->expectException(EncryptionException::class);
         $cipherInstance->decrypt($ciphertext, $wrongKey, $nonce);
-    }
-
-    #[DataProvider('dataProviderCiphers')]
-    public function testDecryptWithWrongNonceThrowsException(string $cipher): void
-    {
-        $cipherInstance = $this->createCipherInstance($cipher);
-        $key = random_bytes($cipherInstance->getKeySize());
-        $nonce = random_bytes($cipherInstance->getNonceSize());
-        $wrongNonce = random_bytes($cipherInstance->getNonceSize());
-        $plaintext = 'test-plain-data';
-
-        $ciphertext = $cipherInstance->encrypt($plaintext, $key, $nonce);
-
-        $this->expectException(EncryptionException::class);
-        $cipherInstance->decrypt($ciphertext, $key, $wrongNonce);
     }
 
     public function testGetSizes(): void
@@ -163,6 +187,6 @@ abstract class AbstractAeadCipherCase extends TestCase
 
         $this->assertIsInt($cipher->getKeySize());
         $this->assertIsInt($cipher->getNonceSize());
-        $this->assertIsInt($cipher->getTagSize());
+        $this->assertIsInt($cipher->getOverheadSize());
     }
 }

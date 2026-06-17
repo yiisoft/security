@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Crypt;
+namespace Yiisoft\Security\Crypto;
 
 use RuntimeException;
 

@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Crypt;
+namespace Yiisoft\Security\Crypto;
 
 use RuntimeException;
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
 
 use function bin2hex;
+use function sprintf;
 
 /**
  * VersionedCryptor wraps multiple cryptors and adds a version prefix to the ciphertext.
@@ -23,28 +24,43 @@ final class VersionedCryptor implements CryptorInterface
     private readonly array $cryptors;
 
     /**
+     * @psalm-var int<1, max>
+     */
+    private readonly int $versionSize;
+
+    /**
      * @param array<string, CryptorInterface> $cryptors List of cryptors indexed by version string.
      * @param string $currentVersion Version identifier used for new encryptions.
-     * @param int $versionSize Fixed byte length of the version prefix (must be >=1).
+     * @param int|null $versionSize Fixed byte length of the version prefix. When `null`, it is computed from `$currentVersion`.
+     *
+     * @psalm-param int<1, max>|null $versionSize
      *
      * @throws RuntimeException If validation fails or current version is not registered.
      */
     public function __construct(
         array $cryptors,
         private readonly string $currentVersion,
-        private readonly int $versionSize,
+        ?int $versionSize = null,
     ) {
+        $versionSize ??= StringHelper::byteLength($this->currentVersion);
+
         if ($versionSize < 1) {
             throw new RuntimeException('Version size must be greater than 0.');
         }
 
+        $this->versionSize = $versionSize;
         $this->cryptors = $this->validateAndNormalize($cryptors);
 
         if (!isset($this->cryptors[$this->currentVersion])) {
-            throw new RuntimeException("Current version '{$this->currentVersion}' is not registered.");
+            throw new RuntimeException(sprintf('Current version "0x%s" is not registered.', bin2hex($this->currentVersion)));
         }
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Structure: version (versionSize bytes) || encrypted payload from underlying cryptor
+     */
     public function encrypt(
         string $data,
         #[SensitiveParameter]
@@ -59,7 +75,7 @@ final class VersionedCryptor implements CryptorInterface
     /**
      * {@inheritdoc}
      *
-     * @throws EncryptionException If the version prefix cannot be read or no cryptor matches.
+     * @throws EncryptionException When decryption fails.
      */
     public function decrypt(
         string $data,
@@ -85,7 +101,9 @@ final class VersionedCryptor implements CryptorInterface
      * and ensures each version identifier has exactly `$versionSize` bytes.
      *
      * @param array $cryptors Raw input mapping.
+     *
      * @throws RuntimeException On validation error.
+     *
      * @return array<string, CryptorInterface> Normalised array.
      */
     private function validateAndNormalize(array $cryptors): array
