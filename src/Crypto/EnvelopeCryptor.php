@@ -54,7 +54,8 @@ final class EnvelopeCryptor implements CryptorInterface
     /**
      * @param KdfInterface $kdf Key derivation function (used to derive KEK from secret).
      * @param CipherInterface $cipher Cipher used to encrypt the actual data.
-     * @param CipherInterface $kwCipher Cipher used to wrap the DEK.
+     * @param CipherInterface|null $kwCipher Cipher used to wrap the DEK. If not provided (or `null`),
+     * the same cipher as `$cipher` is used for both data encryption and DEK wrapping
      */
     public function __construct(
         private readonly KdfInterface $kdf,

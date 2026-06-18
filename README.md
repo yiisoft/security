@@ -24,10 +24,10 @@ Security package provides a set of classes to handle common security-related tas
 
 ## Requirements
 
-- PHP 8.1 - 8.5.
+- PHP 8.2 - 8.5.
 - `hash` PHP extension.
-- `openssl` PHP extension.
-- `sodium` PHP extension.
+- `openssl` PHP extension - optional.
+- `sodium` PHP extension - optional.
 
 ## Installation
 
@@ -128,97 +128,166 @@ There is a special function in PHP that compares strings in a constant time:
 hash_equals($expected, $actual);
 ```
 
-## Crypto
+## Crypto module
 
-`Crypt` provides encryption layer based on `AEAD` algorithms.
-It supports key derivation, session‑oriented encryption, envelope encryption, and versioned ciphertexts for seamless algorithm migration.
+The `Crypto` module provides a modern, authenticated encryption layer based on `AEAD` ciphers. It provides three built‑in cryptors:
 
-All high‑level encryptors implement the `CryptorInterface`. Inject the desired cryptor (`SessionCryptor`, `EnvelopeCryptor` or `VersionedCryptor`) and use it as follows:
+- **`KdfCryptor`** – derives a fresh DEK per message using a KDF.
+- **`EnvelopeCryptor`** – wraps a random DEK with a KEK derived from the secret.
+- **`VersionedCryptor`** – adds a version prefix to delegate to different cryptors
+
+### Basic usage example
+
+All cryptors implement the same `CryptorInterface`. Inject the desired cryptor and use it as follows:
 
 ```php
+//via container
 use Yiisoft\Security\Crypt\CryptorInterface;
 
 $cryptor = $container->get(CryptorInterface::class);
-/** @var high‑entropy key or low‑entropy password */
-$secret;
-/** @var Optional application‑specific string that is mixed into the KDF */
-$context;
+
+$secret = 'high-entropy-key-or-password';
+$context = 'application-specific-context';
 
 $encrypted = $cryptor->encrypt('secret data', $secret, $context);
 $data = $cryptor->decrypt($encrypted, $secret, $context);
 ```
 
-### Session cryptor
+### KdfCryptor
 
-Session‑oriented encryption (single key derived per message, no key wrapping).
-A fresh data encryption key (DEK) is derived from the secret and a random salt.
+KDF‑based encryption (single key derived per message, no key wrapping).  
+A fresh data encryption key (DEK) is derived from the secret and the provided context using the configured KDF.  
+If the configured KDF requires a salt, a random salt is generated for each message and prepended to the ciphertext.
 
-Structure:
+**Output structure:**  
 ```
-keySalt || nonce || encrypted(data) + tag
+kdfSalf (optional) || nonce || encryptedData (with tag)
+
 ```
 
-DI Configuration:
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\KdfCryptor;
+use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypto\Kdf\KdfPasswordArgon2;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
+
+// For high‑entropy keys
+$kdf = new KdfKey();
+// Or for user‑supplied passwords
+$kdf = new KdfPasswordArgon2();
+
+$cipher = new SodiumAeadCipher();
+$cryptor = new KdfCryptor($kdf, $cipher);
+```
+
+Yii DI configuration:
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\SessionCryptor;
-use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
-use Yiisoft\Security\Crypt\Kdf\KdfKey;
+use Yiisoft\DI\Reference;
+use Yiisoft\Security\Crypto\KdfCryptor;
+use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
 
-SessionCryptor::class => [
+KdfCryptor::class => [
     '__construct()' => [
+        'kdf' => Reference::to(KdfKey::class), // replace with KdfPasswordArgon2::class for passwords
         'cipher' => Reference::to(SodiumAeadCipher::class),
-        'kdf' => Reference::to(KdfKey::class),
     ],
 ],
 ```
 
-### Envelope cryptor
+
+### EnvelopeCryptor
 
 Envelope encryption (key wrapping) using a KDF to derive a Key Encryption Key (KEK)
-and a random Data Encryption Key (DEK). The DEK is encrypted with the KEK and stored
-together with the ciphertext.
+and a random Data Encryption Key (DEK). The DEK is wrapped with the KEK and stored
+alongside the ciphertext. The DEK is used to encrypt the actual data.
 
-Structure:
+The DEK wrap cipher can be specified separately (e.g., `OpenSSLWrapCipher`); if omitted, the data cipher is used for wrapping as well.
+
+Output structure:
 ```
-keySalt || dekNonce || encrypted(DEK) + tag || dataNonce || encrypted(data) + tag
+kdfSalt || dekNonce || wrappedDEK (with tag) || dataNonce || encryptedData (with tag)
 ```
 
-DI Configuration:
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\EnvelopeCryptor;
+use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
+use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
+
+$kdf = new KdfKey();
+$cipher = new OpenSSLAeadCipher();
+
+// One cipher is used for both data encryption and DEK wrapping
+$cryptor = new EnvelopeCryptor($kdf, $cipher);
+
+// Separate cipher is used to wrap the DEK
+$kwCipher = new OpenSSLWrapCipher();
+$cryptor = new EnvelopeCryptor($kdf, $cipher, $kwCipher);
+```
+
+Yii DI configuration:
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\EnvelopeCryptor;
-use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
-use Yiisoft\Security\Crypt\Kdf\KdfKey;
+use Yiisoft\DI\Reference;
+use Yiisoft\Security\Crypto\EnvelopeCryptor;
+use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
+use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
 
 EnvelopeCryptor::class => [
     '__construct()' => [
-        'cipher' => Reference::to(SodiumAeadCipher::class),
         'kdf' => Reference::to(KdfKey::class),
+        'cipher' => Reference::to(OpenSSLAeadCipher::class),
+        'kwCipher' => Reference::to(OpenSSLWrapCipher::class), // optional, if separate cipher is used to wrap the DEK
     ],
 ],
 ```
 
 
-### Versioned cryptor
+### VersionedCryptor
 
 Wraps multiple cryptors and adds a fixed‑length version prefix to every ciphertext.
 
-DI Configuration:
+Output structure:
+```
+version (fixed length) || encrypted payload from underlying cryptor
+```
+
+Runtime configuration:
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\VersionedCryptor;
-use Yiisoft\Security\Crypt\SessionCryptor;
-use Yiisoft\Security\Crypt\EnvelopeCryptor;
+use Yiisoft\Security\Crypto\VersionedCryptor;
+
+// Assume $kdfCryptor and $envelopeCryptor are already instantiated
+$cryptor = new VersionedCryptor(
+    cryptors: [
+        chr(0x01) => $kdfCryptor,
+        chr(0x96) => $envelopeCryptor,
+    ],
+    currentVersion: chr(0x01),
+);
+```
+
+Yii DI configuration:
+```php
+// /config/di.php
+use Yiisoft\DI\ReferencesArray;
+use Yiisoft\Security\Crypto\VersionedCryptor;
+use Yiisoft\Security\Crypto\KdfCryptor;
+use Yiisoft\Security\Crypto\EnvelopeCryptor;
 
 VersionedCryptor::class => [
     '__construct()' => [
         'cryptors' => ReferencesArray::from([
-            chr(0x01) => SessionCryptor::class,
+            chr(0x01) => KdfCryptor::class,
             chr(0x96) => EnvelopeCryptor::class,
         ]),
         'currentVersion' => chr(0x01),
-        'versionSize' => 1
+        // 'versionSize' => 1, // optional, auto-detected from currentVersion
     ],
 ],
 ```
@@ -241,7 +310,7 @@ KdfKey::class => [
 ],
 ```
 
-#### KdfPassword - for low‑entropy passwords
+#### KdfPasswordPbkdf2 - for low‑entropy passwords
 This first applies `PBKDF2` with a configurable iteration count, then `HKDF` to derive the final key.
 Follow OWASP recommendations for iteration counts.
 
