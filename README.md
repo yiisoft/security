@@ -142,7 +142,7 @@ All cryptors implement the same `CryptorInterface`. Inject the desired cryptor a
 
 ```php
 //via container
-use Yiisoft\Security\Crypt\CryptorInterface;
+use Yiisoft\Security\Crypto\CryptorInterface;
 
 $cryptor = $container->get(CryptorInterface::class);
 
@@ -292,7 +292,8 @@ VersionedCryptor::class => [
 ],
 ```
 
-### Configure KDF
+
+### Configuring KDF
 
 The KDF is responsible for deriving cryptographic keys from the provided secret. Choose the appropriate KDF based on the type of secret.
 
@@ -301,7 +302,7 @@ Use this when the secret is already a strong cryptographic key (e.g. a 256‑bit
 
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\Kdf\KdfKey;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
 
 KdfKey::class => [
     '__construct()' => [
@@ -316,7 +317,7 @@ Follow OWASP recommendations for iteration counts.
 
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\Kdf\KdfPassword;
+use Yiisoft\Security\Crypto\Kdf\KdfPassword;
 
 KdfPassword::class => [
     '__construct()' => [
@@ -326,35 +327,103 @@ KdfPassword::class => [
 ],
 ```
 
-### Configuring AEAD Ciphers
+### Configuring ciphers
 
-Two backends are available: `OpenSSL` and `Sodium` (libsodium).
+The module provides two backends: `OpenSSL` and `Sodium` (libsodium).
 
 #### OpenSSLAeadCipher
-Supports `AES‑GCM` family.
 
+Uses OpenSSL's AEAD ciphers. Supports the following algorithms:
+
+- `AES-128-GCM`
+- `AES-192-GCM`
+- `AES-256-GCM`
+- `CHACHA20-POLY1305` (IETF variant, 12‑byte nonce) - **default**
+
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
+
+// Using the default algorithm (`CHACHA20-POLY1305`)
+$cipher = new OpenSSLAeadCipher();
+
+// Explicitly specify an algorithm
+$cipher = new OpenSSLAeadCipher(cipher: 'AES-256-GCM');
+```
+
+Yii DI configuration:
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\Cipher\OpenSSLAeadCipher;
+use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
 
 OpenSSLAeadCipher::class => [
     '__construct()' => [
-        'cipher' => 'AES-192-GCM',
+        'cipher' => 'AES-256-GCM',
     ],
 ],
 ```
 
 #### SodiumAeadCipher
-Supports `AES‑256‑GCM` (hardware accelerated), `ChaCha20‑Poly1305‑IETF`, and `XChaCha20‑Poly1305‑IETF`.
-Note: `AES‑256‑GCM` with `Sodium` requires CPU support for AES instructions (`AES‑NI`). Use `ChaCha20‑Poly1305‑IETF` for a safe, non‑hardware‑dependent alternative.
 
+Uses libsodium's high‑performance AEAD ciphers. Supports the following algorithms:
+
+- `AES-256-GCM` – requires hardware AES‑NI support.
+- `CHACHA20-POLY1305-IETF` - **default**
+- `XCHACHA20-POLY1305-IETF`
+
+Note: `AES‑256‑GCM` with `Sodium` requires CPU support for AES instructions (`AES‑NI`).
+
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
+
+// Using the default algorithm (`CHACHA20-POLY1305-IETF`)
+$cipher = new SodiumAeadCipher();
+
+// Explicitly specify an algorithm
+$cipher = new SodiumAeadCipher(cipher: 'AES-256-GCM');
+```
+
+Yii DI configuration:
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypt\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
 
 SodiumAeadCipher::class => [
     '__construct()' => [
-        'cipher' => 'ChaCha20-Poly1305-IETF',
+        'cipher' => 'AES-256-GCM',
+    ],
+],
+```
+
+#### OpenSSLWrapCipher
+
+A dedicated cipher for key wrapping (RFC 5649 AES‑KW). This cipher should only be used inside `EnvelopeCryptor` for wrapping DEKs, not for general‑purpose encryption.
+Allowed algorithms:
+
+- `AES-128-WRAP`
+- `AES-192-WRAP`
+- `AES-256-WRAP - **default**
+
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
+
+// Using the default algorithm (`AES-256-WRAP`)
+$cipher = new OpenSSLWrapCipher();
+
+// Explicitly specify an algorithm
+$cipher = new OpenSSLWrapCipher(cipher: `AES-128-WRAP`);
+```
+
+Yii DI configuration:
+```php
+// /config/di.php
+use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
+
+OpenSSLWrapCipher::class => [
+    '__construct()' => [
+        'cipher' => `AES-128-WRAP`,
     ],
 ],
 ```
