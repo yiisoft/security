@@ -153,13 +153,13 @@ $encrypted = $cryptor->encrypt('secret data', $secret, $context);
 $data = $cryptor->decrypt($encrypted, $secret, $context);
 ```
 
-### KdfCryptor
+### `KdfCryptor`
 
 KDF‑based encryption (single key derived per message, no key wrapping).  
 A fresh data encryption key (DEK) is derived from the secret and the provided context using the configured KDF.  
 If the configured KDF requires a salt, a random salt is generated for each message and prepended to the ciphertext.
 
-**Output structure:**  
+Output structure:
 ```
 kdfSalf (optional) || nonce || encryptedData (with tag)
 
@@ -198,7 +198,7 @@ KdfCryptor::class => [
 ```
 
 
-### EnvelopeCryptor
+### `EnvelopeCryptor`
 
 Envelope encryption (key wrapping) using a KDF to derive a Key Encryption Key (KEK)
 and a random Data Encryption Key (DEK). The DEK is wrapped with the KEK and stored
@@ -248,7 +248,7 @@ EnvelopeCryptor::class => [
 ```
 
 
-### VersionedCryptor
+### `VersionedCryptor`
 
 Wraps multiple cryptors and adds a fixed‑length version prefix to every ciphertext.
 
@@ -295,50 +295,113 @@ VersionedCryptor::class => [
 
 ### Configuring KDF
 
-The KDF is responsible for deriving cryptographic keys from the provided secret. Choose the appropriate KDF based on the type of secret.
+The `KDF` is responsible for deriving cryptographic keys from the provided secret. Choose the appropriate KDF based on the type of secret.
 
-#### KdfKey - for high‑entropy keys
-Use this when the secret is already a strong cryptographic key (e.g. a 256‑bit random value). It applies `HKDF` directly.
+#### `KdfKey` - for high‑entropy keys
 
+Directly applies `HKDF` (RFC 5869) to the input secret. Suitable when the secret is already a strong random key (32 bytes or more). This implementation satisfies the **KDF Security** requirements (resistance to key extraction and key expansion attacks) as defined in the `HKDF` specification.
+`KdfKey` supports static salt for domain separation, ensuring that keys derived for different contexts remain distinct even when the same secret is used. It also provides dynamic salt for per‑message randomness, which is enabled by default. When dynamic salt is disabled, the caller must supply a unique context for each derivation to prevent key reuse.
+
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
+
+// With dynamic salt (default) – a random salt will be used per message
+$kdf = new KdfKey(
+    hashAlgo: 'sha512',
+    hashStaticSalt: $staticSalt, // domain separation
+);
+
+// Without dynamic salt – ensure $context is unique per call
+$kdf = new KdfKey(
+    hashAlgo: 'sha512',
+    hashStaticSalt: $staticSalt, // domain separation
+    saltSize: 0,
+);
+```
+
+Yii DI configuration:
 ```php
 // /config/di.php
 use Yiisoft\Security\Crypto\Kdf\KdfKey;
 
 KdfKey::class => [
     '__construct()' => [
-        'algorithm' => 'sha512', // any hash_hmac_algos()
+        'hashAlgo' => 'sha512',
+        'hashStaticSalt' => 'your-static-salt-binary-string', // must match hash length
+        'saltSize' => 0, // set to 0 to disable dynamic salt
     ],
 ],
 ```
 
-#### KdfPasswordPbkdf2 - for low‑entropy passwords
-This first applies `PBKDF2` with a configurable iteration count, then `HKDF` to derive the final key.
-Follow OWASP recommendations for iteration counts.
 
+#### KdfPasswordArgon2 - for low‑entropy passwords
+
+Uses `Argon2` (via `libsodium`) to hash the password, then `HKDF` to expand. This is the recommended `KDF` for passwords when `Sodium` is available.
+
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\Kdf\KdfPasswordArgon2;
+
+$kdf = new KdfPasswordArgon2(
+    opslimit: SODIUM_CRYPTO_PWHASH_OPSLIMIT_SENSITIVE,
+    memlimit: SODIUM_CRYPTO_PWHASH_MEMLIMIT_SENSITIVE,
+    hashAlgo: 'sha512', // any hash_hmac_algos()
+);
+```
+
+Yii DI configuration:
 ```php
 // /config/di.php
-use Yiisoft\Security\Crypto\Kdf\KdfPassword;
+use Yiisoft\Security\Crypto\Kdf\KdfPasswordArgon2;
 
-KdfPassword::class => [
+KdfPasswordArgon2::class => [
     '__construct()' => [
-        'algorithm' => 'sha512', // any hash_hmac_algos()
+        'opslimit' => SODIUM_CRYPTO_PWHASH_OPSLIMIT_SENSITIVE,
+        'memlimit' => SODIUM_CRYPTO_PWHASH_MEMLIMIT_SENSITIVE,
+        'hashAlgo' => 'sha512', // any hash_hmac_algos()
+    ],
+],
+```
+
+
+#### KdfPasswordPbkdf2 - for low‑entropy passwords
+
+Applies `PBKDF2` (with SHA‑256) to the password and salt, then `HKDF` to expand to the final key length.
+Follow `OWASP` recommendations for iteration counts.
+
+Runtime configuration:
+```php
+use Yiisoft\Security\Crypto\Kdf\KdfPasswordPbkdf2;
+
+$kdf = new KdfPasswordPbkdf2(iterations: 700_000, hashAlgo: 'sha512');
+```
+
+Yii DI configuration:
+```php
+// /config/di.php
+use Yiisoft\Security\Crypto\Kdf\KdfPasswordPbkdf2;
+
+KdfPasswordPbkdf2::class => [
+    '__construct()' => [
         'iterations' => 700_000,
+        'hashAlgo' => 'sha512', // any hash_hmac_algos()
     ],
 ],
 ```
 
 ### Configuring ciphers
 
-The module provides two backends: `OpenSSL` and `Sodium` (libsodium).
+The module provides two backends: `OpenSSL` and `Sodium` (`libsodium`).
 
 #### OpenSSLAeadCipher
 
-Uses OpenSSL's AEAD ciphers. Supports the following algorithms:
+Uses `OpenSSL`'s `AEAD` ciphers. Supports the following algorithms:
 
 - `AES-128-GCM`
 - `AES-192-GCM`
 - `AES-256-GCM`
-- `CHACHA20-POLY1305` (IETF variant, 12‑byte nonce) - **default**
+- `CHACHA20-POLY1305` (`IETF` variant, 12‑byte nonce) - **default**
 
 Runtime configuration:
 ```php
@@ -365,7 +428,7 @@ OpenSSLAeadCipher::class => [
 
 #### SodiumAeadCipher
 
-Uses libsodium's high‑performance AEAD ciphers. Supports the following algorithms:
+Uses `libsodium`'s high‑performance `AEAD` ciphers. Supports the following algorithms:
 
 - `AES-256-GCM` – requires hardware AES‑NI support.
 - `CHACHA20-POLY1305-IETF` - **default**
