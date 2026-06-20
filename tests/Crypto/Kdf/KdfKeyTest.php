@@ -91,7 +91,7 @@ final class KdfKeyTest extends AbstractKdfCase
         $this->expectException(EncryptionException::class);
         $kdf->derive('', 32, 'test-context', 'test-salt');
     }
-    
+
     #[DataProvider('dataProviderEmptyStaticSaltKeyValues')]
     public function testEmptyStaticSaltDerivesExpectedKey(string $hashAlgo, string $secret, int $keySize, string $context, string $key): void
     {
