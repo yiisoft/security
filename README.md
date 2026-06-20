@@ -132,9 +132,9 @@ hash_equals($expected, $actual);
 
 The `Crypto` module provides a modern, authenticated encryption layer based on `AEAD` ciphers. It provides three built‑in cryptors:
 
-- `KdfCryptor` – derives a fresh DEK per message using a KDF.
-- `EnvelopeCryptor` – wraps a random DEK with a KEK derived from the secret.
-- `VersionedCryptor` – adds a version prefix to delegate to different cryptors
+- `KdfCryptor` – derives a fresh `DEK` per message using a `KDF`.
+- `EnvelopeCryptor` – wraps a random `DEK` with a KEK derived from the secret.
+- `VersionedCryptor` – adds a version prefix to delegate to different cryptors.
 
 ### Basic usage example
 
@@ -156,7 +156,7 @@ $data = $cryptor->decrypt($encrypted, $secret, $context);
 ### `KdfCryptor`
 
 `KDF`‑based encryption (single key derived per message, no key wrapping).  
-A fresh data encryption key (`DEK`) is derived from the secret and the provided context using the configured `KDF`.
+A fresh Data Encryption Key (`DEK`) is derived from the secret and the provided context using the configured `KDF`.
 If the configured `KDF` requires a salt, a random salt is generated for each message and prepended to the ciphertext.
 
 Output structure:
@@ -296,11 +296,14 @@ VersionedCryptor::class => [
 
 ### Configuring KDF
 
-The `KDF` is responsible for deriving cryptographic keys from the provided secret. Choose the appropriate KDF based on the type of secret.
+The `KDF` is responsible for deriving cryptographic keys from the provided secret. Choose the appropriate `KDF` based on the type of secret.
 
 #### `KdfKey` - for high‑entropy keys
 
-Directly applies `HKDF` (RFC 5869) to the input secret. Suitable when the secret is already a strong random key (32 bytes or more). This implementation satisfies the **KDF Security** requirements (resistance to key extraction and key expansion attacks) as defined in the `HKDF` specification.
+Directly applies `HKDF` (RFC 5869) to the input secret. Suitable when the secret is already a strong random key (32 bytes or more).
+
+This implementation satisfies the **KDF Security** requirements (resistance to key extraction and key expansion attacks) as defined in the `HKDF` specification.
+
 `KdfKey` supports static salt for domain separation, ensuring that keys derived for different contexts remain distinct even when the same secret is used. It also provides dynamic salt for per‑message randomness, which is enabled by default. When dynamic salt is disabled, the caller must supply a unique context for each derivation to prevent key reuse.
 
 Runtime configuration:
@@ -431,7 +434,7 @@ OpenSSLAeadCipher::class => [
 
 Uses `libsodium`'s high‑performance `AEAD` ciphers. Supports the following algorithms:
 
-- `AES-256-GCM` – requires hardware AES‑NI support.
+- `AES-256-GCM` – requires hardware `AES‑NI` support.
 - `CHACHA20-POLY1305-IETF` - **default**
 - `XCHACHA20-POLY1305-IETF`
 
