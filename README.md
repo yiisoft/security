@@ -132,9 +132,9 @@ hash_equals($expected, $actual);
 
 The `Crypto` module provides a modern, authenticated encryption layer based on `AEAD` ciphers. It provides three built‑in cryptors:
 
-- **`KdfCryptor`** – derives a fresh DEK per message using a KDF.
-- **`EnvelopeCryptor`** – wraps a random DEK with a KEK derived from the secret.
-- **`VersionedCryptor`** – adds a version prefix to delegate to different cryptors
+- `KdfCryptor` – derives a fresh DEK per message using a KDF.
+- `EnvelopeCryptor` – wraps a random DEK with a KEK derived from the secret.
+- `VersionedCryptor` – adds a version prefix to delegate to different cryptors
 
 ### Basic usage example
 
@@ -155,13 +155,13 @@ $data = $cryptor->decrypt($encrypted, $secret, $context);
 
 ### `KdfCryptor`
 
-KDF‑based encryption (single key derived per message, no key wrapping).  
-A fresh data encryption key (DEK) is derived from the secret and the provided context using the configured KDF.  
-If the configured KDF requires a salt, a random salt is generated for each message and prepended to the ciphertext.
+`KDF`‑based encryption (single key derived per message, no key wrapping).  
+A fresh data encryption key (`DEK`) is derived from the secret and the provided context using the configured `KDF`.
+If the configured `KDF` requires a salt, a random salt is generated for each message and prepended to the ciphertext.
 
 Output structure:
 ```
-kdfSalf (optional) || nonce || encryptedData (with tag)
+kdfSalt (optional) || nonce || encryptedData (with tag)
 
 ```
 
@@ -200,11 +200,11 @@ KdfCryptor::class => [
 
 ### `EnvelopeCryptor`
 
-Envelope encryption (key wrapping) using a KDF to derive a Key Encryption Key (KEK)
-and a random Data Encryption Key (DEK). The DEK is wrapped with the KEK and stored
-alongside the ciphertext. The DEK is used to encrypt the actual data.
+Envelope encryption (key wrapping) using a `KDF` to derive a Key Encryption Key (`KEK`)
+and a random Data Encryption Key (`DEK`). The `DEK` is wrapped with the `KEK` and stored
+alongside the ciphertext. The `DEK` is used to encrypt the actual data.
 
-The DEK wrap cipher can be specified separately (e.g., `OpenSSLWrapCipher`); if omitted, the data cipher is used for wrapping as well.
+The `DEK` wrap cipher can be specified separately (e.g., `OpenSSLWrapCipher`); if omitted, the data cipher is used for wrapping as well.
 
 Output structure:
 ```
@@ -275,6 +275,7 @@ $cryptor = new VersionedCryptor(
 Yii DI configuration:
 ```php
 // /config/di.php
+use Yiisoft\DI\Reference;
 use Yiisoft\DI\ReferencesArray;
 use Yiisoft\Security\Crypto\VersionedCryptor;
 use Yiisoft\Security\Crypto\KdfCryptor;
@@ -283,8 +284,8 @@ use Yiisoft\Security\Crypto\EnvelopeCryptor;
 VersionedCryptor::class => [
     '__construct()' => [
         'cryptors' => ReferencesArray::from([
-            chr(0x01) => KdfCryptor::class,
-            chr(0x96) => EnvelopeCryptor::class,
+            chr(0x01) => Reference::to(KdfCryptor::class),
+            chr(0x96) => Reference::to(EnvelopeCryptor::class},
         ]),
         'currentVersion' => chr(0x01),
         // 'versionSize' => 1, // optional, auto-detected from currentVersion
@@ -367,7 +368,7 @@ KdfPasswordArgon2::class => [
 
 #### KdfPasswordPbkdf2 - for low‑entropy passwords
 
-Applies `PBKDF2` (with SHA‑256) to the password and salt, then `HKDF` to expand to the final key length.
+Applies `PBKDF2` (with `SHA‑256`) to the password and salt, then `HKDF` to expand to the final key length.
 Follow `OWASP` recommendations for iteration counts.
 
 Runtime configuration:
@@ -461,22 +462,22 @@ SodiumAeadCipher::class => [
 
 #### OpenSSLWrapCipher
 
-A dedicated cipher for key wrapping (RFC 5649 AES‑KW). This cipher should only be used inside `EnvelopeCryptor` for wrapping DEKs, not for general‑purpose encryption.
+A dedicated cipher for key wrapping (RFC 5649 `AES‑KW`). This cipher should only be used inside `EnvelopeCryptor` for wrapping `DEKs`, not for general‑purpose encryption.
 Allowed algorithms:
 
 - `AES-128-WRAP`
 - `AES-192-WRAP`
-- `AES-256-WRAP - **default**
+- `AES-256-WRAP` - **default**
 
 Runtime configuration:
 ```php
 use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
 
-// Using the default algorithm (`AES-256-WRAP`)
+// Using the default algorithm ('AES-256-WRAP')
 $cipher = new OpenSSLWrapCipher();
 
 // Explicitly specify an algorithm
-$cipher = new OpenSSLWrapCipher(cipher: `AES-128-WRAP`);
+$cipher = new OpenSSLWrapCipher(cipher: 'AES-128-WRAP');
 ```
 
 Yii DI configuration:
@@ -486,12 +487,70 @@ use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
 
 OpenSSLWrapCipher::class => [
     '__construct()' => [
-        'cipher' => `AES-128-WRAP`,
+        'cipher' => 'AES-128-WRAP',
     ],
 ],
 ```
 
-## Old cryptor
+
+### Examples
+
+#### User data encryption
+
+Use this when each entity (user, record, document) has a natural unique identifier. The context includes that identifier, so no dynamic salt is needed.
+
+```php
+use Yiisoft\Security\Crypto\EnvelopeCryptor;
+use Yiisoft\Security\Crypto\KdfCryptor;
+use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
+
+// static salt for domain separation
+$salt = getenv('USER_ENCRYPTION_SALT'); // must be exactly 32 bytes for SHA‑256
+$kdf = new KdfKey(
+    hashStaticSalt: $salt,
+    saltSize: 0, // disabled – rely on unique context
+);
+$cipher = new SodiumAeadCipher('AES-256-GCM');
+$cryptor = new KdfCryptor($kdf, $cipher); // or EnvelopeCryptor
+
+$userId = 12345;
+// Unique context per user
+$context = 'user_data_' . $userId;
+
+$secret = getenv('MASTER_ENCRYPTION_KEY');
+
+$encrypted = $cryptor->encrypt('sensitive user information', $secret, $context);
+$decrypted = $cryptor->decrypt($encrypted, $secret, $context);
+```
+
+#### Static context encryption
+
+Use this when data does not have a natural unique identifier. The dynamic salt provides per‑message randomness.
+
+```php
+use Yiisoft\Security\Crypto\EnvelopeCryptor;
+use Yiisoft\Security\Crypto\KdfCryptor;
+use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
+use Yiisoft\Security\Crypto\Kdf\KdfKey;
+
+// static salt for domain separation, dynamic salt enabled (default 32 bytes)
+$salt = getenv('USER_ENCRYPTION_SALT'); // must be exactly 32 bytes for SHA‑256
+$kdf = new KdfKey(
+    hashStaticSalt: $salt,
+);
+$cipher = new SodiumAeadCipher('AES-256-GCM');
+$cryptor = new KdfCryptor($kdf, $cipher); // or EnvelopeCryptor
+
+$context = 'app_config_v1';
+$secret = getenv('MASTER_ENCRYPTION_KEY');
+
+$encrypted = $cryptor->encrypt('sensitive application configuration', $secret, $context);
+$decrypted = $cryptor->decrypt($encrypted, $secret, $context);
+```
+
+
+## Legacy encryption (`Crypt`)
 
 Note: This is the legacy encryption component based on `CBC` mode + `HMAC`.
 For new projects, prefer the AEAD‑based cryptors (`AES‑GCM`, `ChaCha20‑Poly1305`) which provide authenticated encryption in a single step and are less error‑prone.
