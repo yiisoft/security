@@ -42,7 +42,7 @@
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.9.1",
         "maglnet/composer-require-checker": "^4.18.0",
-        "phpunit/phpunit": "^10.5.63",
+        "phpunit/phpunit": "^11.5.55",
         "rector/rector": "^2.4.6",
         "spatie/phpunit-watcher": "^1.24.4"
     },
@@ -64,8 +64,9 @@
         }
     },
     "scripts": {
-        "test": "phpunit --testdox --no-interaction",
-        "test-watch": "phpunit-watcher watch"
+        "test": "phpunit --display-deprecations",
+        "test-watch": "phpunit-watcher watch",
+        "psalm": "psalm"
     },
     "config": {
         "sort-packages": true,
