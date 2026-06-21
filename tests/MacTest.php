@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 use Yiisoft\Security\MockHelper;
+use RuntimeException;
+
+use function strlen;
 
 final class MacTest extends TestCase
 {
@@ -69,7 +72,7 @@ final class MacTest extends TestCase
 
     public function testSignException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         MockHelper::$mock_hash_hmac = false;
         $mac = new Mac();
@@ -78,7 +81,7 @@ final class MacTest extends TestCase
 
     public function testGetMessageException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         MockHelper::$mock_hash_hmac = false;
         $mac = new Mac();
@@ -93,7 +96,7 @@ final class MacTest extends TestCase
         $signedData = $mac->sign($data, $key);
         $damagedData = substr($signedData, 0, -1);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $mac = new Mac();
         $mac->getMessage($damagedData, $key);
@@ -107,7 +110,7 @@ final class MacTest extends TestCase
         $signedData = $mac->sign($data, $key);
         $damagedData = substr($signedData, 0, -strlen($data) - 1);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $mac = new Mac();
         $mac->getMessage($damagedData, $key);

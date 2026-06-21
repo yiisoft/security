@@ -6,6 +6,13 @@ namespace Yiisoft\Security;
 
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
+use Exception;
+use RuntimeException;
+
+use function array_key_exists;
+use function extension_loaded;
+
+use const OPENSSL_RAW_DATA;
 
 final class Crypt
 {
@@ -46,13 +53,13 @@ final class Crypt
      * @param string $cipher The cipher to use for encryption and decryption.
      */
     public function __construct(
-        private readonly string $cipher = 'AES-128-CBC'
+        private readonly string $cipher = 'AES-128-CBC',
     ) {
         if (!extension_loaded('openssl')) {
-            throw new \RuntimeException('Encryption requires the OpenSSL PHP extension.');
+            throw new RuntimeException('Encryption requires the OpenSSL PHP extension.');
         }
         if (!array_key_exists($cipher, self::ALLOWED_CIPHERS)) {
-            throw new \RuntimeException($cipher . ' is not an allowed cipher.');
+            throw new RuntimeException($cipher . ' is not an allowed cipher.');
         }
     }
 
@@ -110,8 +117,8 @@ final class Crypt
      * @param string $data The data to encrypt.
      * @param string $password The password to use for encryption.
      *
-     * @throws \RuntimeException On OpenSSL not loaded.
-     * @throws \Exception On OpenSSL error.
+     * @throws RuntimeException On OpenSSL not loaded.
+     * @throws Exception On OpenSSL error.
      *
      * @return string The encrypted data as byte string.
      *
@@ -121,7 +128,7 @@ final class Crypt
     public function encryptByPassword(
         string $data,
         #[SensitiveParameter]
-        string $password
+        string $password,
     ): string {
         return $this->encrypt($data, true, $password, '');
     }
@@ -140,8 +147,8 @@ final class Crypt
      * @param string $info Context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      *
-     * @throws \RuntimeException On OpenSSL not loaded.
-     * @throws \Exception On OpenSSL error.
+     * @throws RuntimeException On OpenSSL not loaded.
+     * @throws Exception On OpenSSL error.
      *
      * @return string The encrypted data as byte string.
      *
@@ -152,7 +159,7 @@ final class Crypt
         string $data,
         #[SensitiveParameter]
         string $inputKey,
-        string $info = ''
+        string $info = '',
     ): string {
         return $this->encrypt($data, false, $inputKey, $info);
     }
@@ -163,8 +170,8 @@ final class Crypt
      * @param string $data The encrypted data to decrypt.
      * @param string $password The password to use for decryption.
      *
-     * @throws \RuntimeException On OpenSSL not loaded.
-     * @throws \Exception On OpenSSL errors.
+     * @throws RuntimeException On OpenSSL not loaded.
+     * @throws Exception On OpenSSL errors.
      * @throws AuthenticationException On authentication failure.
      *
      * @return string The decrypted data.
@@ -174,7 +181,7 @@ final class Crypt
     public function decryptByPassword(
         string $data,
         #[SensitiveParameter]
-        string $password
+        string $password,
     ): string {
         return $this->decrypt($data, true, $password, '');
     }
@@ -187,8 +194,8 @@ final class Crypt
      * @param string $info Context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      *
-     * @throws \RuntimeException On OpenSSL not loaded.
-     * @throws \Exception On OpenSSL errors.
+     * @throws RuntimeException On OpenSSL not loaded.
+     * @throws Exception On OpenSSL errors.
      * @throws AuthenticationException On authentication failure.
      *
      * @return string The decrypted data.
@@ -199,7 +206,7 @@ final class Crypt
         string $data,
         #[SensitiveParameter]
         string $inputKey,
-        string $info = ''
+        string $info = '',
     ): string {
         return $this->decrypt($data, false, $inputKey, $info);
     }
@@ -213,8 +220,8 @@ final class Crypt
      * @param string $info context/application specific information, e.g. a user ID
      * See [RFC 5869 Section 3.2](https://tools.ietf.org/html/rfc5869#section-3.2) for more details.
      *
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL error
+     * @throws RuntimeException on OpenSSL not loaded
+     * @throws Exception on OpenSSL error
      *
      * @return string the encrypted data as byte string
      *
@@ -225,7 +232,7 @@ final class Crypt
         bool $passwordBased,
         #[SensitiveParameter]
         string $secret,
-        string $info = ''
+        string $info = '',
     ): string {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
@@ -244,7 +251,7 @@ final class Crypt
              * @psalm-suppress PossiblyFalseOperand `openssl_encrypt()` is returned `false`, so `openssl_error_string()`
              * always returns string.
              */
-            throw new \RuntimeException('OpenSSL failure on encryption: ' . openssl_error_string());
+            throw new RuntimeException('OpenSSL failure on encryption: ' . openssl_error_string());
         }
 
         $authKey = hash_hkdf($this->kdfAlgorithm, $key, $keySize, $this->authorizationKeyInfo);
@@ -267,8 +274,8 @@ final class Crypt
      * @param string $secret the decryption password or key
      * @param string $info context/application specific information, @see encrypt()
      *
-     * @throws \RuntimeException on OpenSSL not loaded
-     * @throws \Exception on OpenSSL errors
+     * @throws RuntimeException on OpenSSL not loaded
+     * @throws Exception on OpenSSL errors
      * @throws AuthenticationException on authentication failure
      *
      * @return string the decrypted data
@@ -280,7 +287,7 @@ final class Crypt
         bool $passwordBased,
         #[SensitiveParameter]
         string $secret,
-        string $info
+        string $info,
     ): string {
         [$blockSize, $keySize] = self::ALLOWED_CIPHERS[$this->cipher];
 
@@ -308,7 +315,7 @@ final class Crypt
              * @psalm-suppress PossiblyFalseOperand `openssl_decrypt()` is returned `false`, so `openssl_error_string()`
              * always returns string.
              */
-            throw new \RuntimeException('OpenSSL failure on decryption: ' . openssl_error_string());
+            throw new RuntimeException('OpenSSL failure on decryption: ' . openssl_error_string());
         }
 
         return $decrypted;

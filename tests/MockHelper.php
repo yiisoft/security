@@ -16,7 +16,7 @@ namespace Yiisoft\Security;
  */
 function hash_hmac($algo, $data, $key, $raw_output = false)
 {
-    return MockHelper::$mock_hash_hmac ?? \hash_hmac($algo, $data, $key, $raw_output);
+    return MockHelper::$mock_hash_hmac ?? hash_hmac($algo, $data, $key, $raw_output);
 }
 
 function extension_loaded($name)
@@ -26,12 +26,12 @@ function extension_loaded($name)
 
 function openssl_encrypt($data, $method, $key, $options = 0, $iv = '')
 {
-    return MockHelper::$mock_openssl_encrypt ?? \openssl_encrypt($data, $method, $key, $options, $iv);
+    return MockHelper::$mock_openssl_encrypt ?? openssl_encrypt($data, $method, $key, $options, $iv);
 }
 
 function openssl_decrypt($data, $method, $password, $options = 1, $iv = '')
 {
-    return MockHelper::$mock_openssl_decrypt ?? \openssl_decrypt($data, $method, $password, $options, $iv);
+    return MockHelper::$mock_openssl_decrypt ?? openssl_decrypt($data, $method, $password, $options, $iv);
 }
 
 class MockHelper

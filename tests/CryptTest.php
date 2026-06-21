@@ -10,18 +10,14 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Yiisoft\Security\AuthenticationException;
 use Yiisoft\Security\Crypt;
 use Yiisoft\Security\MockHelper;
+use Exception;
+use RuntimeException;
 
 final class CryptTest extends TestCase
 {
     protected function tearDown(): void
     {
         MockHelper::resetMocks();
-    }
-
-    private function getCrypt(): Crypt
-    {
-        // speed up test running
-        return (new Crypt())->withDerivationIterations(1000);
     }
 
     public function testEncryptAndDecryptByPassword(): void
@@ -32,7 +28,6 @@ final class CryptTest extends TestCase
 
         $encryptedData = $crypt->encryptByPassword($data, $key);
         $decryptedData = $crypt->decryptByPassword($encryptedData, $key);
-
 
         $this->assertNotSame($data, $encryptedData);
         $this->assertEquals($data, $decryptedData);
@@ -409,7 +404,7 @@ final class CryptTest extends TestCase
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     #[DataProvider('dataProviderEncryptByKeyCompatibilityWithMcrypt')]
     public function testEncryptByKeyCompatibilityWithMcrypt(string $key, string $data, string $encrypted): void
@@ -428,7 +423,7 @@ final class CryptTest extends TestCase
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     #[DataProvider('dataProviderEncryptByKeyCompatibilityWithOpenSsl')]
     public function testEncryptByKeyCompatibilityWithOpenSsl(string $key, string $data, string $encrypted): void
@@ -747,13 +742,13 @@ final class CryptTest extends TestCase
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     #[DataProvider('dataProviderEncryptByPasswordMcryptCompatibility')]
     public function testEncryptByPasswordCompatibilityWithMcrypt(
         string $password,
         string $data,
-        string $encrypted
+        string $encrypted,
     ): void {
         $crypt = $this->getCrypt();
 
@@ -768,13 +763,13 @@ final class CryptTest extends TestCase
      * @param string $data plaintext hex string
      * @param string $encrypted ciphertext hex string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     #[DataProvider('dataProviderEncryptByPasswordOpenSslCompatibility')]
     public function testEncryptByPasswordCompatibilityWithOpenSsl(
         string $password,
         string $data,
-        string $encrypted
+        string $encrypted,
     ): void {
         $crypt = $this->getCrypt();
 
@@ -786,7 +781,7 @@ final class CryptTest extends TestCase
 
     public function testOpensslNotLoadedException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         MockHelper::$mock_extension_loaded = false;
         $this->getCrypt();
@@ -794,14 +789,14 @@ final class CryptTest extends TestCase
 
     public function testUnknownCipher(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         new Crypt('test');
     }
 
     public function testNotAllowedCypher(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         new Crypt('BF-CBC');
     }
@@ -832,7 +827,7 @@ final class CryptTest extends TestCase
 
     public function testOpensslEncryptException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         MockHelper::$mock_openssl_encrypt = false;
         $crypt = $this->getCrypt();
@@ -841,11 +836,17 @@ final class CryptTest extends TestCase
 
     public function testOpensslDecryptException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         MockHelper::$mock_openssl_decrypt = false;
         $crypt = $this->getCrypt();
         $encrypted = $crypt->encryptByPassword('test', 'test');
         $crypt->decryptByPassword($encrypted, 'test');
+    }
+
+    private function getCrypt(): Crypt
+    {
+        // speed up test running
+        return (new Crypt())->withDerivationIterations(1000);
     }
 }

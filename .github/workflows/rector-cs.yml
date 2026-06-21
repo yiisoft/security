@@ -1,0 +1,24 @@
+name: Rector + PHP CS Fixer
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/rector-cs.yml'
+      - 'composer.json'
+      - 'rector.php'
+      - '.php-cs-fixer.dist.php'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rector:
+    uses: yiisoft/actions/.github/workflows/rector-cs.yml@master
+    with:
+      php: '8.2'

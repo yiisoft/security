@@ -6,6 +6,9 @@ namespace Yiisoft\Security;
 
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
+use Exception;
+
+use function is_int;
 
 /**
  * TokenMask helps to mitigate BREACH attack by randomizing how token is outputted on each request.
@@ -19,13 +22,13 @@ final class TokenMask
      *
      * @param string $token An unmasked token.
      *
-     * @throws \Exception if unable to securely generate random bytes
+     * @throws Exception if unable to securely generate random bytes
      *
      * @return string A masked token.
      */
     public static function apply(
         #[SensitiveParameter]
-        string $token
+        string $token,
     ): string {
         // The number of bytes in a mask is always equal to the number of bytes in a token.
         /** @psalm-suppress ArgumentTypeCoercion */
@@ -42,7 +45,7 @@ final class TokenMask
      */
     public static function remove(
         #[SensitiveParameter]
-        string $maskedToken
+        string $maskedToken,
     ): string {
         $decoded = StringHelper::base64UrlDecode($maskedToken);
         $length = StringHelper::byteLength($decoded) / 2;
