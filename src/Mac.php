@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Security;
 
 use SensitiveParameter;
+use ValueError;
 use Yiisoft\Strings\StringHelper;
 use RuntimeException;
 
@@ -51,8 +52,9 @@ final readonly class Mac
         string $key,
         bool $rawHash = false,
     ): string {
-        $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
-        if (!$hash) {
+        try {
+            $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
+        } catch (ValueError) {
             throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
 
@@ -84,8 +86,9 @@ final readonly class Mac
         string $key,
         bool $rawHash = false,
     ): string {
-        $test = hash_hmac($this->algorithm, '', '', $rawHash);
-        if (!$test) {
+        try {
+            $test = hash_hmac($this->algorithm, '', '', $rawHash);
+        } catch (ValueError) {
             throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
         $hashLength = StringHelper::byteLength($test);

@@ -4,23 +4,15 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests;
 
-require_once __DIR__ . '/MockHelper.php';
-
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
-use Yiisoft\Security\MockHelper;
 use RuntimeException;
 
 use function strlen;
 
 final class MacTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        MockHelper::resetMocks();
-    }
-
     public function testSignMessage(): void
     {
         $mac = new Mac();
@@ -72,20 +64,23 @@ final class MacTest extends TestCase
 
     public function testSignException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $mac = new Mac('xxx');
 
-        MockHelper::$mock_hash_hmac = false;
-        $mac = new Mac();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Failed to generate HMAC with hash algorithm: xxx.');
         $mac->sign('test', 'test');
     }
 
     public function testGetMessageException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $mac = new Mac('xxx');
 
-        MockHelper::$mock_hash_hmac = false;
-        $mac = new Mac();
-        $mac->getMessage('test', 'test');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Failed to generate HMAC with hash algorithm: xxx.');
+        $mac->getMessage(
+            data: 'test',
+            key: 'test',
+        );
     }
 
     public function testGetFromDamagedMessageException(): void
