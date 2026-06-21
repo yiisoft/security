@@ -43,7 +43,7 @@ jobs:
       codecovToken: ${{ secrets.CODECOV_TOKEN }}
     with:
       os: >-
-        ['ubuntu-latest']
+        ['windows-latest']
       php: >-
         ['8.2']
       extensions: :openssl
