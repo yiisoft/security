@@ -25,7 +25,7 @@ use function sodium_crypto_aead_xchacha20poly1305_ietf_decrypt;
  * Supports AES-256-GCM (hardware accelerated), ChaCha20-Poly1305-IETF, and XChaCha20-Poly1305-IETF.
  * Authentication tag is always 16 bytes and is included in the returned ciphertext.
  */
-final class SodiumAeadCipher implements CipherInterface
+final readonly class SodiumAeadCipher implements CipherInterface
 {
     /**
      * Authentication tag size in bytes (constant for all supported modes).
@@ -35,12 +35,12 @@ final class SodiumAeadCipher implements CipherInterface
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $keySize;
+    private int $keySize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $nonceSize;
+    private int $nonceSize;
 
     /**
      * Look-up table of allowed Sodium ciphers.
@@ -63,7 +63,7 @@ final class SodiumAeadCipher implements CipherInterface
      * @throws RuntimeException If sodium extension is missing, cipher not allowed, or AES-256-GCM without hardware support.
      */
     public function __construct(
-        private readonly string $cipher = 'CHACHA20-POLY1305-IETF',
+        private string $cipher = 'CHACHA20-POLY1305-IETF',
     ) {
         if (!extension_loaded('sodium')) {
             throw new RuntimeException('Encryption requires the Sodium PHP extension.');

@@ -17,32 +17,32 @@ use function random_bytes;
  * The resulting ciphertext contains no built‑in authentication mechanism,
  * therefore the underlying cipher MUST be AEAD to provide integrity and authenticity.
  */
-final class KdfCryptor implements CryptorInterface
+final readonly class KdfCryptor implements CryptorInterface
 {
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $keySize;
+    private int $keySize;
 
     /**
      * @psalm-var int<0, max>
      */
-    private readonly int $nonceSize;
+    private int $nonceSize;
 
     /**
      * @psalm-var int<0, max>
      */
-    private readonly int $saltSize;
+    private int $saltSize;
 
-    private readonly int $headerLength;
+    private int $headerLength;
 
     /**
      * @param KdfInterface $kdf Key derivation function (used to derive DEK from secret + salt).
      * @param CipherInterface $cipher Low‑level cipher (must support AEAD).
      */
     public function __construct(
-        private readonly KdfInterface $kdf,
-        private readonly CipherInterface $cipher,
+        private KdfInterface $kdf,
+        private CipherInterface $cipher,
     ) {
         $this->keySize = $this->cipher->getKeySize();
         $this->nonceSize = $this->cipher->getNonceSize();

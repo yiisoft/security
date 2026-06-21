@@ -7,11 +7,11 @@ namespace Yiisoft\Security\Tests\Crypto\Kdf;
 use SensitiveParameter;
 use Stringable;
 
-final class StringableParam implements Stringable
+final readonly class StringableParam implements Stringable
 {
     public function __construct(
         #[SensitiveParameter]
-        private readonly string $value
+        private string $value
     ) {
     }
 

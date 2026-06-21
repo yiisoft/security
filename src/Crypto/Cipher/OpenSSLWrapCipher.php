@@ -27,7 +27,7 @@ use const OPENSSL_RAW_DATA;
  * For key wrapping only, not general-purpose encryption.
  * Plaintext and ciphertext MUST be multiples of 8 bytes.
  */
-final class OpenSSLWrapCipher implements CipherInterface
+final readonly class OpenSSLWrapCipher implements CipherInterface
 {
     /**
      * Tag size in bytes (8 bytes for AES-KW).
@@ -37,7 +37,7 @@ final class OpenSSLWrapCipher implements CipherInterface
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $keySize;
+    private int $keySize;
 
     /**
      * Dummy nonce (all zeros) to prevent OpenSSL from issuing warnings.
@@ -47,7 +47,7 @@ final class OpenSSLWrapCipher implements CipherInterface
      * would trigger a warning. This dummy nonce of the appropriate size satisfies the
      * function signature without affecting the key wrap operation, as the algorithm ignores it.
      */
-    private readonly string $dummyNonce;
+    private string $dummyNonce;
 
     /**
      * Look-up table of allowed OpenSSL key wrap ciphers.
@@ -70,7 +70,7 @@ final class OpenSSLWrapCipher implements CipherInterface
      * @throws RuntimeException If OpenSSL extension is not loaded or the cipher is not allowed.
      */
     public function __construct(
-        private readonly string $cipher = 'AES-256-WRAP',
+        private string $cipher = 'AES-256-WRAP',
     ) {
         if (!extension_loaded('openssl')) {
             throw new RuntimeException('Encryption requires the OpenSSL PHP extension.');

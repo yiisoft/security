@@ -16,17 +16,17 @@ use function sprintf;
  * This enables seamless migration between different encryption algorithms or key lengths.
  * Each encrypted message begins with a fixed‑length version identifier.
  */
-final class VersionedCryptor implements CryptorInterface
+final readonly class VersionedCryptor implements CryptorInterface
 {
     /**
      * @var array<string, CryptorInterface> Storage for registered cryptors indexed by their version identifier.
      */
-    private readonly array $cryptors;
+    private array $cryptors;
 
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $versionSize;
+    private int $versionSize;
 
     /**
      * @param array<string, CryptorInterface> $cryptors List of cryptors indexed by version string.
@@ -39,7 +39,7 @@ final class VersionedCryptor implements CryptorInterface
      */
     public function __construct(
         array $cryptors,
-        private readonly string $currentVersion,
+        private string $currentVersion,
         ?int $versionSize = null,
     ) {
         $versionSize ??= StringHelper::byteLength($this->currentVersion);

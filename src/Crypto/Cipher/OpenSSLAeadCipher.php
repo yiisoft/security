@@ -23,19 +23,19 @@ use const OPENSSL_RAW_DATA;
  * AEAD cipher implementation using OpenSSL extension.
  * Supports AES-GCM (128, 192, 256) and ChaCha20-Poly1305(IETF variant) with 16-byte authentication tags.
  */
-final class OpenSSLAeadCipher implements CipherInterface
+final readonly class OpenSSLAeadCipher implements CipherInterface
 {
     private const TAG_SIZE = 16;
 
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $keySize;
+    private int $keySize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $nonceSize;
+    private int $nonceSize;
 
     /**
      * Look-up table of allowed OpenSSL ciphers.
@@ -59,7 +59,7 @@ final class OpenSSLAeadCipher implements CipherInterface
      * @throws RuntimeException If OpenSSL extension is not loaded or the cipher is not allowed.
      */
     public function __construct(
-        private readonly string $cipher = 'CHACHA20-POLY1305',
+        private string $cipher = 'CHACHA20-POLY1305',
     ) {
         if (!extension_loaded('openssl')) {
             throw new RuntimeException('Encryption requires the OpenSSL PHP extension.');

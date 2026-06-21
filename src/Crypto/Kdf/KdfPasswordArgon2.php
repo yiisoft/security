@@ -21,12 +21,12 @@ use function sodium_crypto_pwhash;
  *
  * Note: `sodium_crypto_pwhash()` always uses a single thread (p=1).
  */
-final class KdfPasswordArgon2 implements KdfInterface
+final readonly class KdfPasswordArgon2 implements KdfInterface
 {
     private const PW_HASH_LENGTH = 32;
     private const PW_SALT_SIZE = 16;
 
-    private readonly KdfKey $kdfKey;
+    private KdfKey $kdfKey;
 
     /**
      * @param int $algo Argon2 variant (defaults to Argon2id, constant value 2 – `SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13`).
@@ -40,9 +40,9 @@ final class KdfPasswordArgon2 implements KdfInterface
      * @see https://owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#argon2
      */
     public function __construct(
-        private readonly int $algo = 2,
-        private readonly int $opslimit = 2,
-        private readonly int $memlimit = 67108864,
+        private int $algo = 2,
+        private int $opslimit = 2,
+        private int $memlimit = 67108864,
         string $hashAlgo = 'sha256',
         string|Stringable $hashStaticSalt = '',
     ) {

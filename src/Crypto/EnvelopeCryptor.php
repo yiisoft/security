@@ -17,39 +17,39 @@ use function random_bytes;
  * The cipher responsible for encrypting the actual data MUST be AEAD,
  * because the final payload contains no external authentication.
  */
-final class EnvelopeCryptor implements CryptorInterface
+final readonly class EnvelopeCryptor implements CryptorInterface
 {
-    private readonly CipherInterface $kwCipher;
+    private CipherInterface $kwCipher;
 
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $kekSize;
+    private int $kekSize;
 
     /**
      * @psalm-var int<1, max>
      */
-    private readonly int $dekSize;
+    private int $dekSize;
 
     /**
      * @psalm-var int<0, max>
      */
-    private readonly int $dekNonceSize;
+    private int $dekNonceSize;
 
     /**
      * @psalm-var int<0, max>
      */
-    private readonly int $dataNonceSize;
+    private int $dataNonceSize;
 
     /**
      * @psalm-var int<0, max>
      */
-    private readonly int $saltSize;
+    private int $saltSize;
 
-    private readonly int $saltDekNonceLength;
-    private readonly int $wrapDekLength;
-    private readonly int $saltDekNonceWrapDekLength;
-    private readonly int $headerLength;
+    private int $saltDekNonceLength;
+    private int $wrapDekLength;
+    private int $saltDekNonceWrapDekLength;
+    private int $headerLength;
 
     /**
      * @param KdfInterface $kdf Key derivation function (used to derive KEK from secret).
@@ -58,8 +58,8 @@ final class EnvelopeCryptor implements CryptorInterface
      * the same cipher as `$cipher` is used for both data encryption and DEK wrapping
      */
     public function __construct(
-        private readonly KdfInterface $kdf,
-        private readonly CipherInterface $cipher,
+        private KdfInterface $kdf,
+        private CipherInterface $cipher,
         ?CipherInterface $kwCipher = null,
     ) {
         $this->kwCipher = $kwCipher ?? $this->cipher;

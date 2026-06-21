@@ -19,12 +19,12 @@ use function sprintf;
  * KDF that first applies PBKDF2 to the input password,
  * then applies HKDF to the result. Suitable for deriving cryptographic keys from low-entropy passwords.
  */
-final class KdfPasswordPbkdf2 implements KdfInterface
+final readonly class KdfPasswordPbkdf2 implements KdfInterface
 {
     private const PW_HASH_ALGO = 'sha256';
     private const PW_SALT_SIZE = 32;
 
-    private readonly KdfKey $kdfKey;
+    private KdfKey $kdfKey;
 
     /**
      * @param int $iterations Derivation iteration count (must be > 0). See OWASP recommendations.
@@ -36,7 +36,7 @@ final class KdfPasswordPbkdf2 implements KdfInterface
      * @see https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pbkdf2
      */
     public function __construct(
-        private readonly int $iterations = 600_000,
+        private int $iterations = 600_000,
         string $hashAlgo = 'sha256',
         string|Stringable $hashStaticSalt = '',
     ) {

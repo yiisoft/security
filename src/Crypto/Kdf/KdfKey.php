@@ -21,7 +21,7 @@ use function in_array;
  * KDF that directly applies HKDF (HMAC-based Key Derivation Function) to the input secret.
  * Suitable for deriving additional keys from a high-entropy secret (random key).
  */
-final class KdfKey implements KdfInterface
+final readonly class KdfKey implements KdfInterface
 {
     /**
      * Static salt used in HKDF extraction phase.
@@ -32,7 +32,7 @@ final class KdfKey implements KdfInterface
      *
      * If provided, it must be exactly the length of the hash output (e.g., 32 bytes for SHA‑256).
      */
-    private readonly string $hashStaticSalt;
+    private string $hashStaticSalt;
 
     /**
      * @param string $hashAlgo Hash algorithm for key derivation {@see hash_hmac_algos()}.
@@ -46,9 +46,9 @@ final class KdfKey implements KdfInterface
      * @throws RuntimeException
      */
     public function __construct(
-        private readonly string $hashAlgo = 'sha256',
+        private string $hashAlgo = 'sha256',
         string|Stringable $hashStaticSalt = '',
-        private readonly int $saltSize = 32,
+        private int $saltSize = 32,
     ) {
         if (!in_array($hashAlgo, hash_hmac_algos())) {
             throw new RuntimeException("'{$hashAlgo}' is not an allowed algorithm.");
