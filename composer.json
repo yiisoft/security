@@ -36,15 +36,19 @@
     "require": {
         "php": "8.2 - 8.5",
         "ext-hash": "*",
-        "ext-openssl": "*",
         "yiisoft/strings": "^2.0"
+    },
+    "suggest": {
+        "ext-openssl": "Required to use Crypt class"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.9.1",
+        "friendsofphp/php-cs-fixer": "^3.95.10",
         "maglnet/composer-require-checker": "^4.17.0",
         "phpunit/phpunit": "^11.5.55",
         "rector/rector": "^2.4.6",
-        "spatie/phpunit-watcher": "^1.24.4"
+        "spatie/phpunit-watcher": "^1.24.4",
+        "yiisoft/code-style": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -67,7 +71,8 @@
         "test": "phpunit --display-deprecations",
         "test-watch": "phpunit-watcher watch",
         "psalm": "psalm",
-        "rector": "rector"
+        "rector": "rector",
+        "cs-fix": "php-cs-fixer fix"
     },
     "config": {
         "sort-packages": true,

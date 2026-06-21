@@ -7,6 +7,7 @@ namespace Yiisoft\Security\Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMask;
+use Error;
 
 final class TokenMaskTest extends TestCase
 {
@@ -27,7 +28,7 @@ final class TokenMaskTest extends TestCase
 
     public function testMaskingInvalidStrings(): void
     {
-        $this->expectException(\Error::class);
+        $this->expectException(Error::class);
         TokenMask::apply('');
     }
 

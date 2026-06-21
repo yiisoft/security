@@ -19,13 +19,12 @@ use const PASSWORD_DEFAULT;
  */
 final class PasswordHasher
 {
-    private array $parameters;
-
     private const SAFE_PARAMETERS = [
         PASSWORD_BCRYPT => [
             'cost' => 13,
         ],
     ];
+    private array $parameters;
 
     /**
      * @param string|null $algorithm Algorithm to use. If not specified, PHP chooses safest algorithm available in the
@@ -35,8 +34,8 @@ final class PasswordHasher
      * @see https://www.php.net/manual/en/function.password-hash.php
      */
     public function __construct(
-        private readonly string|null $algorithm = PASSWORD_DEFAULT,
-        array|null $parameters = null,
+        private readonly ?string $algorithm = PASSWORD_DEFAULT,
+        ?array $parameters = null,
     ) {
         if ($parameters === null) {
             $this->parameters = self::SAFE_PARAMETERS[$this->algorithm ?? ''] ?? [];
@@ -76,7 +75,7 @@ final class PasswordHasher
      */
     public function hash(
         #[SensitiveParameter]
-        string $password
+        string $password,
     ): string {
         return password_hash($password, $this->algorithm, $this->parameters);
     }
@@ -98,7 +97,7 @@ final class PasswordHasher
         #[SensitiveParameter]
         string $password,
         #[SensitiveParameter]
-        string $hash
+        string $hash,
     ): bool {
         if ($password === '') {
             throw new InvalidArgumentException('Password must be a string and cannot be empty.');
@@ -118,7 +117,7 @@ final class PasswordHasher
      */
     public function needsRehash(
         #[SensitiveParameter]
-        string $hash
+        string $hash,
     ): bool {
         return password_needs_rehash($hash, $this->algorithm, $this->parameters);
     }

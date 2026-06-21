@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\PasswordHasher;
 
+use const PASSWORD_BCRYPT;
+
 final class PasswordHasherTest extends TestCase
 {
     public function testPasswordHashWithDefaults(): void
@@ -28,7 +30,7 @@ final class PasswordHasherTest extends TestCase
             [
                 // minimum blowfish's value is enough for tests
                 'cost' => 4,
-            ]
+            ],
         );
 
         $secret = 'secret';

@@ -5,6 +5,9 @@
 - Bug #72: Fix possibly null offset in `PasswordHasher` (@olegbaturin)
 - Chg #75: Bump minimal required PHP version to 8.2 (@vjik)
 - Enh #75: Mark `Mac` class as readonly (@vjik)
+- Enh #76: Explicitly import classes, functions and constants in "use" section (@vjik)
+- Enh #76: Make `ext-openssl` optional, it is required only for `Crypt` class (@vjik)
+- Bug #76: Use `ValueError` catching instead of `hash_hmac()` return value check in `Mac` (@vjik)
 
 ## 1.2.0 November 25, 2025
 

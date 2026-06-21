@@ -6,6 +6,9 @@ namespace Yiisoft\Security\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\Random;
+use InvalidArgumentException;
+
+use function strlen;
 
 final class RandomTest extends TestCase
 {
@@ -37,7 +40,7 @@ final class RandomTest extends TestCase
 
     public function testInvalidLength(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Random::string(0);
     }
 }

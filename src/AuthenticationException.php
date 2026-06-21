@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security;
 
-final class AuthenticationException extends \RuntimeException
+use RuntimeException;
+
+final class AuthenticationException extends RuntimeException
 {
     public function __construct()
     {

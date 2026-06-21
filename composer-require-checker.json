@@ -1,5 +1,11 @@
 {
-    "symbol-whitelist": [
-        "random_bytes"
+    "php-core-extensions" : [
+        "Core",
+        "hash",
+        "Reflection",
+        "SPL",
+        "random",
+        "standard",
+        "openssl"
     ]
 }
