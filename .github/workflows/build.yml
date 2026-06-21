@@ -38,7 +38,7 @@ jobs:
       extensions: sodium, openssl
 
   phpunit-without-openssl:
-    name: PHP 8.2 (without openssl)
+    name: PHP 8.2 without openssl
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -52,10 +52,11 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
-      - name: Disable openssl extension
+      - name: Prepare PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          coverage: pcov
           extensions: :openssl
 
       - name: Run tests with PHPUnit with code coverage
