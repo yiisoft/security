@@ -47,4 +47,4 @@ jobs:
       php: >-
         ['8.2']
       extensions: :openssl
-      composer-command: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi --disable-tls
+      composer-command: composer config --global disable-tls true && composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
