@@ -38,8 +38,8 @@ jobs:
       extensions: sodium, openssl
 
   phpunit-without-openssl:
-    name: PHP 8.2-windows-latest (without openssl)
-    runs-on: ubuntu-latest
+    name: PHP 8.2 (without openssl)
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
