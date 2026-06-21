@@ -9,7 +9,7 @@ use Yiisoft\CodeStyle\ConfigBuilder;
 $finder = (new Finder())->in([
     __DIR__ . '/src',
     __DIR__ . '/tests',
-]);
+])->notPath('MockHelper.php');
 
 return ConfigBuilder::build()
     ->setRiskyAllowed(true)

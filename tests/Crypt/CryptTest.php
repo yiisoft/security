@@ -2,17 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Security\Tests;
+namespace Yiisoft\Security\Tests\Crypt;
 
-require_once __DIR__ . '/MockHelper.php';
-
+use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use RuntimeException;
 use Yiisoft\Security\AuthenticationException;
 use Yiisoft\Security\Crypt;
 use Yiisoft\Security\MockHelper;
-use Exception;
-use RuntimeException;
+use Yiisoft\Security\Tests\TestCase;
 
+use function dirname;
+
+require_once dirname(__DIR__) . '/MockHelper.php';
+
+#[RequiresPhpExtension('openssl')]
 final class CryptTest extends TestCase
 {
     protected function tearDown(): void
@@ -777,14 +782,6 @@ final class CryptTest extends TestCase
         $encrypted = hex2bin(preg_replace('{\s+}', '', $encrypted));
 
         $this->assertEquals($data, $crypt->decryptByPassword($encrypted, $password));
-    }
-
-    public function testOpensslNotLoadedException(): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        MockHelper::$mock_extension_loaded = false;
-        $this->getCrypt();
     }
 
     public function testUnknownCipher(): void

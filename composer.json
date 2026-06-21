@@ -36,8 +36,10 @@
     "require": {
         "php": "8.2 - 8.5",
         "ext-hash": "*",
-        "ext-openssl": "*",
         "yiisoft/strings": "^2.0"
+    },
+    "suggest": {
+        "ext-openssl": "Required to use Crypt class"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.9.1",
