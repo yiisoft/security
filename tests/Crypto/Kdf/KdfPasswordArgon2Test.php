@@ -10,6 +10,13 @@ use Yiisoft\Security\Crypto\Kdf\KdfPasswordArgon2;
 
 final class KdfPasswordArgon2Test extends AbstractKdfCase
 {
+    protected function setUp(): void
+    {
+        if (!extension_loaded('sodium')) {
+            $this->markTestSkipped('Sodium extension is required for these tests.');
+        }
+    }
+
     protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
     {
         return $hashAlgo
