@@ -12,7 +12,7 @@ use Yiisoft\Strings\StringHelper;
  * message and a MAC hash. When obtaining original message from signed message using a key an exception is thrown
  * if message was altered.
  */
-final class Mac
+final readonly class Mac
 {
     /**
      * @param string $algorithm Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
@@ -20,7 +20,7 @@ final class Mac
      * @see https://php.net/manual/en/function.hash-algos.php
      */
     public function __construct(
-        private readonly string $algorithm = 'sha256'
+        private string $algorithm = 'sha256'
     ) {
     }
 
