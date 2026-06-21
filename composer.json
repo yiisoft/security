@@ -46,8 +46,8 @@
         "spatie/phpunit-watcher": "^1.24"
     },
     "suggest": {
-        "ext-openssl": "*",
-        "ext-sodium": "*"
+        "ext-openssl": "Required for OpenSSL based ciphers",
+        "ext-sodium": "Required for Sodium based ciphers"
     },
     "autoload": {
         "psr-4": {

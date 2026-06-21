@@ -17,6 +17,9 @@ use function openssl_encrypt;
 use function openssl_error_string;
 use function str_repeat;
 
+use const OPENSSL_DONT_ZERO_PAD_KEY;
+use const OPENSSL_RAW_DATA;
+
 /**
  * Key wrapping cipher using OpenSSL (RFC 5649 / AES-KW).
  * Nonce and AAD are ignored.

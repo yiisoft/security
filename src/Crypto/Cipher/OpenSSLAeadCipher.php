@@ -16,6 +16,9 @@ use function openssl_decrypt;
 use function openssl_encrypt;
 use function openssl_error_string;
 
+use const OPENSSL_DONT_ZERO_PAD_KEY;
+use const OPENSSL_RAW_DATA;
+
 /**
  * AEAD cipher implementation using OpenSSL extension.
  * Supports AES-GCM (128, 192, 256) and ChaCha20-Poly1305(IETF variant) with 16-byte authentication tags.
