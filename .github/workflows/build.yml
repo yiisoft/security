@@ -46,4 +46,4 @@ jobs:
         ['ubuntu-latest']
       php: >-
         ['8.2']
-      extensions: "!openssl"
+      extensions: :openssl
