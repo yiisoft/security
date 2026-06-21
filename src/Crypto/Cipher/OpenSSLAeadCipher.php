@@ -93,6 +93,7 @@ final readonly class OpenSSLAeadCipher implements CipherInterface
         $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY, $nonce, $tag, $aad, self::TAG_SIZE);
 
         if ($encrypted === false) {
+            /** @psalm-suppress RiskyTruthyFalsyComparison */
             $error = openssl_error_string() ?: 'Unknown error';
             throw new EncryptionException('OpenSSL failure on encryption: ' . $error);
         }
@@ -125,6 +126,7 @@ final readonly class OpenSSLAeadCipher implements CipherInterface
         $decrypted = openssl_decrypt($ciphertext, $this->cipher, $key, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY, $nonce, $tag, $aad);
 
         if ($decrypted === false) {
+            /** @psalm-suppress RiskyTruthyFalsyComparison */
             $error = openssl_error_string() ?: 'Unknown error';
             throw new EncryptionException('OpenSSL failure on decryption: ' . $error);
         }

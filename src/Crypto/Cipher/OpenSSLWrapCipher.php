@@ -105,6 +105,7 @@ final readonly class OpenSSLWrapCipher implements CipherInterface
         $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY, $this->dummyNonce);
 
         if ($encrypted === false) {
+            /** @psalm-suppress RiskyTruthyFalsyComparison */
             $error = openssl_error_string() ?: 'Unknown error';
             throw new EncryptionException('OpenSSL failure on encryption: ' . $error);
         }
@@ -134,6 +135,7 @@ final readonly class OpenSSLWrapCipher implements CipherInterface
         $decrypted = openssl_decrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA | OPENSSL_DONT_ZERO_PAD_KEY, $this->dummyNonce);
 
         if ($decrypted === false) {
+            /** @psalm-suppress RiskyTruthyFalsyComparison */
             $error = openssl_error_string() ?: 'Unknown error';
             throw new EncryptionException('OpenSSL failure on decryption: ' . $error);
         }
