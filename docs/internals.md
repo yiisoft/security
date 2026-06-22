@@ -14,7 +14,7 @@ The package tests are checked with [Infection](https://infection.github.io/) mut
 [Infection Static Analysis Plugin](https://github.com/Roave/infection-static-analysis-plugin). To run it:
 
 ```shell
-./vendor/bin/roave-infection-static-analysis-plugin
+./vendor/bin/infection
 ```
 
 ## Static analysis
@@ -32,6 +32,12 @@ use either newest or any specific version of PHP:
 
 ```shell
 ./vendor/bin/rector
+```
+
+Use [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer) to fix your code to follow the standards.
+
+```shell
+./vendor/bin/php-cs-fixer fix
 ```
 
 ## Dependencies
