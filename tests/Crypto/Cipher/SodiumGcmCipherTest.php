@@ -7,6 +7,8 @@ namespace Yiisoft\Security\Tests\Crypto\Cipher;
 use Yiisoft\Security\Crypto\CipherInterface;
 use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
 
+use function extension_loaded;
+
 final class SodiumGcmCipherTest extends AbstractCipherCase
 {
     use CipherWithAeadTrait;
@@ -19,16 +21,6 @@ final class SodiumGcmCipherTest extends AbstractCipherCase
         } elseif (!sodium_crypto_aead_aes256gcm_is_available()) {
             $this->markTestSkipped('Sodium AES-256-GCM requires hardware that supports hardware-accelerated AES.');
         }
-    }
-
-    protected function createCipherInstance(?string $cipher = null): CipherInterface
-    {
-        return $cipher ? new SodiumAeadCipher($cipher) : new SodiumAeadCipher();
-    }
-
-    protected static function getPlainText(): string
-    {
-        return 'test-plain-data';
     }
 
     public static function dataProviderCiphers(): iterable
@@ -52,5 +44,15 @@ final class SodiumGcmCipherTest extends AbstractCipherCase
             'test-plain-data',
             'ae9cf157604ed2a9fd7ad971d005c4e571ec8a6e697e000414e5820748912c',
         ];
+    }
+
+    protected function createCipherInstance(?string $cipher = null): CipherInterface
+    {
+        return $cipher ? new SodiumAeadCipher($cipher) : new SodiumAeadCipher();
+    }
+
+    protected static function getPlainText(): string
+    {
+        return 'test-plain-data';
     }
 }

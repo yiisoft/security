@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Security\Tests\Crypto;
 
 use RuntimeException;
+use stdClass;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\Crypto\CryptorInterface;
 use Yiisoft\Security\Crypto\EncryptionException;
@@ -151,7 +152,7 @@ final class VersionedCryptorTest extends TestCase
     public function testConstructorThrowsExceptionWhenCryptorNotInstanceOfInterface(): void
     {
         $this->expectException(RuntimeException::class);
-        new VersionedCryptor(cryptors: ['v1' => new \stdClass()], currentVersion: 'v1');
+        new VersionedCryptor(cryptors: ['v1' => new stdClass()], currentVersion: 'v1');
     }
 
     public function testConstructorThrowsExceptionWhenVersionSizeLessThanOne(): void

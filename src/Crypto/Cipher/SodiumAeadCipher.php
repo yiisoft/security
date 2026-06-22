@@ -33,16 +33,6 @@ final readonly class SodiumAeadCipher implements CipherInterface
     private const TAG_SIZE = 16;
 
     /**
-     * @psalm-var int<1, max>
-     */
-    private int $keySize;
-
-    /**
-     * @psalm-var int<1, max>
-     */
-    private int $nonceSize;
-
-    /**
      * Look-up table of allowed Sodium ciphers.
      *
      * Each entry maps a cipher name to:
@@ -56,6 +46,16 @@ final readonly class SodiumAeadCipher implements CipherInterface
         'CHACHA20-POLY1305-IETF' => [32, 12],
         'XCHACHA20-POLY1305-IETF' => [32, 24],
     ];
+
+    /**
+     * @psalm-var int<1, max>
+     */
+    private int $keySize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
+    private int $nonceSize;
 
     /**
      * @param string $cipher The cipher to use (must be one of ALLOWED_CIPHERS keys).

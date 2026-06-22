@@ -65,7 +65,7 @@ final readonly class VersionedCryptor implements CryptorInterface
         string $data,
         #[SensitiveParameter]
         string $secret,
-        string $context = ''
+        string $context = '',
     ): string {
         $payload = $this->cryptors[$this->currentVersion]->encrypt($data, $secret, $context);
 
@@ -81,7 +81,7 @@ final readonly class VersionedCryptor implements CryptorInterface
         string $data,
         #[SensitiveParameter]
         string $secret,
-        string $context = ''
+        string $context = '',
     ): string {
         if (StringHelper::byteLength($data) < $this->versionSize) {
             throw new EncryptionException('Encrypted data is too short to contain a version identifier.');

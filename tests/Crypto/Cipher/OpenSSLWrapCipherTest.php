@@ -7,6 +7,8 @@ namespace Yiisoft\Security\Tests\Crypto\Cipher;
 use Yiisoft\Security\Crypto\CipherInterface;
 use Yiisoft\Security\Crypto\Cipher\OpenSSLWrapCipher;
 
+use function extension_loaded;
+
 final class OpenSSLWrapCipherTest extends AbstractCipherCase
 {
     protected function setUp(): void
@@ -14,16 +16,6 @@ final class OpenSSLWrapCipherTest extends AbstractCipherCase
         if (!extension_loaded('openssl')) {
             $this->markTestSkipped('OpenSSL extension is required for these tests.');
         }
-    }
-
-    protected function createCipherInstance(?string $cipher = null): CipherInterface
-    {
-        return $cipher ? new OpenSSLWrapCipher($cipher) : new OpenSSLWrapCipher();
-    }
-
-    protected static function getPlainText(): string
-    {
-        return 'test-plain-data-';
     }
 
     public static function dataProviderCiphers(): iterable
@@ -76,5 +68,15 @@ final class OpenSSLWrapCipherTest extends AbstractCipherCase
         $ciphertext1 = $cipher->encrypt($plaintext, $key, $nonce1);
         $ciphertext2 = $cipher->encrypt($plaintext, $key, $nonce2);
         $this->assertSame($ciphertext1, $ciphertext2);
+    }
+
+    protected function createCipherInstance(?string $cipher = null): CipherInterface
+    {
+        return $cipher ? new OpenSSLWrapCipher($cipher) : new OpenSSLWrapCipher();
+    }
+
+    protected static function getPlainText(): string
+    {
+        return 'test-plain-data-';
     }
 }

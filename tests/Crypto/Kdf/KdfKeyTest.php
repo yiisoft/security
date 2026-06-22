@@ -12,13 +12,6 @@ use Yiisoft\Security\Crypto\Kdf\KdfKey;
 
 final class KdfKeyTest extends AbstractKdfCase
 {
-    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
-    {
-        return $hashAlgo
-            ? new KdfKey(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
-            : new KdfKey(hashStaticSalt: $hashStaticSalt);
-    }
-
     public static function dataProviderAlgos(): iterable
     {
         yield ['sha256', 32];
@@ -118,5 +111,12 @@ final class KdfKeyTest extends AbstractKdfCase
             'test-context',
             'f2b0f6e277232602dfe7588c37850f646c97b4fd8fb120ecf6b28a1b2548939f06e1941feee58a834ad8644b4f62f140a12d001ed6bb297c7b2c8386e0ef249e',
         ];
+    }
+
+    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
+    {
+        return $hashAlgo
+            ? new KdfKey(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
+            : new KdfKey(hashStaticSalt: $hashStaticSalt);
     }
 }

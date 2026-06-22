@@ -26,7 +26,7 @@ interface CryptorInterface
         string $data,
         #[SensitiveParameter]
         string $secret,
-        string $context = ''
+        string $context = '',
     ): string;
 
     /**
@@ -44,6 +44,6 @@ interface CryptorInterface
         string $data,
         #[SensitiveParameter]
         string $secret,
-        string $context = ''
+        string $context = '',
     ): string;
 }

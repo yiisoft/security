@@ -91,7 +91,7 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         string $data,
         #[SensitiveParameter]
         string $secret,
-        string $context = ''
+        string $context = '',
     ): string {
         $kdfSalt = $this->saltSize ? random_bytes($this->saltSize) : '';
         $dek = random_bytes($this->dekSize);
@@ -113,7 +113,7 @@ final readonly class EnvelopeCryptor implements CryptorInterface
         string $data,
         #[SensitiveParameter]
         string $secret,
-        string $context = ''
+        string $context = '',
     ): string {
         if (StringHelper::byteLength($data) < $this->headerLength) {
             throw new EncryptionException('Encrypted data is too short.');

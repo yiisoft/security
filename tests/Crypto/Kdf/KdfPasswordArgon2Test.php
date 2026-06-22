@@ -8,6 +8,8 @@ use Stringable;
 use Yiisoft\Security\Crypto\KdfInterface;
 use Yiisoft\Security\Crypto\Kdf\KdfPasswordArgon2;
 
+use function extension_loaded;
+
 final class KdfPasswordArgon2Test extends AbstractKdfCase
 {
     protected function setUp(): void
@@ -15,13 +17,6 @@ final class KdfPasswordArgon2Test extends AbstractKdfCase
         if (!extension_loaded('sodium')) {
             $this->markTestSkipped('Sodium extension is required for these tests.');
         }
-    }
-
-    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
-    {
-        return $hashAlgo
-            ? new KdfPasswordArgon2(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
-            : new KdfPasswordArgon2(hashStaticSalt: $hashStaticSalt);
     }
 
     public static function dataProviderAlgos(): iterable
@@ -57,5 +52,12 @@ final class KdfPasswordArgon2Test extends AbstractKdfCase
             'aa24ea6b979b1a857d9f9dfa0dcac8a4',
             'f3485c8fec6e20d0e81a332d9a6e7293985ad345076a2b167d3b682e612ab549',
         ];
+    }
+
+    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
+    {
+        return $hashAlgo
+            ? new KdfPasswordArgon2(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
+            : new KdfPasswordArgon2(hashStaticSalt: $hashStaticSalt);
     }
 }

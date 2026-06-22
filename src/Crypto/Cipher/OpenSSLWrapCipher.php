@@ -35,21 +35,6 @@ final readonly class OpenSSLWrapCipher implements CipherInterface
     private const TAG_SIZE = 8;
 
     /**
-     * @psalm-var int<1, max>
-     */
-    private int $keySize;
-
-    /**
-     * Dummy nonce (all zeros) to prevent OpenSSL from issuing warnings.
-     *
-     * The `openssl_encrypt()` and `openssl_decrypt()` functions require an IV parameter,
-     * even for key wrap algorithms that don't use one internally. Passing an empty string
-     * would trigger a warning. This dummy nonce of the appropriate size satisfies the
-     * function signature without affecting the key wrap operation, as the algorithm ignores it.
-     */
-    private string $dummyNonce;
-
-    /**
      * Look-up table of allowed OpenSSL key wrap ciphers.
      *
      * Each entry maps a cipher name to:
@@ -63,6 +48,21 @@ final readonly class OpenSSLWrapCipher implements CipherInterface
         'AES-192-WRAP' => [24, 8],
         'AES-256-WRAP' => [32, 8],
     ];
+
+    /**
+     * @psalm-var int<1, max>
+     */
+    private int $keySize;
+
+    /**
+     * Dummy nonce (all zeros) to prevent OpenSSL from issuing warnings.
+     *
+     * The `openssl_encrypt()` and `openssl_decrypt()` functions require an IV parameter,
+     * even for key wrap algorithms that don't use one internally. Passing an empty string
+     * would trigger a warning. This dummy nonce of the appropriate size satisfies the
+     * function signature without affecting the key wrap operation, as the algorithm ignores it.
+     */
+    private string $dummyNonce;
 
     /**
      * @param string $cipher Cipher method (must be one of ALLOWED_CIPHERS keys).

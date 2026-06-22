@@ -229,31 +229,6 @@ final class EnvelopeCryptorTest extends TestCase
         $cryptor->decrypt('short', 'secret');
     }
 
-    private function createMocks(
-        int $kdfSaltSize,
-        int $dataKeySize,
-        int $dataNonceSize,
-        int $dataOverheadSize,
-        int $kwKeySize,
-        int $kwNonceSize,
-        int $kwOverheadSize,
-    ): array {
-        $kdf = $this->createMock(KdfInterface::class);
-        $kdf->method('getSaltSize')->willReturn($kdfSaltSize);
-
-        $cipher = $this->createMock(CipherInterface::class);
-        $cipher->method('getKeySize')->willReturn($dataKeySize);
-        $cipher->method('getNonceSize')->willReturn($dataNonceSize);
-        $cipher->method('getOverheadSize')->willReturn($dataOverheadSize);
-
-        $kwCipher = $this->createMock(CipherInterface::class);
-        $kwCipher->method('getKeySize')->willReturn($kwKeySize);
-        $kwCipher->method('getNonceSize')->willReturn($kwNonceSize);
-        $kwCipher->method('getOverheadSize')->willReturn($kwOverheadSize);
-
-        return [$kdf, $cipher, $kwCipher];
-    }
-
     /**
      * [kdfSaltSize, kwKeySize, kwNonceSize, kwOverheadSize, dataKeySize, dataNonceSize, dataOverheadSize]
      */
@@ -318,5 +293,30 @@ final class EnvelopeCryptorTest extends TestCase
             'kwNonceSize' => 0,
             'kwOverheadSize' => 16,
         ];
+    }
+
+    private function createMocks(
+        int $kdfSaltSize,
+        int $dataKeySize,
+        int $dataNonceSize,
+        int $dataOverheadSize,
+        int $kwKeySize,
+        int $kwNonceSize,
+        int $kwOverheadSize,
+    ): array {
+        $kdf = $this->createMock(KdfInterface::class);
+        $kdf->method('getSaltSize')->willReturn($kdfSaltSize);
+
+        $cipher = $this->createMock(CipherInterface::class);
+        $cipher->method('getKeySize')->willReturn($dataKeySize);
+        $cipher->method('getNonceSize')->willReturn($dataNonceSize);
+        $cipher->method('getOverheadSize')->willReturn($dataOverheadSize);
+
+        $kwCipher = $this->createMock(CipherInterface::class);
+        $kwCipher->method('getKeySize')->willReturn($kwKeySize);
+        $kwCipher->method('getNonceSize')->willReturn($kwNonceSize);
+        $kwCipher->method('getOverheadSize')->willReturn($kwOverheadSize);
+
+        return [$kdf, $cipher, $kwCipher];
     }
 }

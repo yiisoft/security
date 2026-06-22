@@ -28,16 +28,6 @@ final readonly class OpenSSLAeadCipher implements CipherInterface
     private const TAG_SIZE = 16;
 
     /**
-     * @psalm-var int<1, max>
-     */
-    private int $keySize;
-
-    /**
-     * @psalm-var int<1, max>
-     */
-    private int $nonceSize;
-
-    /**
      * Look-up table of allowed OpenSSL ciphers.
      *
      * Each entry maps a cipher name to:
@@ -52,6 +42,16 @@ final readonly class OpenSSLAeadCipher implements CipherInterface
         'AES-256-GCM' => [32, 12],
         'CHACHA20-POLY1305' => [32, 12], // IETF variant
     ];
+
+    /**
+     * @psalm-var int<1, max>
+     */
+    private int $keySize;
+
+    /**
+     * @psalm-var int<1, max>
+     */
+    private int $nonceSize;
 
     /**
      * @param string $cipher Cipher method (must be one of ALLOWED_CIPHERS keys).

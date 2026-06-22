@@ -11,9 +11,8 @@ final readonly class StringableParam implements Stringable
 {
     public function __construct(
         #[SensitiveParameter]
-        private string $value
-    ) {
-    }
+        private string $value,
+    ) {}
 
     public function __toString(): string
     {

@@ -14,8 +14,6 @@ use Yiisoft\Strings\StringHelper;
 
 abstract class AbstractKdfCase extends TestCase
 {
-    abstract protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface;
-
     abstract public static function dataProviderAlgos(): iterable;
 
     abstract public static function dataProviderKeyValues(): iterable;
@@ -152,4 +150,6 @@ abstract class AbstractKdfCase extends TestCase
         $this->assertIsInt($keySize);
         $this->assertGreaterThanOrEqual(0, $keySize);
     }
+
+    abstract protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface;
 }

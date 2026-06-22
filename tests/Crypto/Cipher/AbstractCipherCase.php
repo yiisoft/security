@@ -15,10 +15,6 @@ use Yiisoft\Security\Crypto\EncryptionException;
  */
 abstract class AbstractCipherCase extends TestCase
 {
-    abstract protected function createCipherInstance(?string $cipher = null): CipherInterface;
-
-    abstract protected static function getPlainText(): string;
-
     abstract public static function dataProviderCiphers(): iterable;
 
     abstract public static function dataProviderEncrypted(): iterable;
@@ -189,4 +185,8 @@ abstract class AbstractCipherCase extends TestCase
         $this->assertIsInt($cipher->getNonceSize());
         $this->assertIsInt($cipher->getOverheadSize());
     }
+
+    abstract protected function createCipherInstance(?string $cipher = null): CipherInterface;
+
+    abstract protected static function getPlainText(): string;
 }

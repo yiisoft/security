@@ -7,6 +7,8 @@ namespace Yiisoft\Security\Tests\Crypto\Cipher;
 use Yiisoft\Security\Crypto\CipherInterface;
 use Yiisoft\Security\Crypto\Cipher\SodiumAeadCipher;
 
+use function extension_loaded;
+
 final class SodiumAeadCipherTest extends AbstractCipherCase
 {
     use CipherWithAeadTrait;
@@ -17,16 +19,6 @@ final class SodiumAeadCipherTest extends AbstractCipherCase
         if (!extension_loaded('sodium')) {
             $this->markTestSkipped('Sodium extension is required for these tests.');
         }
-    }
-
-    protected function createCipherInstance(?string $cipher = null): CipherInterface
-    {
-        return $cipher ? new SodiumAeadCipher($cipher) : new SodiumAeadCipher();
-    }
-
-    protected static function getPlainText(): string
-    {
-        return 'test-plain-data';
     }
 
     public static function dataProviderCiphers(): iterable
@@ -58,5 +50,15 @@ final class SodiumAeadCipherTest extends AbstractCipherCase
             'test-plain-data',
             '4c88400da53f878bf9de7749a70b38022ce8166effecc64b8c8a49c2c0f28c',
         ];
+    }
+
+    protected function createCipherInstance(?string $cipher = null): CipherInterface
+    {
+        return $cipher ? new SodiumAeadCipher($cipher) : new SodiumAeadCipher();
+    }
+
+    protected static function getPlainText(): string
+    {
+        return 'test-plain-data';
     }
 }

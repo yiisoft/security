@@ -47,7 +47,7 @@ final class KdfCryptorTest extends TestCase
         $this->assertIsString($result);
         $this->assertSame(
             $kdfSaltSize + $nonceSize + StringHelper::byteLength('test-ciphertext-and-tag'),
-            StringHelper::byteLength($result)
+            StringHelper::byteLength($result),
         );
 
         $keySalt = StringHelper::byteSubstring($result, 0, $kdfSaltSize);
@@ -155,21 +155,6 @@ final class KdfCryptorTest extends TestCase
         $cryptor->decrypt('short', 'secret');
     }
 
-    private function createMocks(
-        int $kdfSaltSize,
-        int $keySize,
-        int $nonceSize,
-    ): array {
-        $kdf = $this->createMock(KdfInterface::class);
-        $kdf->method('getSaltSize')->willReturn($kdfSaltSize);
-
-        $cipher = $this->createMock(CipherInterface::class);
-        $cipher->method('getKeySize')->willReturn($keySize);
-        $cipher->method('getNonceSize')->willReturn($nonceSize);
-
-        return [$kdf, $cipher];
-    }
-
     /**
      * [kdfSaltSize, kwKeySize, kwNonceSize, kwOverheadSize, dataKeySize, dataNonceSize, dataOverheadSize]
      */
@@ -198,5 +183,20 @@ final class KdfCryptorTest extends TestCase
             'keySize' => 32,
             'nonceSize' => 0,
         ];
+    }
+
+    private function createMocks(
+        int $kdfSaltSize,
+        int $keySize,
+        int $nonceSize,
+    ): array {
+        $kdf = $this->createMock(KdfInterface::class);
+        $kdf->method('getSaltSize')->willReturn($kdfSaltSize);
+
+        $cipher = $this->createMock(CipherInterface::class);
+        $cipher->method('getKeySize')->willReturn($keySize);
+        $cipher->method('getNonceSize')->willReturn($nonceSize);
+
+        return [$kdf, $cipher];
     }
 }

@@ -7,6 +7,8 @@ namespace Yiisoft\Security\Tests\Crypto\Cipher;
 use Yiisoft\Security\Crypto\CipherInterface;
 use Yiisoft\Security\Crypto\Cipher\OpenSSLAeadCipher;
 
+use function extension_loaded;
+
 final class OpenSSLAeadCipherTest extends AbstractCipherCase
 {
     use CipherWithAeadTrait;
@@ -17,16 +19,6 @@ final class OpenSSLAeadCipherTest extends AbstractCipherCase
         if (!extension_loaded('openssl')) {
             $this->markTestSkipped('OpenSSL extension is required for these tests.');
         }
-    }
-
-    protected function createCipherInstance(?string $cipher = null): CipherInterface
-    {
-        return $cipher ? new OpenSSLAeadCipher($cipher) : new OpenSSLAeadCipher();
-    }
-
-    protected static function getPlainText(): string
-    {
-        return 'test-plain-data';
     }
 
     public static function dataProviderCiphers(): iterable
@@ -81,5 +73,15 @@ final class OpenSSLAeadCipherTest extends AbstractCipherCase
             'test-plain-data',
             '75058e089d84a58fed82a822b462b2a3dcdf5b5b4cda445fdba26ccd012503',
         ];
+    }
+
+    protected function createCipherInstance(?string $cipher = null): CipherInterface
+    {
+        return $cipher ? new OpenSSLAeadCipher($cipher) : new OpenSSLAeadCipher();
+    }
+
+    protected static function getPlainText(): string
+    {
+        return 'test-plain-data';
     }
 }

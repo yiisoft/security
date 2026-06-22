@@ -11,13 +11,6 @@ use Yiisoft\Security\Crypto\Kdf\KdfPasswordPbkdf2;
 
 final class KdfPasswordPbkdf2Test extends AbstractKdfCase
 {
-    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
-    {
-        return $hashAlgo
-            ? new KdfPasswordPbkdf2(hashAlgo: $hashAlgo, iterations: 100_000, hashStaticSalt: $hashStaticSalt)
-            : new KdfPasswordPbkdf2(iterations: 100_000, hashStaticSalt: $hashStaticSalt);
-    }
-
     public static function dataProviderAlgos(): iterable
     {
         yield ['sha256', 32];
@@ -57,5 +50,12 @@ final class KdfPasswordPbkdf2Test extends AbstractKdfCase
     {
         $this->expectException(RuntimeException::class);
         new KdfPasswordPbkdf2(iterations: 0);
+    }
+
+    protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
+    {
+        return $hashAlgo
+            ? new KdfPasswordPbkdf2(hashAlgo: $hashAlgo, iterations: 100_000, hashStaticSalt: $hashStaticSalt)
+            : new KdfPasswordPbkdf2(iterations: 100_000, hashStaticSalt: $hashStaticSalt);
     }
 }

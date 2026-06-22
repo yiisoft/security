@@ -9,6 +9,4 @@ use RuntimeException;
 /**
  * Exception thrown when encryption or decryption fails.
  */
-final class EncryptionException extends RuntimeException
-{
-}
+final class EncryptionException extends RuntimeException {}

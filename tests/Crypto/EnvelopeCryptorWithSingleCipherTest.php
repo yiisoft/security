@@ -62,9 +62,7 @@ final class EnvelopeCryptorWithSingleCipherTest extends TestCase
     private function getKdfStub(int $saltSize = 16): KdfInterface
     {
         return new class ($saltSize) implements KdfInterface {
-            public function __construct(private readonly int $saltSize)
-            {
-            }
+            public function __construct(private readonly int $saltSize) {}
 
             public function derive(string $secret, int $keySize, string $context, string $salt = ''): string
             {
@@ -89,8 +87,7 @@ final class EnvelopeCryptorWithSingleCipherTest extends TestCase
             public function __construct(
                 private readonly int $keySize,
                 private readonly int $nonceSize,
-            ) {
-            }
+            ) {}
 
             public function encrypt(string $data, #[SensitiveParameter] string $key, string $nonce = '', string $aad = ''): string
             {
