@@ -22,6 +22,9 @@ on:
 
 name: build
 
+permissions:
+  contents: read
+
 jobs:
   phpunit:
     uses: yiisoft/actions/.github/workflows/phpunit.yml@master
@@ -33,3 +36,34 @@ jobs:
       php: >-
         ['8.2', '8.3', '8.4', '8.5']
       extensions: sodium, openssl
+
+  phpunit-without-openssl:
+    name: PHP 8.2 without openssl
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install PHP with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+
+      - name: Prepare PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: xdebug
+          extensions: :openssl
+
+      - name: Run tests with PHPUnit with code coverage
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml

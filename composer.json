@@ -38,16 +38,18 @@
         "ext-hash": "*",
         "yiisoft/strings": "^2.0"
     },
-    "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.8.2",
-        "maglnet/composer-require-checker": "^4.7.1",
-        "phpunit/phpunit": "^10.5.45",
-        "rector/rector": "^2.0.9",
-        "spatie/phpunit-watcher": "^1.24"
-    },
     "suggest": {
         "ext-openssl": "Required for OpenSSL based ciphers",
         "ext-sodium": "Required for Sodium based ciphers"
+    },
+    "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.9.1",
+        "friendsofphp/php-cs-fixer": "^3.95.10",
+        "maglnet/composer-require-checker": "^4.17.0",
+        "phpunit/phpunit": "^11.5.55",
+        "rector/rector": "^2.4.6",
+        "spatie/phpunit-watcher": "^1.24.4",
+        "yiisoft/code-style": "^1.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -67,8 +69,11 @@
         }
     },
     "scripts": {
-        "test": "phpunit --testdox --no-interaction",
-        "test-watch": "phpunit-watcher watch"
+        "test": "phpunit --display-deprecations",
+        "test-watch": "phpunit-watcher watch",
+        "psalm": "psalm",
+        "rector": "rector",
+        "cs-fix": "php-cs-fixer fix"
     },
     "config": {
         "sort-packages": true,

@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Yiisoft\Security;
 
 use SensitiveParameter;
+use ValueError;
 use Yiisoft\Strings\StringHelper;
+use RuntimeException;
 
 /**
  * Provides ability to sign a message with a MAC (message authentication). Signed message contains both original
  * message and a MAC hash. When obtaining original message from signed message using a key an exception is thrown
  * if message was altered.
  */
-final class Mac
+final readonly class Mac
 {
     /**
      * @param string $algorithm Hash algorithm for message authentication. Recommend sha256, sha384 or sha512.
@@ -20,9 +22,8 @@ final class Mac
      * @see https://php.net/manual/en/function.hash-algos.php
      */
     public function __construct(
-        private readonly string $algorithm = 'sha256'
-    ) {
-    }
+        private string $algorithm = 'sha256',
+    ) {}
 
     /**
      * Prefixes data with a keyed sign value so that it can later be detected if it is tampered.
@@ -36,7 +37,7 @@ final class Mac
      * @param bool $rawHash Whether the generated sign value is in raw binary format. If false, lowercase
      * hex digits will be generated.
      *
-     * @throws \RuntimeException When HMAC generation fails.
+     * @throws RuntimeException When HMAC generation fails.
      *
      * @return string The data prefixed with the keyed sign.
      *
@@ -49,11 +50,12 @@ final class Mac
         string $data,
         #[SensitiveParameter]
         string $key,
-        bool $rawHash = false
+        bool $rawHash = false,
     ): string {
-        $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
-        if (!$hash) {
-            throw new \RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
+        try {
+            $hash = hash_hmac($this->algorithm, $data, $key, $rawHash);
+        } catch (ValueError) {
+            throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
 
         return $hash . $data;
@@ -71,7 +73,7 @@ final class Mac
      * It indicates whether the sign value in the data is in binary format. If false, it means the hash value consists
      * of lowercase hex digits only.
      *
-     * @throws \RuntimeException When HMAC generation fails.
+     * @throws RuntimeException When HMAC generation fails.
      * @throws DataIsTamperedException If the given data is tampered.
      *
      * @return string The real data with the signature stripped off.
@@ -82,11 +84,12 @@ final class Mac
         string $data,
         #[SensitiveParameter]
         string $key,
-        bool $rawHash = false
+        bool $rawHash = false,
     ): string {
-        $test = hash_hmac($this->algorithm, '', '', $rawHash);
-        if (!$test) {
-            throw new \RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
+        try {
+            $test = hash_hmac($this->algorithm, '', '', $rawHash);
+        } catch (ValueError) {
+            throw new RuntimeException("Failed to generate HMAC with hash algorithm: {$this->algorithm}.");
         }
         $hashLength = StringHelper::byteLength($test);
         if (StringHelper::byteLength($data) >= $hashLength) {
