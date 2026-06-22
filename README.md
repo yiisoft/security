@@ -133,7 +133,7 @@ hash_equals($expected, $actual);
 The `Crypto` module provides a modern, authenticated encryption layer based on `AEAD` ciphers. It provides three built‑in cryptors:
 
 - `KdfCryptor` – derives a fresh `DEK` per message using a `KDF`.
-- `EnvelopeCryptor` – wraps a random `DEK` with a KEK derived from the secret.
+- `EnvelopeCryptor` – wraps a random `DEK` with a `KEK` derived from the secret.
 - `VersionedCryptor` – adds a version prefix to delegate to different cryptors.
 
 ### Basic usage example
