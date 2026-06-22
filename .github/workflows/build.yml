@@ -38,7 +38,7 @@ jobs:
       extensions: sodium, openssl
 
   phpunit-without-openssl:
-    name: PHP 8.2 without openssl
+    name: PHP 8.2 without openssl and sodium
     runs-on: windows-latest
     steps:
       - name: Checkout
