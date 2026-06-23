@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Security\Tests\Crypto\Kdf;
 
+use RuntimeException;
 use Stringable;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yiisoft\Security\Crypto\EncryptionException;
@@ -83,6 +84,12 @@ final class KdfKeyTest extends AbstractKdfCase
 
         $this->expectException(EncryptionException::class);
         $kdf->derive('', 32, 'test-context', 'test-salt');
+    }
+
+    public function testInvalidStaticSaltThrowsException(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->createKdfInstance(hashAlgo: 'sha256', hashStaticSalt: random_bytes(31));
     }
 
     #[DataProvider('dataProviderEmptyStaticSaltKeyValues')]
