@@ -26,3 +26,5 @@ updates:
         patterns:
           - "*"
     versioning-strategy: increase-if-necessary
+    cooldown:
+      default-days: 7
