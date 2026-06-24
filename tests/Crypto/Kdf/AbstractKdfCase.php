@@ -14,9 +14,14 @@ use Yiisoft\Strings\StringHelper;
 
 abstract class AbstractKdfCase extends TestCase
 {
-    abstract public static function dataProviderAlgos(): iterable;
-
     abstract public static function dataProviderKeyValues(): iterable;
+
+    public static function dataProviderAlgoKeySize(): iterable
+    {
+        yield ['sha256', 32];
+        yield ['sha512', 64];
+        yield ['sha3-256', 48];
+    }
 
     public function testDeriveSuccess(): void
     {
@@ -42,14 +47,13 @@ abstract class AbstractKdfCase extends TestCase
         $this->assertSame($key, $kdf->derive($secret, $keySize, $context, $salt));
     }
 
-    #[DataProvider('dataProviderAlgos')]
+    #[DataProvider('dataProviderAlgoKeySize')]
     public function testDeriveWithCustomAlgorithm(string $hashAlgo, int $keySize): void
     {
         $kdf = $this->createKdfInstance($hashAlgo);
-        $secret = random_bytes($keySize);
         $salt = random_bytes($kdf->getSaltSize());
 
-        $key = $kdf->derive($secret, $keySize, 'test-context', $salt);
+        $key = $kdf->derive('test-secret', $keySize, 'test-context', $salt);
 
         $this->assertSame($keySize, StringHelper::byteLength($key));
     }

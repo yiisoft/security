@@ -11,13 +11,6 @@ use Yiisoft\Security\Crypto\Kdf\KdfPasswordPbkdf2;
 
 final class KdfPasswordPbkdf2Test extends AbstractKdfCase
 {
-    public static function dataProviderAlgos(): iterable
-    {
-        yield ['sha256', 32];
-        yield ['sha512', 64];
-        yield ['sha3-256', 32];
-    }
-
     public static function dataProviderKeyValues(): iterable
     {
         yield [

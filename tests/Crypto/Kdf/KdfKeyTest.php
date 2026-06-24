@@ -13,13 +13,6 @@ use Yiisoft\Security\Crypto\Kdf\KdfKey;
 
 final class KdfKeyTest extends AbstractKdfCase
 {
-    public static function dataProviderAlgos(): iterable
-    {
-        yield ['sha256', 32];
-        yield ['sha512', 64];
-        yield ['sha3-256', 32];
-    }
-
     public static function dataProviderKeyValues(): iterable
     {
         yield [
