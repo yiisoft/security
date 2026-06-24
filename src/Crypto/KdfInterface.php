@@ -17,8 +17,8 @@ interface KdfInterface
      *
      * @param string $secret The input secret (password or raw key material). Sensitive parameter.
      * @param int $keySize Desired key length in bytes.
-     * @param string $context Application-specific context string (used as HKDF info or similar).
-     * @param string $salt Salt value (must be random and unique for each derivation, unless salt size is 0).
+     * @param string $context Application-specific context string.
+     * @param string @param string $salt Salt value. Must be exactly {@see getSaltSize()} bytes.
      *
      * @throws EncryptionException If key derivation fails.
      *

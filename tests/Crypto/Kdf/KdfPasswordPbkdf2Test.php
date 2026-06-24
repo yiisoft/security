@@ -47,7 +47,7 @@ final class KdfPasswordPbkdf2Test extends AbstractKdfCase
 
     protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
     {
-        return $hashAlgo
+        return isset($hashAlgo)
             ? new KdfPasswordPbkdf2(hashAlgo: $hashAlgo, iterations: 100_000, hashStaticSalt: $hashStaticSalt)
             : new KdfPasswordPbkdf2(iterations: 100_000, hashStaticSalt: $hashStaticSalt);
     }

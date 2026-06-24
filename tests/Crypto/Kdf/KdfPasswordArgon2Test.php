@@ -49,7 +49,7 @@ final class KdfPasswordArgon2Test extends AbstractKdfCase
 
     protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
     {
-        return $hashAlgo
+        return isset($hashAlgo)
             ? new KdfPasswordArgon2(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
             : new KdfPasswordArgon2(hashStaticSalt: $hashStaticSalt);
     }

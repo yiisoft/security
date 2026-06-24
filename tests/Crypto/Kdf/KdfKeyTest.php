@@ -91,6 +91,9 @@ final class KdfKeyTest extends AbstractKdfCase
 
     public function testSaltSizeValid(): void
     {
+        $kdf1 = new KdfKey(saltSize: 0);
+        $this->assertSame(0, $kdf1->getSaltSize());
+
         $kdf = new KdfKey(saltSize: 24);
         $this->assertSame(24, $kdf->getSaltSize());
     }
@@ -129,7 +132,7 @@ final class KdfKeyTest extends AbstractKdfCase
 
     protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
     {
-        return $hashAlgo
+        return isset($hashAlgo)
             ? new KdfKey(hashAlgo: $hashAlgo, hashStaticSalt: $hashStaticSalt)
             : new KdfKey(hashStaticSalt: $hashStaticSalt);
     }

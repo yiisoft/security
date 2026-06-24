@@ -37,7 +37,7 @@ final readonly class KdfCryptor implements CryptorInterface
     private int $headerLength;
 
     /**
-     * @param KdfInterface $kdf Key derivation function (used to derive DEK from secret + salt).
+     * @param KdfInterface $kdf Key derivation function. Used to derive DEK from secret.
      * @param CipherInterface $cipher Low‑level cipher (must support AEAD).
      */
     public function __construct(
