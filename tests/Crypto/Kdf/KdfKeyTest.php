@@ -41,6 +41,24 @@ final class KdfKeyTest extends AbstractKdfCase
         ];
     }
 
+    public static function dataProviderEmptyStaticSaltKeyValues(): iterable
+    {
+        yield [
+            'sha256',
+            '263d2461b6464bbc898ffa385f9d4c1a8f5a1cf0e2d27c4499516142e0542125',
+            32,
+            'test-context',
+            '50320fc7d6a85c6bb631a10475bd27e0d49892c509041692917c19b0451f98b2',
+        ];
+        yield [
+            'sha512',
+            '84c7e9fb214e1d5d3ac6d9ae7b7af33f23355f4795831dcdb5d97093ec42d3d32b4391c7e1b2673ec5577aad934d231d24fd9e5032dd845e86e75a965eba4207',
+            64,
+            'test-context',
+            'f2b0f6e277232602dfe7588c37850f646c97b4fd8fb120ecf6b28a1b2548939f06e1941feee58a834ad8644b4f62f140a12d001ed6bb297c7b2c8386e0ef249e',
+        ];
+    }
+
     public function testDifferentParamsAndEmptySaltProducesDifferentKey(): void
     {
         $kdf = new KdfKey(saltSize: 0);
@@ -71,6 +89,12 @@ final class KdfKeyTest extends AbstractKdfCase
         $this->assertNotSame($key1, $key2);
     }
 
+    public function testSaltSizeValid(): void
+    {
+        $kdf = new KdfKey(saltSize: 24);
+        $this->assertSame(24, $kdf->getSaltSize());
+    }
+
     public function testInvalidSecretThrowsException(): void
     {
         $kdf = $this->createKdfInstance();
@@ -85,6 +109,14 @@ final class KdfKeyTest extends AbstractKdfCase
         $this->createKdfInstance(hashAlgo: 'sha256', hashStaticSalt: random_bytes(31));
     }
 
+    public function testInvalidSaltSizeThrowsException(): void
+    {
+        $kdf = new KdfKey(saltSize: -1);
+
+        $this->expectException(EncryptionException::class);
+        $kdf->derive('test-secret', 32, 'test-context', 'test-salt');
+    }
+
     #[DataProvider('dataProviderEmptyStaticSaltKeyValues')]
     public function testEmptyStaticSaltDerivesExpectedKey(string $hashAlgo, string $secret, int $keySize, string $context, string $key): void
     {
@@ -93,24 +125,6 @@ final class KdfKeyTest extends AbstractKdfCase
         $key = hex2bin(preg_replace('{\s+}', '', $key));
 
         $this->assertSame($key, $kdf->derive($secret, $keySize, $context));
-    }
-
-    public static function dataProviderEmptyStaticSaltKeyValues(): iterable
-    {
-        yield [
-            'sha256',
-            '263d2461b6464bbc898ffa385f9d4c1a8f5a1cf0e2d27c4499516142e0542125',
-            32,
-            'test-context',
-            '50320fc7d6a85c6bb631a10475bd27e0d49892c509041692917c19b0451f98b2',
-        ];
-        yield [
-            'sha512',
-            '84c7e9fb214e1d5d3ac6d9ae7b7af33f23355f4795831dcdb5d97093ec42d3d32b4391c7e1b2673ec5577aad934d231d24fd9e5032dd845e86e75a965eba4207',
-            64,
-            'test-context',
-            'f2b0f6e277232602dfe7588c37850f646c97b4fd8fb120ecf6b28a1b2548939f06e1941feee58a834ad8644b4f62f140a12d001ed6bb297c7b2c8386e0ef249e',
-        ];
     }
 
     protected function createKdfInstance(?string $hashAlgo = null, string|Stringable $hashStaticSalt = ''): KdfInterface
