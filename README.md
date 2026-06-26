@@ -259,7 +259,6 @@ version (fixed length) || encrypted payload from underlying cryptor
 
 Runtime configuration:
 ```php
-// /config/di.php
 use Yiisoft\Security\Crypto\VersionedCryptor;
 
 // Assume $kdfCryptor and $envelopeCryptor are already instantiated
@@ -523,7 +522,7 @@ $context = 'user_data_' . $userId;
 
 $secret = getenv('MASTER_ENCRYPTION_KEY');
 
-$encrypted = $cryptor->encrypt('sensitive user information', $secret, $context);
+$encrypted = $cryptor->encrypt('sensitive user data', $secret, $context);
 $decrypted = $cryptor->decrypt($encrypted, $secret, $context);
 ```
 
@@ -548,7 +547,7 @@ $cryptor = new KdfCryptor($kdf, $cipher); // or EnvelopeCryptor
 $context = 'app_config_v1';
 $secret = getenv('MASTER_ENCRYPTION_KEY');
 
-$encrypted = $cryptor->encrypt('sensitive application configuration', $secret, $context);
+$encrypted = $cryptor->encrypt('sensitive configuration', $secret, $context);
 $decrypted = $cryptor->decrypt($encrypted, $secret, $context);
 ```
 
