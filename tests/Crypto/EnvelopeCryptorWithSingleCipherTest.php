@@ -64,7 +64,7 @@ final class EnvelopeCryptorWithSingleCipherTest extends TestCase
         return new class ($saltSize) implements KdfInterface {
             public function __construct(private readonly int $saltSize) {}
 
-            public function derive(string $secret, int $keySize, string $context, string $salt = ''): string
+            public function derive(string $secret, int $keySize, string $context = '', string $salt = ''): string
             {
                 $hash = hash('sha256', $secret . $context . $salt, true);
 
