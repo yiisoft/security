@@ -79,7 +79,7 @@ final readonly class KdfPasswordArgon2 implements KdfInterface
         #[SensitiveParameter]
         string $secret,
         int $keySize,
-        string $context,
+        string $context = '',
         string $salt = '',
     ): string {
         try {

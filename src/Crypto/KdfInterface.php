@@ -28,7 +28,7 @@ interface KdfInterface
         #[SensitiveParameter]
         string $secret,
         int $keySize,
-        string $context,
+        string $context = '',
         string $salt = '',
     ): string;
 

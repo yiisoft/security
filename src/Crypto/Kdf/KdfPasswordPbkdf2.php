@@ -73,7 +73,7 @@ final readonly class KdfPasswordPbkdf2 implements KdfInterface
         #[SensitiveParameter]
         string $secret,
         int $keySize,
-        string $context,
+        string $context = '',
         string $salt = '',
     ): string {
         /** @psalm-suppress ImpureMethodCall */
