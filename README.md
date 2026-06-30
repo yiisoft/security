@@ -264,10 +264,10 @@ use Yiisoft\Security\Crypto\VersionedCryptor;
 // Assume $kdfCryptor and $envelopeCryptor are already instantiated
 $cryptor = new VersionedCryptor(
     cryptors: [
-        chr(0x01) => $kdfCryptor,
-        chr(0x96) => $envelopeCryptor,
+        "\x01" => $kdfCryptor,
+        "\x96" => $envelopeCryptor,
     ],
-    currentVersion: chr(0x01),
+    currentVersion: "\x01",
 );
 ```
 
@@ -283,10 +283,10 @@ use Yiisoft\Security\Crypto\EnvelopeCryptor;
 VersionedCryptor::class => [
     '__construct()' => [
         'cryptors' => ReferencesArray::from([
-            chr(0x01) => Reference::to(KdfCryptor::class),
-            chr(0x96) => Reference::to(EnvelopeCryptor::class},
+            "\x01" => Reference::to(KdfCryptor::class),
+            "\x96" => Reference::to(EnvelopeCryptor::class},
         ]),
-        'currentVersion' => chr(0x01),
+        'currentVersion' => "\x01",
         // 'versionSize' => 1, // optional, auto-detected from currentVersion
     ],
 ],
