@@ -37,32 +37,13 @@ jobs:
       extensions: sodium, openssl
 
   phpunit-without-openssl:
-    name: PHP 8.2 without openssl
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - name: Install PHP with extensions
-        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
-        with:
-          php-version: '8.2'
-
-      - name: Install Composer dependencies
-        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
-
-      - name: Prepare PHP
-        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
-        with:
-          php-version: '8.2'
-          coverage: xdebug
-          extensions: :openssl
-
-      - name: Run tests with PHPUnit with code coverage
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.xml
+    uses: yiisoft/actions/.github/workflows/phpunit.yml@master
+    secrets:
+      codecovToken: ${{ secrets.CODECOV_TOKEN }}
+    with:
+      coverage: xdebug
+      extensions: :openssl
+      os: >-
+        ['windows-latest']
+      php: >-
+        ['8.2']
