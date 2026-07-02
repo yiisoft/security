@@ -42,8 +42,8 @@ jobs:
       codecovToken: ${{ secrets.CODECOV_TOKEN }}
     with:
       coverage: xdebug
-      extensions: :openssl
       os: >-
         ['windows-latest']
       php: >-
         ['8.2']
+      test-extensions: :openssl
