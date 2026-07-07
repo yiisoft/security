@@ -23,6 +23,8 @@ on:
 
 name: backwards compatibility
 
+permissions:
+  contents: read
 jobs:
   roave_bc_check:
     uses: yiisoft/actions/.github/workflows/bc.yml@master
@@ -30,4 +32,4 @@ jobs:
       os: >-
         ['ubuntu-latest']
       php: >-
-        ['8.2']
+        ['8.4']
