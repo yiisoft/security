@@ -2,13 +2,11 @@ name: GitHub Actions Security Analysis with zizmor 🌈
 
 on:
   push:
-    paths:
+    paths: &paths
       - '.github/**.yml'
       - '.github/**.yaml'
   pull_request:
-    paths:
-      - '.github/**.yml'
-      - '.github/**.yaml'
+    paths: *paths
 
 permissions:
   contents: read
