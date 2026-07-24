@@ -2,6 +2,7 @@
 
 ## 1.2.1 under development
 
+- New #71: Add `KdfCryptor`, `EnvelopeCryptor` and `VersionedCryptor` (@olegbaturin)
 - Bug #72: Fix possibly null offset in `PasswordHasher` (@olegbaturin)
 - Chg #75: Bump minimal required PHP version to 8.2 (@vjik)
 - Enh #75: Mark `Mac` class as readonly (@vjik)

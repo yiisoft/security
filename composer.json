@@ -39,7 +39,8 @@
         "yiisoft/strings": "^2.0"
     },
     "suggest": {
-        "ext-openssl": "Required to use Crypt class"
+        "ext-openssl": "Required for OpenSSL based ciphers",
+        "ext-sodium": "Required for Sodium based ciphers"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.9.1",

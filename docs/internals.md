@@ -34,6 +34,12 @@ use either newest or any specific version of PHP:
 ./vendor/bin/rector
 ```
 
+Use [PHP-CS-Fixer](https://github.com/PHP-CS-Fixer/PHP-CS-Fixer) to fix your code to follow the standards.
+
+```shell
+./vendor/bin/php-cs-fixer fix
+```
+
 ## Dependencies
 
 This package uses [composer-require-checker](https://github.com/maglnet/ComposerRequireChecker) to check if all
