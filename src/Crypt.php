@@ -7,6 +7,7 @@ namespace Yiisoft\Security;
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
 use Exception;
+use InvalidArgumentException;
 use RuntimeException;
 
 use function array_key_exists;
@@ -17,7 +18,8 @@ use const OPENSSL_RAW_DATA;
 final class Crypt
 {
     /**
-     * @var array[] Look-up table of block sizes and key sizes for each supported OpenSSL cipher.
+     * @var array<string, array{int<1, max>, int<1, max>}> Look-up table of block sizes and key sizes for each supported
+     * OpenSSL cipher.
      *
      * In each element, the key is one of the ciphers supported by OpenSSL {@see openssl_get_cipher_methods()}.
      * The value is an array of two integers, the first is the cipher's block size in bytes and the second is
@@ -33,7 +35,7 @@ final class Crypt
     ];
 
     /**
-     * @var string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
+     * @var non-falsy-string Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
      *
      * @see https://php.net/manual/en/function.hash-algos.php
      */
@@ -44,7 +46,7 @@ final class Crypt
      */
     private string $authorizationKeyInfo = 'AuthorizationKey';
     /**
-     * @var int Derivation iterations count.
+     * @var int<1, max> Derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
      */
     private int $derivationIterations = 100000;
@@ -64,20 +66,22 @@ final class Crypt
     }
 
     /**
-     * @psalm-mutation-free
-     *
      * @param string $algorithm Hash algorithm for key derivation. Recommend sha256, sha384 or sha512.
+     *
+     * @throws InvalidArgumentException if the algorithm is empty.
      */
     public function withKdfAlgorithm(string $algorithm): self
     {
+        if ($algorithm === '' || $algorithm === '0') {
+            throw new InvalidArgumentException('Algorithm must not be empty.');
+        }
+
         $new = clone $this;
         $new->kdfAlgorithm = $algorithm;
         return $new;
     }
 
     /**
-     * @psalm-mutation-free
-     *
      * @param string $info HKDF info value for derivation of message authentication key.
      */
     public function withAuthorizationKeyInfo(string $info): self
@@ -88,13 +92,17 @@ final class Crypt
     }
 
     /**
-     * @psalm-mutation-free
-     *
      * @param int $iterations Derivation iterations count.
      * Set as high as possible to hinder dictionary password attacks.
+     *
+     * @throws InvalidArgumentException if the iterations count is less than 1.
      */
     public function withDerivationIterations(int $iterations): self
     {
+        if ($iterations < 1) {
+            throw new InvalidArgumentException('Iterations must be greater than 0.');
+        }
+
         $new = clone $this;
         $new->derivationIterations = $iterations;
         return $new;
@@ -247,10 +255,6 @@ final class Crypt
 
         $encrypted = openssl_encrypt($data, $this->cipher, $key, OPENSSL_RAW_DATA, $iv);
         if ($encrypted === false) {
-            /**
-             * @psalm-suppress PossiblyFalseOperand `openssl_encrypt()` is returned `false`, so `openssl_error_string()`
-             * always returns string.
-             */
             throw new RuntimeException('OpenSSL failure on encryption: ' . openssl_error_string());
         }
 
@@ -311,10 +315,6 @@ final class Crypt
 
         $decrypted = openssl_decrypt($encrypted, $this->cipher, $key, OPENSSL_RAW_DATA, $iv);
         if ($decrypted === false) {
-            /**
-             * @psalm-suppress PossiblyFalseOperand `openssl_decrypt()` is returned `false`, so `openssl_error_string()`
-             * always returns string.
-             */
             throw new RuntimeException('OpenSSL failure on decryption: ' . openssl_error_string());
         }
 

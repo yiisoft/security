@@ -7,7 +7,7 @@ namespace Yiisoft\Security\Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Security\TokenMask;
-use Error;
+use InvalidArgumentException;
 
 final class TokenMaskTest extends TestCase
 {
@@ -28,7 +28,8 @@ final class TokenMaskTest extends TestCase
 
     public function testMaskingInvalidStrings(): void
     {
-        $this->expectException(Error::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Token must not be empty.');
         TokenMask::apply('');
     }
 

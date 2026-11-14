@@ -24,12 +24,16 @@ final class PasswordHasher
             'cost' => 13,
         ],
     ];
+
+    /**
+     * @var array<string, mixed>
+     */
     private array $parameters;
 
     /**
      * @param string|null $algorithm Algorithm to use. If not specified, PHP chooses safest algorithm available in the
      * current version of PHP.
-     * @param array|null $parameters Algorithm parameters. If not specified, safe defaults are used.
+     * @param array<string, mixed>|null $parameters Algorithm parameters. If not specified, safe defaults are used.
      *
      * @see https://www.php.net/manual/en/function.password-hash.php
      */
@@ -70,8 +74,6 @@ final class PasswordHasher
      * in future versions of PHP (https://php.net/manual/en/function.password-hash.php)
      *
      * @see validate()
-     * @psalm-suppress InvalidNullableReturnType
-     * @psalm-suppress NullableReturnStatement
      */
     public function hash(
         #[SensitiveParameter]

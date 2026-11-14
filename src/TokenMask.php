@@ -7,6 +7,7 @@ namespace Yiisoft\Security;
 use SensitiveParameter;
 use Yiisoft\Strings\StringHelper;
 use Exception;
+use InvalidArgumentException;
 
 use function is_int;
 
@@ -23,6 +24,7 @@ final class TokenMask
      * @param string $token An unmasked token.
      *
      * @throws Exception if unable to securely generate random bytes
+     * @throws InvalidArgumentException if the token is empty.
      *
      * @return string A masked token.
      */
@@ -31,8 +33,11 @@ final class TokenMask
         string $token,
     ): string {
         // The number of bytes in a mask is always equal to the number of bytes in a token.
-        /** @psalm-suppress ArgumentTypeCoercion */
-        $mask = random_bytes(StringHelper::byteLength($token));
+        $maskLength = StringHelper::byteLength($token);
+        if ($maskLength < 1) {
+            throw new InvalidArgumentException('Token must not be empty.');
+        }
+        $mask = random_bytes($maskLength);
         return StringHelper::base64UrlEncode($mask . ($mask ^ $token));
     }
 
