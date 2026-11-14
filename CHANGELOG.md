@@ -8,6 +8,9 @@
 - Enh #76: Explicitly import classes, functions and constants in "use" section (@vjik)
 - Enh #76: Make `ext-openssl` optional, it is required only for `Crypt` class (@vjik)
 - Bug #76: Use `ValueError` catching instead of `hash_hmac()` return value check in `Mac` (@vjik)
+- Chg #85: Replace Psalm with PHPStan (@vjik)
+- Enh #85: Throw `InvalidArgumentException` on invalid arguments in `Crypt::withKdfAlgorithm()`,
+  `Crypt::withDerivationIterations()` and `TokenMask::apply()` (@vjik)
 
 ## 1.2.0 November 25, 2025
 

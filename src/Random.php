@@ -27,9 +27,7 @@ final class Random
      *
      * @throws Exception On failure.
      *
-     * @return string The generated random key.
-     *
-     * @psalm-return non-empty-string
+     * @return non-empty-string The generated random key.
      */
     public static function string(int $length = 32): string
     {
@@ -37,13 +35,9 @@ final class Random
             throw new InvalidArgumentException('First parameter ($length) must be greater than 0.');
         }
 
-        /**
-         * Optimization: we can generate a quarter fewer bits to completely cover the desired length in base64
-         * @psalm-suppress ArgumentTypeCoercion
-         */
-        $bytes = random_bytes((int) ceil($length * 0.75));
+        // Optimization: we can generate a quarter fewer bits to completely cover the desired length in base64
+        $bytes = random_bytes(max(1, (int) ceil($length * 0.75)));
 
-        /** @var non-empty-string */
         return substr(StringHelper::base64UrlEncode($bytes), 0, $length);
     }
 }
