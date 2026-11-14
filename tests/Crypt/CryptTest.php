@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Yiisoft\Security\Tests\Crypt;
 
 use Exception;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use RuntimeException;
 use Yiisoft\Security\AuthenticationException;
@@ -806,6 +808,17 @@ final class CryptTest extends TestCase
         $this->assertEquals('sha512', $this->getInaccessibleProperty($newCrypt, 'kdfAlgorithm'));
     }
 
+    #[TestWith([''])]
+    #[TestWith(['0'])]
+    public function testWithKdfAlgorithmInvalid(string $algorithm): void
+    {
+        $crypt = new Crypt('AES-256-CBC');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Algorithm must not be empty.');
+        $crypt->withKdfAlgorithm($algorithm);
+    }
+
     public function testWithAuthKeyInfo(): void
     {
         $crypt = new Crypt('AES-256-CBC');
@@ -820,6 +833,17 @@ final class CryptTest extends TestCase
         $newCrypt = $crypt->withDerivationIterations(5);
         $this->assertNotSame($crypt, $newCrypt);
         $this->assertEquals(5, $this->getInaccessibleProperty($newCrypt, 'derivationIterations'));
+    }
+
+    #[TestWith([0])]
+    #[TestWith([-1])]
+    public function testWithDerivationIterationsInvalid(int $iterations): void
+    {
+        $crypt = new Crypt('AES-256-CBC');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Iterations must be greater than 0.');
+        $crypt->withDerivationIterations($iterations);
     }
 
     public function testOpensslEncryptException(): void
